@@ -1,0 +1,5 @@
+<library path="vehicle_gateway_px4">
+  <class type="vehicle_gateway_px4::VehicleGatewayPX4" base_class_type="vehicle_gateway::VehicleGateway">
+    <description>Vehicle Gateway implementation for PX4</description>
+  </class>
+</library>

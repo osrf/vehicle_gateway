@@ -1,0 +1,5 @@
+<launch>
+  <node pkg="vehicle_gateway" exec="vehicle_gateway_node" name="vehicle_gateway_node" output="screen">
+    <param name="plugin_name" value="vehicle_gateway_px4"/>
+  </node>
+</launch>
