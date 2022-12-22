@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>px4_sim</name>
+  <version>0.0.0</version>
+  <description>The px4 package</description>
+
+  <maintainer email="alejandro@openrobotics.org">Alejandro Hernandez</maintainer>
+
+  <license>Apache 2.0</license>
+
+  <exec_depend>ros_gz_sim</exec_depend>
+  <exec_depend>qgroundcontrol</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

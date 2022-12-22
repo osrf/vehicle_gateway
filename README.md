@@ -12,6 +12,7 @@ If you have installed ROS 2 Humble from APT on your system (the recommended meth
 mkdir -p ~/vg_ws/src
 cd ~/vg_ws/src
 git clone https://github.com/osrf/vehicle_gateway
+vcs import src < src/vehicle_gateway/dependencies.repos
 cd ~/vg_ws
 source /opt/ros/humble/setup.bash
 colcon build
