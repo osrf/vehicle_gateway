@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>qgroundcontrol</name>
+  <version>0.0.0</version>
+  <description>The qgroundcontrol package</description>
+
+  <maintainer email="alejandro@osrfoundation.org">Alejandro Hernández</maintainer>
+
+  <!-- One license tag required, multiple allowed, one license per tag -->
+  <!-- Commonly used license strings: -->
+  <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
+  <license>Apache2 / GPLv3</license>
+
+  <url type="website">https://dev.qgroundcontrol.com</url>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
