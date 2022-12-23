@@ -28,6 +28,17 @@ install(DIRECTORY
  DESTINATION share/${PROJECT_NAME}
 )
 
+install(DIRECTORY
+  models
+ DESTINATION ${CMAKE_INSTALL_PREFIX}/share/px4_sim
+)
+
+install(FILES
+  airframes/1040_standard_vtol
+  airframes/1030_plane
+ DESTINATION ${CMAKE_INSTALL_PREFIX}/share/px4_sim/etc/init.d-posix/airframes
+)
+
 ament_environment_hooks(cmake/99_px4_setup.sh.in)
 
 ament_export_libraries(px4)
