@@ -161,10 +161,19 @@
           <diffuse>0 0 0 1.0</diffuse>
         </material>
       </visual>
-      <sensor name="airspeed" type="navsat">
-        <update_rate>5.0</update_rate>
-        <always_on>true</always_on>
-        <visualize>false</visualize>
+      <sensor name="air_speed" type="air_speed">
+        <always_on>1</always_on>
+        <update_rate>30</update_rate>
+        <visualize>true</visualize>
+        <enable_metrics>true</enable_metrics>
+        <air_speed>
+          <airspeed>
+            <noise type="gaussian">
+              <mean>0</mean>
+              <stddev>0.01</stddev>
+            </noise>
+          </airspeed>
+        </air_speed>
       </sensor>
     </link>
     <joint name='airspeed_joint' type='fixed'>
@@ -848,108 +857,6 @@
       <rotorVelocitySlowdownSim>20</rotorVelocitySlowdownSim>
       <motorType>velocity</motorType>
     </plugin>
-    <!-- <plugin name='groundtruth_plugin' filename='libgazebo_groundtruth_plugin.so'>
-      <robotNamespace/>
-    </plugin> -->
-    <!-- <plugin name='barometer_plugin' filename='libgazebo_barometer_plugin.so'>
-      <robotNamespace/>
-      <pubRate>50</pubRate>
-      <baroTopic>/baro</baroTopic>
-    </plugin> -->
-    <!-- <plugin name='mavlink_interface' filename='libgazebo_mavlink_interface.so'>
-      <robotNamespace></robotNamespace>
-      <imuSubTopic>/imu</imuSubTopic>
-      <baroSubTopic>/baro</baroSubTopic>
-      <mavlink_addr>INADDR_ANY</mavlink_addr>
-      <mavlink_tcp_port>{{ mavlink_tcp_port }}</mavlink_tcp_port>
-      <mavlink_udp_port>{{ mavlink_udp_port }}</mavlink_udp_port>
-      <serialEnabled>{{ serial_enabled }}</serialEnabled>
-      <serialDevice>{{ serial_device }}</serialDevice>
-      <baudRate>{{ serial_baudrate }}</baudRate>
-      <qgc_addr>INADDR_ANY</qgc_addr>
-      <qgc_udp_port>14550</qgc_udp_port>
-      <sdk_addr>INADDR_ANY</sdk_addr>
-      <sdk_udp_port>14540</sdk_udp_port>
-      <hil_mode>{{ hil_mode }}</hil_mode>
-      <hil_state_level>false</hil_state_level>
-      <enable_lockstep>true</enable_lockstep>
-      <use_tcp>true</use_tcp>
-      <motorSpeedCommandPubTopic>/gazebo/command/motor_speed</motorSpeedCommandPubTopic>
-      <control_channels>
-        <channel name="rotor0">
-          <input_index>0</input_index>
-          <input_offset>0</input_offset>
-          <input_scaling>1500</input_scaling>
-          <zero_position_disarmed>0</zero_position_disarmed>
-          <zero_position_armed>0</zero_position_armed>
-          <joint_control_type>velocity</joint_control_type>
-          <joint_name>rotor_0_joint</joint_name>
-        </channel>
-        <channel name="rotor1">
-          <input_index>1</input_index>
-          <input_offset>0</input_offset>
-          <input_scaling>1500</input_scaling>
-          <zero_position_disarmed>0</zero_position_disarmed>
-          <zero_position_armed>0</zero_position_armed>
-          <joint_control_type>velocity</joint_control_type>
-          <joint_name>rotor_1_joint</joint_name>
-        </channel>
-        <channel name="rotor2">
-          <input_index>2</input_index>
-          <input_offset>0</input_offset>
-          <input_scaling>1500</input_scaling>
-          <zero_position_disarmed>0</zero_position_disarmed>
-          <zero_position_armed>0</zero_position_armed>
-          <joint_control_type>velocity</joint_control_type>
-          <joint_name>rotor_2_joint</joint_name>
-        </channel>
-        <channel name="rotor3">
-          <input_index>3</input_index>
-          <input_offset>0</input_offset>
-          <input_scaling>1500</input_scaling>
-          <zero_position_disarmed>0</zero_position_disarmed>
-          <zero_position_armed>0</zero_position_armed>
-          <joint_control_type>velocity</joint_control_type>
-          <joint_name>rotor_3_joint</joint_name>
-        </channel>
-        <channel name="rotor4">
-          <input_index>4</input_index>
-          <input_offset>0</input_offset>
-          <input_scaling>5500</input_scaling>
-          <zero_position_disarmed>0</zero_position_disarmed>
-          <zero_position_armed>0</zero_position_armed>
-          <joint_control_type>velocity</joint_control_type>
-          <joint_name>rotor_puller_joint</joint_name>
-        </channel>
-        <channel name="left_elevon">
-          <input_index>5</input_index>
-          <input_offset>0</input_offset>
-          <input_scaling>1</input_scaling>
-          <zero_position_disarmed>0</zero_position_disarmed>
-          <zero_position_armed>0</zero_position_armed>
-          <joint_control_type>position_kinematic</joint_control_type>
-          <joint_name>left_elevon_joint</joint_name>
-        </channel>
-        <channel name="right_elevon">
-          <input_index>6</input_index>
-          <input_offset>0</input_offset>
-          <input_scaling>1</input_scaling>
-          <zero_position_disarmed>0</zero_position_disarmed>
-          <zero_position_armed>0</zero_position_armed>
-          <joint_control_type>position_kinematic</joint_control_type>
-          <joint_name>right_elevon_joint</joint_name>
-        </channel>
-        <channel name="elevator">
-          <input_index>7</input_index>
-          <input_offset>0</input_offset>
-          <input_scaling>1</input_scaling>
-          <zero_position_disarmed>0</zero_position_disarmed>
-          <zero_position_armed>0</zero_position_armed>
-          <joint_control_type>position_kinematic</joint_control_type>
-          <joint_name>elevator_joint</joint_name>
-        </channel>
-      </control_channels>
-    </plugin> -->
     <static>0</static>
   </model>
 </sdf>
