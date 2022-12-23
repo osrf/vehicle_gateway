@@ -19,6 +19,7 @@ ExternalProject_Add(px4-firmware
   BUILD_COMMAND pwd && ls && ${MAKE_EXECUTABLE} px4_ros2 -j && make px4_sitl_default -j
   BUILD_IN_SOURCE ON
   CONFIGURE_COMMAND ""
+  PATCH_COMMAND patch -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/patches/GzBridge.cpp.patch && patch -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/patches/GzBridge.hpp.patch
 )
 
 install(DIRECTORY
