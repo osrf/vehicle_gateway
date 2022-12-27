@@ -84,9 +84,8 @@
       </visual>
       <sensor name="air_speed" type="air_speed">
         <always_on>1</always_on>
-        <update_rate>30</update_rate>
-        <visualize>true</visualize>
-        <enable_metrics>true</enable_metrics>
+        <update_rate>5.0</update_rate>
+        <enable_metrics>false</enable_metrics>
         <air_speed>
           <airspeed>
             <noise type="gaussian">
@@ -101,15 +100,6 @@
       <child>airspeed</child>
       <parent>base_link</parent>
     </joint>
-    <!-- <include>
-      <uri>model://airspeed</uri>
-      <pose>0 0 0 0 0 0</pose>
-      <name>airspeed</name>
-    </include> -->
-    <!-- <joint name='airspeed_joint' type='fixed'>
-      <child>airspeed::link</child>
-      <parent>base_link</parent>
-    </joint> -->
     <link name='rotor_puller'>
       <pose>0.3 0 0.0 0 1.57 0</pose>
       <inertial>
@@ -471,24 +461,6 @@
         </ode>
       </physics>
     </joint>
-    <!-- <include>
-      <uri>model://gps</uri>
-      <pose>0 0 0 0 0 0</pose>
-      <name>gps</name>
-    </include>
-    <joint name='gps_joint' type='fixed'>
-      <child>gps::link</child>
-      <parent>base_link</parent>
-    </joint>
-    <include>
-      <uri>model://magnetometer</uri>
-      <pose>0 0 0 0 0 0</pose>
-      <name>mag</name>
-    </include>
-    <joint name='mag_joint' type='fixed'>
-      <child>mag::link</child>
-      <parent>base_link</parent>
-    </joint> -->
     <plugin filename="gz-sim-lift-drag-system" name="gz::sim::systems::LiftDrag">
     <!-- <plugin name="left_wing" filename="libLiftDragPlugin.so"> -->
       <a0>0.05984281113</a0>
