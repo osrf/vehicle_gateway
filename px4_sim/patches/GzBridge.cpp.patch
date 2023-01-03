@@ -1,0 +1,45 @@
+--- a/src/modules/simulation/gz_bridge/GZBridge.cpp
++++ b/src/modules/simulation/gz_bridge/GZBridge.cpp
+@@ -154,6 +154,13 @@
+ 		return PX4_ERROR;
+ 	}
+
++	std::string airpressure_topic = "/world/" + _world_name + "/model/" + _model_name + "/link/airspeed/sensor/air_speed/air_speed";
++
++	if (!_node.Subscribe(airpressure_topic, &GZBridge::airpressureCallback, this)) {
++		PX4_ERR("failed to subscribe to %s", airpressure_topic.c_str());
++		return PX4_ERROR;
++	}
++
+ 	// ESC feedback: /x500/command/motor_speed
+ 	std::string motor_speed_topic = "/" + _model_name + "/command/motor_speed";
+
+@@ -330,6 +337,29 @@
+
+ 	pthread_mutex_unlock(&_mutex);
+ }
++
++void GZBridge::airpressureCallback(const ignition::msgs::FluidPressure &air_pressure)
++{
++	if (hrt_absolute_time() == 0) {
++		return;
++	}
++
++	pthread_mutex_lock(&_mutex);
++
++	const uint64_t time_us = (air_pressure.header().stamp().sec() * 1000000) + (air_pressure.header().stamp().nsec() / 1000);
++
++	double air_pressure_value = air_pressure.pressure();
++
++	differential_pressure_s report{};
++	report.timestamp_sample = time_us;
++	report.device_id = 1377548; // 1377548: DRV_DIFF_PRESS_DEVTYPE_SIM, BUS: 1, ADDR: 5, TYPE: SIMULATION
++	report.differential_pressure_pa = static_cast<float>(air_pressure_value); // hPa to Pa;
++	report.temperature = static_cast<float>(air_pressure.variance()) - 273.15f;//_sensors_temperature;
++	report.timestamp = hrt_absolute_time();;
++	_differential_pressure_pub.publish(report);
++
++	pthread_mutex_unlock(&_mutex);
++}
+
+ void GZBridge::imuCallback(const ignition::msgs::IMU &imu)
