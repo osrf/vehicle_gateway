@@ -40,7 +40,12 @@ int main(int argc, char ** argv)
     }
     std::cerr << "Takeoff" << '\n';
     gateway->takeoff();
-    std::this_thread::sleep_for(2000ms);
+    std::this_thread::sleep_for(10000ms);
+    gateway->land();
+    while(gateway->arming_state())
+    {
+      std::this_thread::sleep_for(200ms);
+    }
     gateway->destroy();
   }
   catch(pluginlib::PluginlibException& ex)

@@ -38,7 +38,6 @@ void VehicleGatewayPX4::init(int argc, char ** argv)
     [this](px4_msgs::msg::VehicleStatus::ConstSharedPtr msg) {
       this->arming_state_ = msg->arming_state;
       this->nav_state_ = msg->nav_state;
-      std::cerr << "arming_state_ " << arming_state_ << '\n';
     });
 
   this->vehicle_sensor_gps_sub_ = this->px4_node_->create_subscription<px4_msgs::msg::SensorGps>(
@@ -48,7 +47,6 @@ void VehicleGatewayPX4::init(int argc, char ** argv)
       this->lat_ = msg->lat;
       this->lon_ = msg->lon;
       this->alt_ = msg->alt;
-      std::cerr << "lat " << msg->lat << " lon: " << msg->lon << '\n';
     });
 
   this->vehicle_command_pub_ = this->px4_node_->create_publisher<px4_msgs::msg::VehicleCommand>("/fmu/in/vehicle_command", qos_profile);
@@ -91,9 +89,9 @@ void VehicleGatewayPX4::takeoff()
   msg_vehicle_command.param1 = 0.1;
   msg_vehicle_command.param2 = 0;
   msg_vehicle_command.param3 = 0;
-  msg_vehicle_command.param4 = 0; // orientation
-  msg_vehicle_command.param5 = this->lat_;
-  msg_vehicle_command.param6 = this->lon_;
+  msg_vehicle_command.param4 = 1.57; // orientation
+  msg_vehicle_command.param5 = this->lat_*1e-7;
+  msg_vehicle_command.param6 = this->lon_*1e-7;
   msg_vehicle_command.param7 = 5.0;
   msg_vehicle_command.confirmation = 1;
   msg_vehicle_command.source_system = 255;
@@ -107,21 +105,34 @@ void VehicleGatewayPX4::takeoff()
   msg_vehicle_command.param1 = -1;
   msg_vehicle_command.param2 = 1;
   msg_vehicle_command.param3 = 0;
-  msg_vehicle_command.param4 = 0;
-  msg_vehicle_command.param5 = this->lat_;
-  msg_vehicle_command.param6 = this->lon_;
-  msg_vehicle_command.param7 = 5.0;
+  msg_vehicle_command.param4 = 1.57;
+  msg_vehicle_command.param5 = this->lat_*1e-7;
+  msg_vehicle_command.param6 = this->lon_*1e-7;
+  msg_vehicle_command.param7 = this->alt_*1e-3 + 5;
   msg_vehicle_command.confirmation = 0;
   msg_vehicle_command.source_system = 255;
   msg_vehicle_command.target_system = target_system_;
   msg_vehicle_command.target_component = 1;
   msg_vehicle_command.from_external = true;
   vehicle_command_pub_->publish(msg_vehicle_command);
-
 }
 
 void VehicleGatewayPX4::land()
 {
+  px4_msgs::msg::VehicleCommand msg_vehicle_command;
+
+  msg_vehicle_command.timestamp = this->px4_node_->get_clock()->now().nanoseconds()/1000;
+  msg_vehicle_command.command = px4_msgs::msg::VehicleCommand::VEHICLE_CMD_NAV_LAND;
+  msg_vehicle_command.param1 = 0.1;
+  msg_vehicle_command.param4 = 1.57;
+  msg_vehicle_command.param5 = this->lat_*1e-7;
+  msg_vehicle_command.param6 = this->lon_*1e-7;
+  msg_vehicle_command.confirmation = 1;
+  msg_vehicle_command.source_system = 255;
+  msg_vehicle_command.target_system = target_system_;
+  msg_vehicle_command.target_component = 1;
+  msg_vehicle_command.from_external = true;
+  vehicle_command_pub_->publish(msg_vehicle_command);
 }
 
 void VehicleGatewayPX4::go_to_waypoint()
