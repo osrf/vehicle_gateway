@@ -25,12 +25,11 @@ int main(int argc, char ** argv)
     "vehicle_gateway::VehicleGateway");
 
   // TODO: retrieve the plugin name from a ROS 2 param in the launch file
-  try
-  {
+  try {
     std::shared_ptr<vehicle_gateway::VehicleGateway> gateway = loader.createSharedInstance(
       "vehicle_gateway_px4::VehicleGatewayPX4");
     gateway->init();
-  } catch(pluginlib::PluginlibException& ex) {
+  } catch(pluginlib::PluginlibException & ex) {
     printf("The plugin failed to load: %s\n", ex.what());
   }
 
