@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#ifndef VEHICLE_GATEWAY_PX4__VEHICLE_GATEWAY_PX4_HPP_
+#define VEHICLE_GATEWAY_PX4__VEHICLE_GATEWAY_PX4_HPP_
+
 #include "vehicle_gateway/vehicle_gateway.hpp"
 
 #include <memory>
@@ -29,19 +32,25 @@ namespace vehicle_gateway_px4
 class VehicleGatewayPX4 : public vehicle_gateway::VehicleGateway
 {
 public:
-  public: void init(int argc, char ** argv) override;
+  void init(int argc, char ** argv) override;
 
-  public: void destroy() override;
+public:
+  void destroy() override;
 
-  public: void arm() override;
+public:
+  void arm() override;
 
-  public: bool arming_state() override;
+public:
+  bool arming_state() override;
 
-  public: void takeoff() override;
+public:
+  void takeoff() override;
 
-  public: void land() override;
+public:
+  void land() override;
 
-  public: void go_to_waypoint() override;
+public:
+  void go_to_waypoint() override;
 
 private:
   // Orchestration
@@ -64,3 +73,5 @@ private:
 };
 
 }  // namespace vehicle_gateway_px4
+
+#endif  // VEHICLE_GATEWAY_PX4__VEHICLE_GATEWAY_PX4_HPP_
