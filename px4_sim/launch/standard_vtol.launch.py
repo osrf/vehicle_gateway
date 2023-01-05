@@ -69,10 +69,10 @@ def generate_launch_description():
     return LaunchDescription([
         # Launch gazebo environment
         IncludeLaunchDescription(
-          PythonLaunchDescriptionSource(
-              [os.path.join(get_package_share_directory('ros_gz_sim'),
-                           'launch', 'gz_sim.launch.py')]),
-          launch_arguments=[('gz_args', [' -r -v 4 ' + world_sdf])]),
+            PythonLaunchDescriptionSource(
+                [os.path.join(get_package_share_directory('ros_gz_sim'),
+                              'launch', 'gz_sim.launch.py')]),
+            launch_arguments=[('gz_args', [' -r -v 4 ' + world_sdf])]),
         run_px4,
         use_sim_time_arg,
         ExecuteProcess(cmd=['QGroundControl.AppImage'])
