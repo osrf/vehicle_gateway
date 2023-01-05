@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>betaflight_sim</name>
+  <version>0.0.0</version>
+  <description>The betaflight package</description>
+
+  <maintainer email="alejandro@openrobotics.org">Alejandro Hernandez</maintainer>
+
+  <license>Apache 2.0</license>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
