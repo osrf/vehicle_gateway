@@ -30,7 +30,7 @@ def get_px4_dir():
 
 def seed_rootfs(rootfs):
     px4_dir = get_px4_dir()
-    print("seeding rootfs at %s from %s" % (rootfs, px4_dir))
+    print(f"seeding rootfs at {rootfs} from {px4_dir}")
     copy_tree(px4_dir, rootfs)
 
 

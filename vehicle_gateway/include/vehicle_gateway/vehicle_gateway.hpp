@@ -28,7 +28,7 @@ public:
   // TODO: add classes for all the fun cool vehicle things
 
 protected:
-  VehicleGateway(){}
+  VehicleGateway() {}
 };
 
 }
