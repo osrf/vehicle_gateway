@@ -24,7 +24,7 @@ int main(int argc, char ** argv)
   pluginlib::ClassLoader<vehicle_gateway::VehicleGateway> loader("vehicle_gateway",
     "vehicle_gateway::VehicleGateway");
 
-  // TODO: retrieve the plugin name from a ROS 2 param in the launch file
+  // TODO(anyone): retrieve the plugin name from a ROS 2 param in the launch file
   try {
     std::shared_ptr<vehicle_gateway::VehicleGateway> gateway = loader.createSharedInstance(
       "vehicle_gateway_px4::VehicleGatewayPX4");
