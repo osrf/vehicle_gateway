@@ -23,7 +23,6 @@ jobs:
         uses: ros-tooling/action-ros-ci@v0.2
         with:
           package-name: |
-            qgroundcontrol
             vehicle_gateway
             vehicle_gateway_px4
           vcs-repo-file-url: |
