@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef VEHICLE_GATEWAY_VEHICLE_GATEWAY_HPP
-#define VEHICLE_GATEWAY_VEHICLE_GATEWAY_HPP
+#ifndef VEHICLE_GATEWAY__VEHICLE_GATEWAY_HPP_
+#define VEHICLE_GATEWAY__VEHICLE_GATEWAY_HPP_
 
 namespace vehicle_gateway
 {
@@ -25,12 +25,11 @@ public:
 
   virtual void init() = 0;
 
-  // TODO: add classes for all the fun cool vehicle things
+  // TODO(anyone): add classes for all the fun cool vehicle things
 
 protected:
   VehicleGateway() {}
 };
+}  // namespace vehicle_gateway
 
-}
-
-#endif
+#endif  // VEHICLE_GATEWAY__VEHICLE_GATEWAY_HPP_
