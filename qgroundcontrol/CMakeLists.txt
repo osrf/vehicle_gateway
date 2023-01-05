@@ -14,7 +14,7 @@ endif()
 
 install(PROGRAMS
   ${CMAKE_BINARY_DIR}/QGroundControl.AppImage
- TYPE BIN
+  TYPE BIN
 )
 
 ament_package()

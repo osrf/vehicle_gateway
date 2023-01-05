@@ -4,24 +4,70 @@ The goal of this project is to create a pluginlib-based C++ library that can int
 
 # Installation
 
-This package is developed and on Ubuntu 22.04 LTS with ROS 2 Humble.
+This package is developed and on Ubuntu 22.04 LTS with ROS 2 Humble. We suggest installing ROS 2 Humble from binary packages, and building Gazebo Garden from source. The following steps will describe this process, resulting in two workspaces: one for Gazebo Garden, and an overlaid workspace for the Vehicle Gateway (this project), in order to make rebuilds faster.
 
-If you have installed ROS 2 Humble from APT on your system (the recommended method unless you prefer to work from source), the following steps will create a workspace for this repo and build it:
-
-First, install ROS 2 and Gazebo Garden.
-Note that Gazebo Garden must be installed separately, following its instructions below; it is not the version that ships with Ubuntu 22.04 LTS.
-This is why `ros_gz` must be built as part of the repository dependencies in subsequent steps.
- * [ROS 2 Humble binary installation instructure](http://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html)
- * [Gazebo Garden binary installation instructions](https://gazebosim.org/docs/garden/install_ubuntu)
+To keep paths short, `vg` stands for "Vehicle Gateway". After these steps, you'll have two workspaces in the `~/vg` directory, like this:
 
 ```
+vg
+├── gz_ws
+│   ├── build
+│   ├── install
+│   ├── log
+│   └── src
+└── vg_ws
+    ├── build
+    ├── install
+    ├── log
+    └── src
+```
+
+First, install ROS 2 Humble using the `.deb` packages using APT [according to these instructions](http://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html)
+
+Next, install a few dependencies and set up our workspace source directories:
+```bash
 sudo apt install python3-kconfiglib python3-jinja2 python3-jsonschema ros-humble-gps-msgs
 pip3 install pyros-genmsg
-mkdir -p ~/vg_ws/src
-cd ~/vg_ws/src
+mkdir -p ~/vg/vg_ws/src
+cd ~/vg/vg_ws/src
 git clone https://github.com/osrf/vehicle_gateway
+cd ~/vg/vg_ws
 vcs import src < src/vehicle_gateway/dependencies.repos
-cd ~/vg_ws
+```
+
+Next, build Gazebo Garden from source. The full instructions are [here](https://gazebosim.org/docs/garden/install_ubuntu_src), and summarized in the following command sequence:
+
+```bash
+mkdir -p ~/vg/gz_ws/src
+cd ~/vg/gz_ws
+vcs import src < ../vg_ws/src/vehicle_gateway/gazebo.repos
+sudo apt install -y $(sort -u $(find . -iname 'packages-'`lsb_release -cs`'.apt' -o -iname 'packages.apt' | grep -v '/\.git/') | sed '/gz\|sdf/d' | tr '\n' ' ')
 source /opt/ros/humble/setup.bash
-colcon build
+colcon build --merge-install
+```
+Now you should have Gazebo available to any terminals that source `~/vg/gz_ws/install/setup.bash`
+
+We can now build the Vehicle Gateway itself, by overlaying its workspace on top of the Gazebo Garden workspace (which in turn is overlaying the ROS 2 Humble system installation). The Vehicle Gateway build will also download and build the PX4 firmware, to allow software-in-the-loop (SITL) simulation:
+
+```bash
+cd ~/vg/vg_ws
+rosdep update && rosdep install --from-paths src --ignore-src -y
+source ~/vg/gz_ws/install/setup.bash
+colcon build --event-handlers console_direct+
+```
+
+As a last step, we will build the Micro-ROS agent in this workspace
+
+```bash
+cd ~/vg/vg_ws
+source install/setup.bash
+ros2 run micro_ros_setup create_agent_ws.sh
+ros2 run micro_ros_setup build_agent.sh
+```
+
+# Run a PX4 Quadcopter demo
+```bash
+cd ~/vg/vg_ws
+source install/setup.bash
+ros2 launch px4_sim x500_launch.py
 ```
