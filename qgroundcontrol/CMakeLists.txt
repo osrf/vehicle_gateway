@@ -15,7 +15,7 @@ message("CMAKE_BINARY_DIR " ${CMAKE_BINARY_DIR})
 
 install(PROGRAMS
   ${CMAKE_BINARY_DIR}/QGroundControl.AppImage
- TYPE BIN
+  TYPE BIN
 )
 
 ament_export_libraries(qgroundcontrol)
