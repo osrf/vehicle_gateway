@@ -30,7 +30,6 @@ public:
 protected:
   VehicleGateway() {}
 };
-
 }  // namespace vehicle_gateway
 
 #endif  // VEHICLE_GATEWAY__VEHICLE_GATEWAY_HPP_
