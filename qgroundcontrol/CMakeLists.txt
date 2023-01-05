@@ -5,19 +5,16 @@ find_package(ament_cmake REQUIRED)
 
 include(ExternalProject)
 
-file(DOWNLOAD
-  https://github.com/mavlink/qgroundcontrol/releases/download/v4.2.4/QGroundControl.AppImage
-  QGroundControl.AppImage
-)
-
-message("CMAKE_BUILD_DIR " ${CMAKE_BUILD_DIR})
-message("CMAKE_BINARY_DIR " ${CMAKE_BINARY_DIR})
+if(NOT EXISTS "${CMAKE_BINARY_DIR}/QGroundControl.AppImage")
+  file(DOWNLOAD
+    https://github.com/mavlink/qgroundcontrol/releases/download/v4.2.4/QGroundControl.AppImage
+    QGroundControl.AppImage
+  )
+endif()
 
 install(PROGRAMS
   ${CMAKE_BINARY_DIR}/QGroundControl.AppImage
  TYPE BIN
 )
-
-ament_export_libraries(qgroundcontrol)
 
 ament_package()
