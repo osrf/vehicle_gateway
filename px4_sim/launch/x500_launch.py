@@ -14,13 +14,11 @@
 
 from ament_index_python.packages import get_package_share_directory
 from distutils.dir_util import copy_tree
-import launch
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 import tempfile
 import os
-import subprocess
 from launch.substitutions import LaunchConfiguration
 
 
@@ -37,7 +35,7 @@ def seed_rootfs(rootfs):
 def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
 
-    os.environ["GZ_SIM_RESOURCE_PATH"] = os.path.join(get_px4_dir(), "models");
+    os.environ["GZ_SIM_RESOURCE_PATH"] = os.path.join(get_px4_dir(), "models")
     print(os.path.join(get_px4_dir(), "models"))
     rootfs = tempfile.TemporaryDirectory()
     px4_dir = get_px4_dir()
@@ -51,9 +49,9 @@ def generate_launch_description():
 
     run_px4 = ExecuteProcess(
         cmd=['px4', '%s/ROMFS/px4fmu_common' % rootfs.name,
-               '-s', rc_script,
-               '-i', "id0",
-               '-d'],
+             '-s', rc_script,
+             '-i', "id0",
+             '-d'],
         cwd=get_px4_dir(),
         output='screen'
     )
