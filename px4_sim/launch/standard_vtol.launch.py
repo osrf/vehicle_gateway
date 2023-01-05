@@ -17,6 +17,7 @@ from distutils.dir_util import copy_tree
 import launch
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription
+from launch_ros.actions import Node
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 import tempfile
 import os
@@ -68,6 +69,12 @@ def generate_launch_description():
 
     world_sdf = os.path.join(get_px4_dir(), "worlds", "empty_px4_world.sdf")
 
+    micro_ros_agent = Node(
+        package='micro_ros_agent',
+        executable='micro_ros_agent',
+        arguments=["udp4", "-p", "8888"],
+        output='screen')
+
     return LaunchDescription([
         # Launch gazebo environment
         IncludeLaunchDescription(
@@ -77,5 +84,6 @@ def generate_launch_description():
           launch_arguments=[('gz_args', [' -r -v 4 ' + world_sdf])]),
         run_px4,
         use_sim_time_arg,
-        ExecuteProcess(cmd=['QGroundControl.AppImage'])
+        ExecuteProcess(cmd=['QGroundControl.AppImage']),
+        micro_ros_agent
     ])
