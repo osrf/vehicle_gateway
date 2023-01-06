@@ -7,31 +7,10 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-find_package(pluginlib REQUIRED)
-
-add_executable(vehicle_gateway_node src/vehicle_gateway_node.cpp)
-target_include_directories(vehicle_gateway_node PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>)
-target_compile_features(vehicle_gateway_node PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
-ament_target_dependencies(
-  vehicle_gateway_node
-  "pluginlib"
-)
 
 install(
   DIRECTORY include/
   DESTINATION include
-)
-
-install(
-  DIRECTORY launch/
-  DESTINATION share/${PROJECT_NAME}
-)
-
-install(
-  TARGETS vehicle_gateway_node
-  DESTINATION lib/${PROJECT_NAME}
 )
 
 ament_export_include_directories(
