@@ -55,8 +55,7 @@ void VehicleGatewayPX4::init(int argc, const char ** argv)
 
 void VehicleGatewayPX4::destroy()
 {
-  if (this->exec_)
-  {
+  if (this->exec_) {
     this->exec_->cancel();
     rclcpp::shutdown();
     this->spin_thread_.join();
