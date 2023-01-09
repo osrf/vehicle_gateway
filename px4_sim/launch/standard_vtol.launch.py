@@ -37,7 +37,6 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
 
     os.environ["GZ_SIM_RESOURCE_PATH"] = os.path.join(get_px4_dir(), "models")
-    print(os.path.join(get_px4_dir(), "models"))
     rootfs = tempfile.TemporaryDirectory()
     px4_dir = get_px4_dir()
 
