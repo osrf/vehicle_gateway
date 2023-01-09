@@ -16,7 +16,7 @@
 
 namespace vehicle_gateway_px4
 {
-void VehicleGatewayPX4::init(int argc, char ** argv)
+void VehicleGatewayPX4::init(int argc, const char ** argv)
 {
   rclcpp::init(argc, argv);
   this->exec_ = std::make_shared<rclcpp::executors::MultiThreadedExecutor>();
@@ -55,9 +55,12 @@ void VehicleGatewayPX4::init(int argc, char ** argv)
 
 void VehicleGatewayPX4::destroy()
 {
-  this->exec_->cancel();
-  rclcpp::shutdown();
-  this->spin_thread_.join();
+  if (this->exec_)
+  {
+    this->exec_->cancel();
+    rclcpp::shutdown();
+    this->spin_thread_.join();
+  }
 }
 
 bool VehicleGatewayPX4::arming_state()

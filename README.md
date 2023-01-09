@@ -53,7 +53,7 @@ We can now build the Vehicle Gateway itself, by overlaying its workspace on top 
 cd ~/vg/vg_ws
 rosdep update && rosdep install --from-paths src --ignore-src -y
 source ~/vg/gz_ws/install/setup.bash
-colcon build --event-handlers console_direct+
+colcon build --merge-install --event-handlers console_direct+
 ```
 
 As a last step, we will build the Micro-ROS agent in this workspace
@@ -62,7 +62,7 @@ As a last step, we will build the Micro-ROS agent in this workspace
 cd ~/vg/vg_ws
 source install/setup.bash
 ros2 run micro_ros_setup create_agent_ws.sh
-ros2 run micro_ros_setup build_agent.sh
+ros2 run micro_ros_setup build_agent.sh --merge-install
 ```
 
 # Run a PX4 Quadcopter demo
