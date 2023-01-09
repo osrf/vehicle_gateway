@@ -56,15 +56,6 @@ source ~/vg/gz_ws/install/setup.bash
 colcon build --event-handlers console_direct+
 ```
 
-As a last step, we will build the Micro-ROS agent in this workspace
-
-```bash
-cd ~/vg/vg_ws
-source install/setup.bash
-ros2 run micro_ros_setup create_agent_ws.sh
-ros2 run micro_ros_setup build_agent.sh
-```
-
 # Run a PX4 Quadcopter demo
 ```bash
 cd ~/vg/vg_ws
