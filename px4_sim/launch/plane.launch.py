@@ -14,13 +14,12 @@
 
 from ament_index_python.packages import get_package_share_directory
 from distutils.dir_util import copy_tree
-import launch
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription
+from launch_ros.actions import Node
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 import tempfile
 import os
-import subprocess
 from launch.substitutions import LaunchConfiguration
 
 
@@ -30,14 +29,14 @@ def get_px4_dir():
 
 def seed_rootfs(rootfs):
     px4_dir = get_px4_dir()
-    print("seeding rootfs at %s from %s" % (rootfs, px4_dir))
+    print(f"seeding rootfs at {rootfs} from {px4_dir}")
     copy_tree(px4_dir, rootfs)
 
 
 def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
 
-    os.environ["GZ_SIM_RESOURCE_PATH"] = os.path.join(get_px4_dir(), "models");
+    os.environ["GZ_SIM_RESOURCE_PATH"] = os.path.join(get_px4_dir(), "models")
     print(os.path.join(get_px4_dir(), "models"))
     rootfs = tempfile.TemporaryDirectory()
     px4_dir = get_px4_dir()
@@ -51,9 +50,9 @@ def generate_launch_description():
 
     run_px4 = ExecuteProcess(
         cmd=['px4', '%s/ROMFS/px4fmu_common' % rootfs.name,
-               '-s', rc_script,
-               '-i', "0",
-               '-d'],
+             '-s', rc_script,
+             '-i', "id0",
+             '-d'],
         cwd=get_px4_dir(),
         output='screen'
     )
@@ -66,14 +65,21 @@ def generate_launch_description():
 
     world_sdf = os.path.join(get_px4_dir(), "worlds", "empty_px4_world.sdf")
 
+    micro_ros_agent = Node(
+        package='micro_ros_agent',
+        executable='micro_ros_agent',
+        arguments=["udp4", "-p", "8888"],
+        output='screen')
+
     return LaunchDescription([
         # Launch gazebo environment
         IncludeLaunchDescription(
-          PythonLaunchDescriptionSource(
-              [os.path.join(get_package_share_directory('ros_gz_sim'),
-                           'launch', 'gz_sim.launch.py')]),
-          launch_arguments=[('gz_args', [' -r -v 4 ' + world_sdf])]),
+            PythonLaunchDescriptionSource(
+                [os.path.join(get_package_share_directory('ros_gz_sim'),
+                              'launch', 'gz_sim.launch.py')]),
+            launch_arguments=[('gz_args', [' -r -v 4 ' + world_sdf])]),
         run_px4,
         use_sim_time_arg,
-        ExecuteProcess(cmd=['QGroundControl.AppImage'])
+        ExecuteProcess(cmd=['QGroundControl.AppImage']),
+        micro_ros_agent
     ])

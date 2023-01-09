@@ -1,0 +1,30 @@
+name: build
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+defaults:
+  run:
+    shell: bash
+jobs:
+  build_and_test:
+    name: Build and test
+    runs-on: ubuntu-latest
+    container:
+      image: rostooling/setup-ros-docker:ubuntu-jammy-latest
+    steps:
+      - name: deps
+        uses: ros-tooling/setup-ros@v0.3
+        with:
+          required-ros-distributions: humble
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: build
+        uses: ros-tooling/action-ros-ci@v0.2
+        with:
+          package-name: |
+            vehicle_gateway
+            vehicle_gateway_px4
+          vcs-repo-file-url: |
+            $GITHUB_WORKSPACE/dependencies.repos
+          target-ros2-distro: humble
