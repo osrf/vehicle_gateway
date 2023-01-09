@@ -1,0 +1,84 @@
+<?xml version="1.0" ?>
+<sdf version="1.9">
+  <world name="null_island">
+    <plugin
+      filename="gz-sim-physics-system"
+      name="gz::sim::systems::Physics">
+    </plugin>
+    <plugin
+      filename="gz-sim-user-commands-system"
+      name="gz::sim::systems::UserCommands">
+    </plugin>
+    <plugin
+      filename="gz-sim-scene-broadcaster-system"
+      name="gz::sim::systems::SceneBroadcaster">
+    </plugin>
+    <plugin
+      filename="gz-sim-sensors-system"
+      name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+    <plugin
+      filename="gz-sim-imu-system"
+      name="gz::sim::systems::Imu">
+    </plugin>
+    <plugin
+      filename="gz-sim-air-speed-system"
+      name="gz::sim::systems::AirSpeed">
+    </plugin>
+
+    <plugin filename="MinimalScene" name="gz::gui::plugins::MinimalScene">
+      <gui>
+        <title>3D View</title>
+        <property type="bool" key="showTitleBar">true</property>
+        <property type="string" key="state">docked</property>
+      </gui>
+
+      <engine>ogre2</engine>
+      <scene>scene</scene>
+      <ambient_light>0.4 0.4 0.4</ambient_light>
+      <background_color>0.8 0.8 0.8</background_color>
+      <camera_pose>-1510 0 6 0 0.5 0</camera_pose>
+      <camera_clip>
+        <near>0.25</near>
+        <far>10</far>
+      </camera_clip>
+    </plugin>
+
+    <!--
+    <scene>
+      <clouds>
+      </clouds>
+      <grid>false</grid>
+    </scene>
+    -->
+
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0.75 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.1 0.1 0.1 1</specular>
+      <intensity>5</intensity>
+      <attenuation>
+        <range>100</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+
+    <include>
+      <uri>
+        https://fuel.gazebosim.org/1.0/OpenRobotics/models/Null Island
+      </uri>
+    </include>
+
+    <include>
+      <uri>
+        https://fuel.gazebosim.org/1.0/OpenRobotics/models/Coast Water
+      </uri>
+    </include>
+
+  </world>
+</sdf>
