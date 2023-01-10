@@ -21,6 +21,7 @@ install(DIRECTORY
   "${PROJECT_BINARY_DIR}/betaflight-configurator/Betaflight Configurator/"
   DESTINATION
   ${CMAKE_INSTALL_PREFIX}/share/betaflight_configurator/bin
+  USE_SOURCE_PERMISSIONS
 )
 
 ament_environment_hooks(cmake/99_betaflight_configurator_setup.sh.in)
