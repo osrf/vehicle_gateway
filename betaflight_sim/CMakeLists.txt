@@ -22,9 +22,11 @@ ExternalProject_Add(betaflight-firmware
   BUILD_COMMAND pwd && ${MAKE_EXECUTABLE} TARGET=SITL -j
   BUILD_IN_SOURCE ON
   CONFIGURE_COMMAND ""
-  PATCH_COMMAND git checkout . &&
-  patch -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/patches/sitl.patch &&
-  patch -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/patches/tools.mk.patch
+  # PATCH_COMMAND git checkout . &&
+	# 	patch -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/patches/target.cc.patch &&
+	# 	patch -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/patches/target.hh.patch &&
+	# 	patch -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/patches/udp.cc.patch &&
+	#   patch -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/patches/tools.mk.patch
 )
 
 ament_environment_hooks(cmake/99_betaflight_setup.sh.in)
@@ -46,6 +48,12 @@ install(DIRECTORY
   worlds
   DESTINATION
     share/${PROJECT_NAME}
+)
+
+install(DIRECTORY
+  models
+  DESTINATION
+    ${CMAKE_INSTALL_PREFIX}/share/betaflight_sim
 )
 
 ament_package()

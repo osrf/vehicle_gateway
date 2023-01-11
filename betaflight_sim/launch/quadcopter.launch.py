@@ -37,6 +37,8 @@ def generate_launch_description():
         default_value=use_sim_time,
         description='If true, use simulated clock')
 
+    os.environ["GZ_SIM_RESOURCE_PATH"] = os.path.join(get_betaflight_dir(), "models")
+
     world_sdf = os.path.join(get_betaflight_dir(), "worlds", "empty_betaflight_world.sdf")
 
     return LaunchDescription([
@@ -46,7 +48,7 @@ def generate_launch_description():
                 [os.path.join(get_package_share_directory('ros_gz_sim'),
                               'launch', 'gz_sim.launch.py')]),
             launch_arguments=[('gz_args', [' -r -v 4 ' + world_sdf])]),
-        run_betaflight,
+        # run_betaflight,
         use_sim_time_arg,
         ExecuteProcess(cmd=['betaflight-configurator']),
     ])

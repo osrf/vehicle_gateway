@@ -1,0 +1,11 @@
+--- a/src/main/target/SITL/target.c
++++ b/src/main/target/SITL/target.c
+@@ -562,7 +562,7 @@ static void pwmCompleteMotorUpdate(void)
+     // send to simulator
+     
+     #if defined(SITL_GAZEBO)  // for gazebo8 ArduCopterPlugin remap, normal range = [0.0, 1.0], 3D rang = [-1.0, 1.0]
+-        double outScale = 1000.0;
++        double outScale = 500.0;
+         if (featureIsEnabled(FEATURE_3D)) {
+             outScale = 500.0;
+         }
