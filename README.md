@@ -8,7 +8,7 @@ This package is developed and on Ubuntu 22.04 LTS with ROS 2 Humble. We suggest 
 
 To keep paths short, `vg` stands for "Vehicle Gateway". After these steps, you'll have two workspaces in the `~/vg` directory, like this:
 
-```
+```bash
 vg
 ├── gz_ws
 │   ├── build
