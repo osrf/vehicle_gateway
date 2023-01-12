@@ -33,6 +33,7 @@ cd ~/vg/vg_ws/src
 git clone https://github.com/osrf/vehicle_gateway
 cd ~/vg/vg_ws
 vcs import src < src/vehicle_gateway/dependencies.repos
+vcs import src < src/vehicle_gateway/gazebo.repos
 ```
 
 Next, build Gazebo Garden from source. The full instructions are [here](https://gazebosim.org/docs/garden/install_ubuntu_src), and summarized in the following command sequence:

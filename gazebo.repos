@@ -1,8 +1,4 @@
 repositories:
-  ros_gz:
-    type: git
-    url: https://github.com/gazebosim/ros_gz
-    version: ros2
   gz-sim:
     type: git
     url: https://github.com/gazebosim/gz-sim
