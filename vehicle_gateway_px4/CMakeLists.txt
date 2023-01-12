@@ -30,8 +30,8 @@ ament_target_dependencies(
   vehicle_gateway_px4
   pluginlib
   px4_msgs
-	rclcpp
-	vehicle_gateway
+  rclcpp
+  vehicle_gateway
 )
 
 add_executable(vehicle_gateway_px4_node src/vehicle_gateway_main.cpp)
