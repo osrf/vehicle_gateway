@@ -1040,7 +1040,7 @@ bool betaflight_gazebo::BetaFlightPlugin::ReceiveServoPacket(double _simTime,
         // Increase timeout for recv once we detect a packet from Betaflight FCS.
         // If this value is too high then it will block the main Gazebo
         // update loop and adversely affect the RTF.
-        waitMs = 10;
+        waitMs = 1;
     }
     else
     {
