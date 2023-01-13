@@ -1052,7 +1052,6 @@ bool betaflight_gazebo::BetaFlightPlugin::ReceiveServoPacket(double _simTime,
     ssize_t recvSize =
       this->dataPtr->socket_in.Recv(&pkt, sizeof(ServoPacket), waitMs);
 
-    gzerr << "recvSize " << recvSize << std::endl;
     // Drain the socket in the case we're backed up
     int counter = 0;
     ServoPacket last_pkt;
@@ -1111,11 +1110,11 @@ bool betaflight_gazebo::BetaFlightPlugin::ReceiveServoPacket(double _simTime,
       // gazebo::common::Time::NSleep(100);
       if (this->dataPtr->betaflightOnline)
       {
-        gzwarn << "[" << this->dataPtr->modelName << "] "
-               << "Broken ArduPilot connection, count ["
-               << this->dataPtr->connectionTimeoutCount
-               << "/" << this->dataPtr->connectionTimeoutMaxCount
-               << "]\n";
+        // gzwarn << "[" << this->dataPtr->modelName << "] "
+        //        << "Broken ArduPilot connection, count ["
+        //        << this->dataPtr->connectionTimeoutCount
+        //        << "/" << this->dataPtr->connectionTimeoutMaxCount
+        //        << "]\n";
         if (++this->dataPtr->connectionTimeoutCount >
           this->dataPtr->connectionTimeoutMaxCount)
         {

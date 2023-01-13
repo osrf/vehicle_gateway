@@ -15,21 +15,56 @@
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription
+from launch.actions import RegisterEventHandler
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-import os
 from launch.substitutions import LaunchConfiguration
+from launch_ros.actions import Node
+from launch.event_handlers.on_process_io import OnProcessIO
+import os
+import time
 
 
 def get_betaflight_dir():
     return get_package_share_directory('betaflight_sim')
 
+
+run_betaflight_controller = Node(
+    package='betaflight_controller',
+    executable='main',
+    output='screen')
+
+run_betaflight_sitl = ExecuteProcess(
+    cmd=['betaflight_SITL.elf', "127.0.0.1"],
+    cwd=os.path.join(get_betaflight_dir(), "config"),
+    output='screen')
+
+
+def _run_betaflight_sitl_check(event):
+    """
+    Consider betaflight_controller ready when 'Opened joystick...' string is printed.
+
+    Launches betaflight_controller node if ready.
+    """
+    target_str = 'Opened joystick'
+    if target_str in event.text.decode():
+        time.sleep(5)
+        return run_betaflight_sitl
+
+
+def _run_betaflight_controller_check(event):
+    """
+    Consider betaflight_controller ready when 'bind port 5761 for UART1...' string is printed.
+
+    Launches betaflight_controller node if ready.
+    """
+    target_str = 'bind port 5761 for UART1'
+    if target_str in event.text.decode():
+        time.sleep(2)
+        return run_betaflight_controller
+
+
 def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
-
-    run_betaflight = ExecuteProcess(
-        cmd=['betaflight_SITL.elf'],
-        output='screen'
-    )
 
     # Launch Arguments
     use_sim_time_arg = DeclareLaunchArgument(
@@ -41,6 +76,11 @@ def generate_launch_description():
 
     world_sdf = os.path.join(get_betaflight_dir(), "worlds", "empty_betaflight_world.sdf")
 
+    joy_node = Node(
+        package='joy',
+        executable='joy_node',
+        output='screen')
+
     return LaunchDescription([
         # Launch gazebo environment
         IncludeLaunchDescription(
@@ -48,7 +88,21 @@ def generate_launch_description():
                 [os.path.join(get_package_share_directory('ros_gz_sim'),
                               'launch', 'gz_sim.launch.py')]),
             launch_arguments=[('gz_args', [' -r -v 4 ' + world_sdf])]),
-        # run_betaflight,
+        joy_node,
         use_sim_time_arg,
+        RegisterEventHandler(
+            OnProcessIO(
+                target_action=joy_node,
+                on_stdout=_run_betaflight_sitl_check,
+                on_stderr=_run_betaflight_sitl_check
+            )
+        ),
+        RegisterEventHandler(
+            OnProcessIO(
+                target_action=run_betaflight_sitl,
+                on_stdout=_run_betaflight_controller_check,
+                on_stderr=_run_betaflight_controller_check
+            )
+        ),
         ExecuteProcess(cmd=['betaflight-configurator']),
     ])

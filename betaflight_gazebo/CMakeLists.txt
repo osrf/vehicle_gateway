@@ -40,9 +40,6 @@ set(GZ_MATH_VER ${gz-math7_VERSION_MAJOR})
 gz_find_package(gz-transport12 REQUIRED)
 set(GZ_TRANSPORT_VER ${gz-transport12_VERSION_MAJOR})
 
-# gz_find_package(gz-common5 REQUIRED)
-# set(GZ_COMMON_VER ${gz-common5_VERSION_MAJOR})
-
 #======================================
 # Build plugin
 
@@ -60,7 +57,6 @@ target_link_libraries(BetaflightPlugin PUBLIC
   gz-plugin${GZ_PLUGIN_VER}::register
 	gz-math${GZ_MATH_VER}::gz-math${GZ_MATH_VER}
 	gz-transport${GZ_TRANSPORT_VER}::gz-transport${GZ_TRANSPORT_VER}
-  # gz-common${GZ_COMMON_VER}::gz-common${GZ_COMMON_VER}
 )
 
 # Install directories
