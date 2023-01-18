@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+  <asset>
+    <contributor>
+      <author/>
+      <authoring_tool>FBX COLLADA exporter</authoring_tool>
+      <comments/>
+    </contributor>
+    <created>2023-01-04T00:29:22Z</created>
+    <keywords/>
+    <modified>2023-01-04T00:29:22Z</modified>
+    <revision/>
+    <subject/>
+    <title/>
+    <unit meter="0.010000" name="centimeter"/>
+    <up_axis>Z_UP</up_axis>
+  </asset>
+  <library_materials>
+    <material id="FBXASC0481FBXASC032-FBXASC032Default" name="FBXASC0481FBXASC032-FBXASC032Default">
+      <instance_effect url="#FBXASC0481FBXASC032-FBXASC032Default-fx"/>
+    </material>
+  </library_materials>
+  <library_effects>
+    <effect id="FBXASC0481FBXASC032-FBXASC032Default-fx" name="FBXASC0481FBXASC032-FBXASC032Default">
+      <profile_COMMON>
+        <technique sid="standard">
+          <phong>
+            <emission>
+              <color sid="emission">0.000000  0.000000 0.000000 1.000000</color>
+            </emission>
+            <ambient>
+              <color sid="ambient">0.533333  0.533333 0.533333 1.000000</color>
+            </ambient>
+            <diffuse>
+              <color sid="diffuse">0.533333  0.533333 0.533333 1.000000</color>
+            </diffuse>
+            <specular>
+              <color sid="specular">0.450000  0.450000 0.450000 1.000000</color>
+            </specular>
+            <shininess>
+              <float sid="shininess">2.000000</float>
+            </shininess>
+            <reflective>
+              <color sid="reflective">0.000000  0.000000 0.000000 1.000000</color>
+            </reflective>
+            <reflectivity>
+              <float sid="reflectivity">1.000000</float>
+            </reflectivity>
+            <transparent opaque="RGB_ZERO">
+              <color sid="transparent">1.000000  1.000000 1.000000 1.000000</color>
+            </transparent>
+            <transparency>
+              <float sid="transparency">0.000000</float>
+            </transparency>
+          </phong>
+        </technique>
+      </profile_COMMON>
+    </effect>
+  </library_effects>
+  <library_geometries>
+    <geometry id="aileron_left001-lib" name="aileron_left001Mesh">
+      <mesh>
+        <source id="aileron_left001-POSITION">
+          <float_array id="aileron_left001-POSITION-array" count="24">
+-22.533873 -5.029331 0.014118
+21.454678 -6.323860 0.014118
+21.454671 -6.323863 -0.693587
+-22.533873 -5.029333 -0.693587
+21.421440 0.713595 0.942631
+-22.464671 0.867589 0.931360
+-22.464560 0.866434 -0.693587
+21.421823 0.709453 -0.693587
+</float_array>
+          <technique_common>
+            <accessor source="#aileron_left001-POSITION-array" count="8" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="aileron_left001-Normal0">
+          <float_array id="aileron_left001-Normal0-array" count="108">
+-0.002456 -0.141263 0.989969
+-0.002456 -0.141263 0.989969
+-0.002456 -0.141263 0.989969
+-0.002456 -0.141263 0.989969
+-0.002456 -0.141263 0.989969
+-0.002456 -0.141263 0.989969
+-0.029416 -0.999567 0.000003
+-0.029416 -0.999567 0.000003
+-0.029416 -0.999567 0.000003
+-0.029416 -0.999567 0.000003
+-0.029416 -0.999567 0.000003
+-0.029416 -0.999567 0.000003
+-0.000000 0.000000 -1.000000
+-0.000000 0.000000 -1.000000
+-0.000000 0.000000 -1.000000
+-0.000000 0.000000 -1.000000
+-0.000000 0.000000 -1.000000
+-0.000000 0.000000 -1.000000
+-0.999931 0.011749 -0.000054
+-0.999931 0.011749 -0.000054
+-0.999931 0.011749 -0.000054
+-0.999931 0.011749 -0.000054
+-0.999931 0.011749 -0.000054
+-0.999931 0.011749 -0.000054
+0.999989 0.004687 0.000152
+0.999989 0.004687 0.000152
+0.999989 0.004687 0.000152
+0.999989 0.004687 0.000152
+0.999989 0.004687 0.000152
+0.999989 0.004687 0.000152
+0.003543 0.999992 -0.001624
+0.003543 0.999992 -0.001624
+0.003543 0.999992 -0.001624
+0.003543 0.999992 -0.001624
+0.003543 0.999992 -0.001624
+0.003543 0.999992 -0.001624
+</float_array>
+          <technique_common>
+            <accessor source="#aileron_left001-Normal0-array" count="36" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="aileron_left001-UV0">
+          <float_array id="aileron_left001-UV0-array" count="24">
+0.666879 0.000000
+0.666879 1.000000
+0.521055 0.000000
+0.521055 1.000000
+0.478945 0.000000
+0.521055 0.000000
+0.333121 0.000000
+0.666879 0.000000
+0.521055 0.251335
+0.666879 0.251335
+0.333121 0.513000
+0.478945 0.513000
+</float_array>
+          <technique_common>
+            <accessor source="#aileron_left001-UV0-array" count="12" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="aileron_left001-VERTEX">
+          <input semantic="POSITION" source="#aileron_left001-POSITION"/>
+        </vertices>
+        <triangles count="12" material="FBXASC0481FBXASC032-FBXASC032Default">
+          <input semantic="VERTEX" offset="0" source="#aileron_left001-VERTEX"/>
+          <input semantic="NORMAL" offset="1" source="#aileron_left001-Normal0"/>
+          <input semantic="TEXCOORD" offset="2" set="0" source="#aileron_left001-UV0"/>
+          <p> 4 0 8 5 1 9 0 2 0 4 3 8 0 4 0 1 5 2 3 6 7 2 7 5 0 8 1 1 9 3 0 10 1 2 11 5 3 12 6 7 13 11 2 14 4 7 15 11 3 16 6 6 17 10 0 18 0 5 19 5 6 20 6 0 21 0 6 22 6 3 23 3 1 24 1 7 25 7 4 26 4 7 27 7 1 28 1 2 29 2 4 30 4 6 31 6 5 32 5 6 33 6 4 34 4 7 35 7</p>
+        </triangles>
+      </mesh>
+    </geometry>
+  </library_geometries>
+  <library_visual_scenes>
+    <visual_scene id="aileron_right" name="aileron_right">
+      <node name="aileron_left001" id="aileron_left001" sid="aileron_left001">
+        <matrix sid="matrix">-1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 -0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000</matrix>
+        <instance_geometry url="#aileron_left001-lib">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="FBXASC0481FBXASC032-FBXASC032Default" target="#FBXASC0481FBXASC032-FBXASC032Default"/>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+        <extra>
+          <technique profile="FCOLLADA">
+            <visibility>1.000000</visibility>
+          </technique>
+        </extra>
+      </node>
+      <extra>
+        <technique profile="MAX3D">
+          <frame_rate>30.000000</frame_rate>
+        </technique>
+        <technique profile="FCOLLADA">
+          <start_time>0.000000</start_time>
+          <end_time>3.333333</end_time>
+        </technique>
+      </extra>
+    </visual_scene>
+  </library_visual_scenes>
+  <scene>
+    <instance_visual_scene url="#aileron_right"/>
+  </scene>
+</COLLADA>

@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sdf version="1.9">
+  <model name="albatross">
+    <pose>0 0 0.2 0 0 0</pose>
+    <link name="base_link">
+      <visual name="visual_base_link">
+        <geometry>
+          <mesh>
+            <uri>model://albatross/meshes/Albatross.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <collision name="collision_base_link">
+        <geometry>
+          <mesh>
+            <uri>model://albatross/meshes/Albatross.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <inertial>
+        <pose>9.2704498225588886e-09 0.03867858926469585 0.12190761634548454 1.5707963267948966 -1.4837483016685091 1.5707963267948959</pose>
+        <mass>8.9417506140315845</mass>
+        <inertia>
+          <ixx>4.6567457753331763</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>3.0225213670373495</iyy>
+          <iyz>0</iyz>
+          <izz>1.6675557462777661</izz>
+        </inertia>
+      </inertial>
+    </link>
+    <link name="aileron_left_link">
+      <pose>-0.276 -0.157 0.13 0 0 -0.09622355555</pose>
+      <visual name="visual_aileron_left_link">
+        <geometry>
+          <mesh>
+            <uri>model://albatross/meshes/aileron_left.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <collision name="collision_aileron_left_link">
+        <geometry>
+          <mesh>
+            <uri>model://albatross/meshes/aileron_left.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <inertial>
+        <pose>0.0013926979950206766 -0.020256886992858734 -0.00084718131071825561 -1.5702649623555514 -1.4968622055264078 -1.5866465793244586</pose>
+        <mass>0.69363462361421335</mass>
+        <inertia>
+          <ixx>0.011408993810042081</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.011184896421525058</iyy>
+          <iyz>0</iyz>
+          <izz>0.0002419378408971488</izz>
+        </inertia>
+      </inertial>
+    </link>
+    <joint name="aileron_left_joint" type="revolute">
+      <parent>base_link</parent>
+      <child>aileron_left_link</child>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>0</lower>
+          <upper>0</upper>
+          <effort>0</effort>
+          <velocity>0</velocity>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+    </joint>
+    <link name="aileron_right_link">
+      <pose>0.276 -0.157 0.13 0 0 0.09622355555</pose>
+      <visual name="visual_aileron_right_link">
+        <geometry>
+          <mesh>
+            <uri>model://albatross/meshes/aileron_right.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <collision name="collision_aileron_right_link">
+        <geometry>
+          <mesh>
+            <uri>model://albatross/meshes/aileron_right.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <inertial>
+        <pose>-0.0013927001631649414 -0.020256886759491138 -0.00084718303942941605 -1.5713276505282008 -1.496862114877646 -1.5549461086906684</pose>
+        <mass>0.69363463531782987</mass>
+        <inertia>
+          <ixx>0.011408994031789375</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.011184896645700647</iyy>
+          <iyz>0</iyz>
+          <izz>0.00024193783975385642</izz>
+        </inertia>
+      </inertial>
+    </link>
+    <joint name="aileron_right_joint" type="revolute">
+      <parent>base_link</parent>
+      <child>aileron_right_link</child>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>0</lower>
+          <upper>0</upper>
+          <effort>0</effort>
+          <velocity>0</velocity>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+    </joint>
+    <link name="rudder_left_link">
+      <pose>-0.17 -1.283 0.212 1.57 -0.39905911111 -0.44366455555</pose>
+      <visual name="visual_rudder_left_link">
+        <geometry>
+          <mesh>
+            <uri>model://albatross/meshes/rudder_left.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <collision name="collision_rudder_left_link">
+        <geometry>
+          <mesh>
+            <uri>model://albatross/meshes/rudder_left.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <inertial>
+        <pose>0.0086659258447588771 -0.0034581440980500826 0.011993788874177187 1.5723926276260292 -0.18945174289552996 1.5667283795418694</pose>
+        <mass>0.16659999435205503</mass>
+        <inertia>
+          <ixx>0.0010555073514094649</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.0010404851349077506</iyy>
+          <iyz>0</iyz>
+          <izz>1.723734714341286e-05</izz>
+        </inertia>
+      </inertial>
+    </link>
+    <joint name="rudder_left_joint" type="revolute">
+      <parent>base_link</parent>
+      <child>rudder_left_link</child>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>0</lower>
+          <upper>0</upper>
+          <effort>0</effort>
+          <velocity>0</velocity>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+    </joint>
+    <link name="rudder_right_link">
+      <pose>0.17 -1.283 0.212 1.57 0.39905911111 0.44366455555</pose>
+      <visual name="visual_rudder_right_link">
+        <geometry>
+          <mesh>
+            <uri>model://albatross/meshes/rudder_right.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <collision name="collision_rudder_right_link">
+        <geometry>
+          <mesh>
+            <uri>model://albatross/meshes/rudder_right.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <inertial>
+        <pose>-0.0086659165291879357 -0.003458124410117001 0.011993796077636124 1.5691999396168039 -0.18945218003724901 1.5748643595746579</pose>
+        <mass>0.1665997119700709</mass>
+        <inertia>
+          <ixx>0.0010555055074389123</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.0010404833188929115</iyy>
+          <iyz>0</iyz>
+          <izz>1.7237308824860217e-05</izz>
+        </inertia>
+      </inertial>
+    </link>
+    <joint name="rudder_right_joint" type="revolute">
+      <parent>base_link</parent>
+      <child>rudder_right_link</child>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>0</lower>
+          <upper>0</upper>
+          <effort>0</effort>
+          <velocity>0</velocity>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+    </joint>
+    <link name="rotor_1">
+      <gravity>true</gravity>
+      <self_collide>false</self_collide>
+      <velocity_decay/>
+      <pose>0.0 -0.31 0.118 1.57 0 0</pose>
+      <inertial>
+          <mass>0.016076923076923075</mass>
+          <inertia>
+            <ixx>3.8464910483993325e-07</ixx>
+            <iyy>2.6115851691700804e-05</iyy>
+            <izz>2.649858234714004e-05</izz>
+          </inertia>
+        </inertial>
+      <visual name="rotor_1_visual">
+        <geometry>
+          <mesh>
+            <scale>0.2 0.2 0.2</scale>
+            <uri>model://albatross/meshes/propeller_cw.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <collision name="rotor_1_collision">
+        <pose>0 0 0 0 0 0 </pose>
+        <geometry>
+          <box>
+            <size>0.2792307692307692 0.016923076923076923 0.0008461538461538462</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode>
+              <min_depth>0.001</min_depth>
+              <max_vel>0</max_vel>
+            </ode>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+    </link>
+    <joint name="rotor_1_joint" type="revolute">
+      <parent>base_link</parent>
+      <child>rotor_1</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+    </joint>
+  </model>
+</sdf>

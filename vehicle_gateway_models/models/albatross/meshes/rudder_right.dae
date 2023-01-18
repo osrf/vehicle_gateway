@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+  <asset>
+    <contributor>
+      <author/>
+      <authoring_tool>FBX COLLADA exporter</authoring_tool>
+      <comments/>
+    </contributor>
+    <created>2023-01-04T00:28:08Z</created>
+    <keywords/>
+    <modified>2023-01-04T00:28:08Z</modified>
+    <revision/>
+    <subject/>
+    <title/>
+    <unit meter="0.010000" name="centimeter"/>
+    <up_axis>Z_UP</up_axis>
+  </asset>
+  <library_materials>
+    <material id="FBXASC0481FBXASC032-FBXASC032Default" name="FBXASC0481FBXASC032-FBXASC032Default">
+      <instance_effect url="#FBXASC0481FBXASC032-FBXASC032Default-fx"/>
+    </material>
+  </library_materials>
+  <library_effects>
+    <effect id="FBXASC0481FBXASC032-FBXASC032Default-fx" name="FBXASC0481FBXASC032-FBXASC032Default">
+      <profile_COMMON>
+        <technique sid="standard">
+          <phong>
+            <emission>
+              <color sid="emission">0.000000  0.000000 0.000000 1.000000</color>
+            </emission>
+            <ambient>
+              <color sid="ambient">0.533333  0.533333 0.533333 1.000000</color>
+            </ambient>
+            <diffuse>
+              <color sid="diffuse">0.533333  0.533333 0.533333 1.000000</color>
+            </diffuse>
+            <specular>
+              <color sid="specular">0.450000  0.450000 0.450000 1.000000</color>
+            </specular>
+            <shininess>
+              <float sid="shininess">2.000000</float>
+            </shininess>
+            <reflective>
+              <color sid="reflective">0.000000  0.000000 0.000000 1.000000</color>
+            </reflective>
+            <reflectivity>
+              <float sid="reflectivity">1.000000</float>
+            </reflectivity>
+            <transparent opaque="RGB_ZERO">
+              <color sid="transparent">1.000000  1.000000 1.000000 1.000000</color>
+            </transparent>
+            <transparency>
+              <float sid="transparency">0.000000</float>
+            </transparency>
+          </phong>
+        </technique>
+      </profile_COMMON>
+    </effect>
+  </library_effects>
+  <library_geometries>
+    <geometry id="rudder_right-lib" name="rudder_rightMesh">
+      <mesh>
+        <source id="rudder_right-POSITION">
+          <float_array id="rudder_right-POSITION-array" count="30">
+12.424858 -0.140163 2.590271
+12.407688 -0.931297 2.437088
+11.849018 -0.681160 3.595364
+13.669777 0.443592 -0.361408
+13.615013 -0.428173 -0.505646
+-15.031258 -0.090170 2.057259
+-14.678496 -1.075123 2.028717
+-15.382133 -0.711437 3.145058
+-13.982140 0.444464 -0.423790
+-13.618820 -0.629133 -0.424892
+</float_array>
+          <technique_common>
+            <accessor source="#rudder_right-POSITION-array" count="10" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="rudder_right-Normal0">
+          <float_array id="rudder_right-Normal0-array" count="144">
+0.002023 -0.994252 0.107047
+-0.012604 -0.102285 0.994675
+-0.013138 0.150316 0.988551
+-0.012604 -0.102285 0.994675
+0.002023 -0.994252 0.107047
+0.004295 -0.999933 -0.010755
+-0.003905 0.951587 0.307356
+-0.005613 0.926937 0.375175
+-0.012604 -0.102285 0.994675
+-0.013138 0.150316 0.988551
+-0.012604 -0.102285 0.994675
+-0.005613 0.926937 0.375175
+-0.001269 0.979566 0.201119
+-0.001269 0.979566 0.201119
+-0.003905 0.951587 0.307356
+-0.005613 0.926937 0.375175
+-0.003905 0.951587 0.307356
+-0.001269 0.979566 0.201119
+0.004295 -0.999933 -0.010755
+0.002023 -0.994252 0.107047
+0.007281 -0.985374 -0.170250
+0.007281 -0.985374 -0.170250
+0.007281 -0.985374 -0.170250
+0.004295 -0.999933 -0.010755
+0.924888 -0.105355 0.365353
+0.924888 -0.105355 0.365353
+0.924888 -0.105355 0.365353
+0.924888 -0.105355 0.365353
+0.924888 -0.105355 0.365353
+0.924888 -0.105355 0.365353
+-0.857123 -0.292046 -0.424322
+-0.857123 -0.292046 -0.424322
+-0.857123 -0.292046 -0.424322
+-0.857123 -0.292046 -0.424322
+-0.857123 -0.292046 -0.424322
+-0.857123 -0.292046 -0.424322
+-0.000605 0.074408 -0.997228
+-0.000605 0.074408 -0.997228
+-0.000605 0.074408 -0.997228
+-0.000605 0.074408 -0.997228
+-0.000605 0.074408 -0.997228
+-0.000605 0.074408 -0.997228
+-0.849228 -0.291391 -0.440344
+-0.849228 -0.291391 -0.440344
+-0.849228 -0.291391 -0.440344
+0.886392 -0.106470 0.450526
+0.886392 -0.106470 0.450526
+0.886392 -0.106470 0.450526
+</float_array>
+          <technique_common>
+            <accessor source="#rudder_right-Normal0-array" count="48" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="rudder_right-UV0">
+          <float_array id="rudder_right-UV0-array" count="20">
+0.083333 0.940000
+0.250000 0.940000
+0.166667 0.940000
+0.083333 0.768400
+0.250000 0.770600
+0.083333 0.940000
+0.250000 0.940000
+0.166667 0.940000
+0.083333 0.768400
+0.250000 0.770600
+</float_array>
+          <technique_common>
+            <accessor source="#rudder_right-UV0-array" count="10" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="rudder_right-VERTEX">
+          <input semantic="POSITION" source="#rudder_right-POSITION"/>
+        </vertices>
+        <triangles count="16" material="FBXASC0481FBXASC032-FBXASC032Default">
+          <input semantic="VERTEX" offset="0" source="#rudder_right-VERTEX"/>
+          <input semantic="NORMAL" offset="1" source="#rudder_right-Normal0"/>
+          <input semantic="TEXCOORD" offset="2" set="0" source="#rudder_right-UV0"/>
+          <p> 6 0 6 2 1 2 7 2 7 2 3 2 6 4 6 1 5 1 0 6 0 5 7 5 2 8 2 7 9 7 2 10 2 5 11 5 3 12 3 8 13 8 0 14 0 5 15 5 0 16 0 8 17 8 1 18 1 6 19 6 9 20 9 9 21 9 4 22 4 1 23 1 1 24 1 4 25 4 0 26 0 4 27 4 3 28 3 0 29 0 9 30 9 6 31 6 5 32 5 5 33 5 8 34 8 9 35 9 8 36 8 3 37 3 9 38 9 4 39 4 9 40 9 3 41 3 5 42 5 6 43 6 7 44 7 2 45 2 1 46 1 0 47 0</p>
+        </triangles>
+      </mesh>
+    </geometry>
+  </library_geometries>
+  <library_visual_scenes>
+    <visual_scene id="rudder_right" name="rudder_right">
+      <node name="rudder_right" id="rudder_right" sid="rudder_right">
+        <matrix sid="matrix">1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 -0.000000 0.000000 -0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000</matrix>
+        <instance_geometry url="#rudder_right-lib">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="FBXASC0481FBXASC032-FBXASC032Default" target="#FBXASC0481FBXASC032-FBXASC032Default"/>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+        <extra>
+          <technique profile="FCOLLADA">
+            <visibility>1.000000</visibility>
+          </technique>
+        </extra>
+      </node>
+      <extra>
+        <technique profile="MAX3D">
+          <frame_rate>30.000000</frame_rate>
+        </technique>
+        <technique profile="FCOLLADA">
+          <start_time>0.000000</start_time>
+          <end_time>3.333333</end_time>
+        </technique>
+      </extra>
+    </visual_scene>
+  </library_visual_scenes>
+  <scene>
+    <instance_visual_scene url="#rudder_right"/>
+  </scene>
+</COLLADA>
