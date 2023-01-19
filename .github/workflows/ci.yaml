@@ -19,7 +19,7 @@ jobs:
           required-ros-distributions: humble
       - name: checkout
         uses: actions/checkout@v2
-        run: |
+      - run: |
           export DEBIAN_FRONTEND=noninteractive
           apt update -qq
           apt install -qq -y lsb-release wget curl gnupg2
