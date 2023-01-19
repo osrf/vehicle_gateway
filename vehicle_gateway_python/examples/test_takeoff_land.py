@@ -14,6 +14,7 @@
 
 import sys
 import time
+
 import vehicle_gateway
 
 px4_gateway = vehicle_gateway.init(args=sys.argv, type='px4')

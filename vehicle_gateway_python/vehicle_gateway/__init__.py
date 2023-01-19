@@ -20,7 +20,7 @@ from vehicle_gateway.impl.implementation_singleton import vehicle_gateway_implem
 
 def init(
     args: Optional[List[str]] = None,
-    type: str = None,
+    plugin_type: str = None,
 ) -> None:
     args if args is None else []
-    return _vehicle_gateway.VehicleGatewayPython(args, type)
+    return _vehicle_gateway.VehicleGatewayPython(args, plugin_type)
