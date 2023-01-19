@@ -10,7 +10,8 @@
 
   <exec_depend>ros_gz_sim</exec_depend>
   <exec_depend>qgroundcontrol</exec_depend>
-  <exec_depend>micro_ros_setup</exec_depend>
+  <build_depend>micro_ros_msgs</build_depend>
+  <build_depend>micro-ROS-Agent</build_depend>
 
   <export>
     <build_type>ament_cmake</build_type>
