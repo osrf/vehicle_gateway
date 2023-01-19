@@ -18,7 +18,7 @@ jobs:
         with:
           required-ros-distributions: humble
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: build
         uses: ros-tooling/action-ros-ci@v0.2
         with:
