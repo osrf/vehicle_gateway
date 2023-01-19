@@ -63,3 +63,22 @@ cd ~/vg/vg_ws
 source install/setup.bash
 ros2 launch px4_sim x500_launch.py
 ```
+
+# Dockerfile
+
+```bash
+cd Docker
+docker build -t vehicle_gateway .
+```
+
+Install rocker
+
+```bash
+sudo apt-get install python3-rocker
+```
+
+Run the container with rocker to visualize the GUI
+
+```bash
+rocker --x11 vehicle_gateway
+```
