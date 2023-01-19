@@ -54,8 +54,8 @@ public:
 
   void Update();
 
-  void drawRoll(QPainter & painter);
-  void drawPitch(QPainter & painter);
+  void DrawRoll(QPainter & painter);
+  void DrawPitch(QPainter & painter);
   void DrawBackground(QPainter & painter);
 
   /// \brief Frequency
