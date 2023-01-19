@@ -43,4 +43,5 @@ RUN rosdep init && \
 RUN cd /home/vehicle_gateway && . /opt/ros/humble/local_setup.sh && colcon build --merge-install --event-handlers console_direct+ --cmake-args -DBUILD_TESTING=0
 
 RUN apt-get install -y -q ros-humble-ros2launch
-RUN . /opt/ros/humble/local_setup.sh && . /home/vehicle_gateway/install/setup.sh && ros2 launch px4_sim plane.launch.py
+COPY entrypoint.sh /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]

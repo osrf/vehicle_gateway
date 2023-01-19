@@ -80,5 +80,5 @@ sudo apt-get install python3-rocker
 Run the container with rocker to visualize the GUI
 
 ```bash
-rocker --x11 vehicle_gateway
+rocker --x11 vehicle_gateway ros2 launch px4_sim plane.launch.py
 ```
