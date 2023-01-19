@@ -12,8 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Optional
-from typing import List
+from typing import List, Optional
 
 from vehicle_gateway.impl.implementation_singleton import vehicle_gateway_implementation \
   as _vehicle_gateway

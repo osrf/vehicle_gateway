@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import vehicle_gateway
 import sys
 import time
+import vehicle_gateway
 
-px4_gateway = vehicle_gateway.init(args=sys.argv, type="px4")
+px4_gateway = vehicle_gateway.init(args=sys.argv, type='px4')
 
 px4_gateway.arm()
 
