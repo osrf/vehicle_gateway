@@ -44,19 +44,19 @@ set(GZ_TRANSPORT_VER ${gz-transport12_VERSION_MAJOR})
 # Build plugin
 
 add_library(BetaflightPlugin
-    SHARED
-    src/BetaflightPlugin.cpp
-		src/BetaflightSocket.cpp
-		src/Util.cpp
+  SHARED
+  src/BetaflightPlugin.cpp
+  src/BetaflightSocket.cpp
+  src/Util.cpp
 )
 target_include_directories(BetaflightPlugin PUBLIC
   include
 )
 target_link_libraries(BetaflightPlugin PUBLIC
-	gz-sim${GZ_SIM_VER}::gz-sim${GZ_SIM_VER}
+  gz-sim${GZ_SIM_VER}::gz-sim${GZ_SIM_VER}
   gz-plugin${GZ_PLUGIN_VER}::register
-	gz-math${GZ_MATH_VER}::gz-math${GZ_MATH_VER}
-	gz-transport${GZ_TRANSPORT_VER}::gz-transport${GZ_TRANSPORT_VER}
+  gz-math${GZ_MATH_VER}::gz-math${GZ_MATH_VER}
+  gz-transport${GZ_TRANSPORT_VER}::gz-transport${GZ_TRANSPORT_VER}
 )
 
 # Install directories

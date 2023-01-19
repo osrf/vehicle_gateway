@@ -27,45 +27,42 @@ namespace betaflight_gazebo
 {
 //////////////////////////////////////////////////
 std::unordered_set<gz::sim::Entity> EntitiesFromUnscopedName(
-    const std::string &_name, const gz::sim::EntityComponentManager &_ecm,
-    gz::sim::Entity _relativeTo)
+  const std::string & _name, const gz::sim::EntityComponentManager & _ecm,
+  gz::sim::Entity _relativeTo)
 {
   // holds entities that match
   std::vector<gz::sim::Entity> entities;
 
-  if (_relativeTo == gz::sim::kNullEntity)
-  {
+  if (_relativeTo == gz::sim::kNullEntity) {
     // search everything
     entities = _ecm.EntitiesByComponents(gz::sim::components::Name(_name));
-  }
-  else
-  {
+  } else {
     // search all descendents
     auto descendents = _ecm.Descendants(_relativeTo);
-    for (const auto& descendent : descendents)
-    {
-      if (_ecm.EntityHasComponentType(descendent,
+    for (const auto & descendent : descendents) {
+      if (_ecm.EntityHasComponentType(
+          descendent,
           gz::sim::components::Name::typeId))
       {
         auto nameComp = _ecm.Component<gz::sim::components::Name>(descendent);
-        if (nameComp->Data() == _name)
-        {
+        if (nameComp->Data() == _name) {
           entities.push_back(descendent);
         }
       }
     }
-
   }
-  if (entities.empty())
+  if (entities.empty()) {
     return {};
+  }
 
   return std::unordered_set<gz::sim::Entity>(entities.begin(), entities.end());
 }
 
 //////////////////////////////////////////////////
-gz::sim::Entity JointByName(gz::sim::EntityComponentManager &_ecm,
-    gz::sim::Entity _modelEntity,
-    const std::string &_name)
+gz::sim::Entity JointByName(
+  gz::sim::EntityComponentManager & _ecm,
+  gz::sim::Entity _modelEntity,
+  const std::string & _name)
 {
   // Retrieve entities from a scoped name.
   // See for example:
@@ -73,22 +70,20 @@ gz::sim::Entity JointByName(gz::sim::EntityComponentManager &_ecm,
   // which applies to the LiftDrag plugin
   auto entities = entitiesFromScopedName(_name, _ecm, _modelEntity);
 
-  if (entities.empty())
-  {
+  if (entities.empty()) {
     gzerr << "Joint with name [" << _name << "] not found. "
           << "The joint will not respond to ArduPilot commands\n";
     return gz::sim::kNullEntity;
-  }
-  else if (entities.size() > 1)
-  {
+  } else if (entities.size() > 1) {
     gzwarn << "Multiple joint entities with name[" << _name << "] found. "
-            << "Using the first one.\n";
+           << "Using the first one.\n";
   }
 
   gz::sim::Entity joint = *entities.begin();
 
   // Validate
-  if (!_ecm.EntityHasComponentType(joint,
+  if (!_ecm.EntityHasComponentType(
+      joint,
       gz::sim::components::Joint::typeId))
   {
     gzerr << "Entity with name[" << _name << "] is not a joint\n";
@@ -96,14 +91,16 @@ gz::sim::Entity JointByName(gz::sim::EntityComponentManager &_ecm,
   }
 
   // Ensure the joint has a velocity component
-  if (!_ecm.EntityHasComponentType(joint,
+  if (!_ecm.EntityHasComponentType(
+      joint,
       gz::sim::components::JointVelocity::typeId))
   {
-    _ecm.CreateComponent(joint,
-        gz::sim::components::JointVelocity());
+    _ecm.CreateComponent(
+      joint,
+      gz::sim::components::JointVelocity());
   }
 
   return joint;
-};
+}
 
 }  // namespace betaflight_gazebo

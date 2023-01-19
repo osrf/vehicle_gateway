@@ -21,7 +21,7 @@ There is an effort to integrate Gazebo-classic 8 in Betaflight. It's using the A
    - You need to run `ros2 run joy joy_node`
    - And the `ros2 run betaflight_controller main`.
 
- - **betaflight_gazebo**: This plugin will send the state data to the STIL and it will received
+ - **betaflight_gazebo**: This plugin will send the state data to the SITL and it will received
  the data from the motors [-1, 1].
   - Sending state output to SITL at UDP link: 127.0.0.1:9003
   - Receiving PWM from SITL at UDP server: 127.0.0.1:9003

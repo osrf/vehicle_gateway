@@ -7,7 +7,7 @@
 
     <include>
       <uri>model://gimbal_small_2d</uri>
-      <pose>0 -0.01 0.070 1.57 0 1.57</pose>    
+      <pose>0 -0.01 0.070 1.57 0 1.57</pose>
     </include>
 
     <joint name="gimbal_joint" type="revolute">

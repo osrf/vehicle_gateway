@@ -7,7 +7,7 @@ include(ExternalProject)
 
 if(NOT EXISTS "${CMAKE_BINARY_DIR}/betaflight-configurator_10.9.0-RC3_linux64-portable.zip")
   file(DOWNLOAD
-    https://github.com/betaflight/betaflight-configurator/releases/download/10.9.0-RC3/betaflight-configurator_10.9.0-RC3_linux64-portable.zip
+https://github.com/betaflight/betaflight-configurator/releases/download/10.9.0-RC3/betaflight-configurator_10.9.0-RC3_linux64-portable.zip
     betaflight-configurator_10.9.0-RC3_linux64-portable.zip
     SHOW_PROGRESS
   )

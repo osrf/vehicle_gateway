@@ -30,26 +30,24 @@ BetaflightSocket::BetaflightSocket()
 /// \brief destructor
 BetaflightSocket::~BetaflightSocket()
 {
-  if (fd != -1)
-  {
+  if (fd != -1) {
     ::close(fd);
     fd = -1;
   }
 }
 
-/// \brief Bind to an adress and port
+/// \brief Bind to an address and port
 /// \param[in] _address Address to bind to.
 /// \param[in] _port Port to bind to.
 /// \return True on success.
-bool BetaflightSocket::Bind(const char *_address, const uint16_t _port)
+bool BetaflightSocket::Bind(const char * _address, const uint16_t _port)
 {
   struct sockaddr_in sockaddr;
   this->MakeSockAddr(_address, _port, sockaddr);
 
   this->recv = sockaddr;
 
-  if (bind(this->fd, (struct sockaddr *)&sockaddr, sizeof(sockaddr)) != 0)
-  {
+  if (bind(this->fd, (struct sockaddr *)&sockaddr, sizeof(sockaddr)) != 0) {
     shutdown(this->fd, 0);
     #ifdef _WIN32
     closesocket(this->fd);
@@ -59,8 +57,9 @@ bool BetaflightSocket::Bind(const char *_address, const uint16_t _port)
     return false;
   }
   int one = 1;
-  setsockopt(this->fd, SOL_SOCKET, SO_REUSEADDR,
-      reinterpret_cast<const char *>(&one), sizeof(one));
+  setsockopt(
+    this->fd, SOL_SOCKET, SO_REUSEADDR,
+    reinterpret_cast<const char *>(&one), sizeof(one));
 
   fcntl(this->fd, F_SETFL, fcntl(this->fd, F_GETFL, 0) | O_NONBLOCK);
   return true;
@@ -70,13 +69,14 @@ bool BetaflightSocket::Bind(const char *_address, const uint16_t _port)
 /// \param[in] _address Socket address.
 /// \param[in] _port Socket port
 /// \param[out] _sockaddr New socket address structure.
-void BetaflightSocket::MakeSockAddr(const char *_address, const uint16_t _port,
-  struct sockaddr_in &_sockaddr)
+void BetaflightSocket::MakeSockAddr(
+  const char * _address, const uint16_t _port,
+  struct sockaddr_in & _sockaddr)
 {
   memset(&_sockaddr, 0, sizeof(_sockaddr));
 
   #ifdef HAVE_SOCK_SIN_LEN
-    _sockaddr.sin_len = sizeof(_sockaddr);
+  _sockaddr.sin_len = sizeof(_sockaddr);
   #endif
 
   _sockaddr.sin_port = htons(_port);
@@ -84,25 +84,25 @@ void BetaflightSocket::MakeSockAddr(const char *_address, const uint16_t _port,
   _sockaddr.sin_addr.s_addr = inet_addr(_address);
 }
 
-ssize_t BetaflightSocket::Send(const void *_buf, size_t _size)
+ssize_t BetaflightSocket::Send(const void * _buf, size_t _size)
 {
   return send(this->fd, _buf, _size, 0);
 }
 
-bool BetaflightSocket::Connect(const char *_address, const uint16_t _port)
+bool BetaflightSocket::Connect(const char * _address, const uint16_t _port)
 {
   struct sockaddr_in sockaddr;
   this->MakeSockAddr(_address, _port, sockaddr);
 
-  if (connect(this->fd, (struct sockaddr *)&sockaddr, sizeof(sockaddr)) != 0)
-  {
+  if (connect(this->fd, (struct sockaddr *)&sockaddr, sizeof(sockaddr)) != 0) {
     shutdown(this->fd, 0);
     close(this->fd);
     return false;
   }
   int one = 1;
-  setsockopt(this->fd, SOL_SOCKET, SO_REUSEADDR,
-      reinterpret_cast<const char *>(&one), sizeof(one));
+  setsockopt(
+    this->fd, SOL_SOCKET, SO_REUSEADDR,
+    reinterpret_cast<const char *>(&one), sizeof(one));
 
   fcntl(this->fd, F_SETFL, fcntl(this->fd, F_GETFL, 0) | O_NONBLOCK);
   return true;
@@ -112,7 +112,7 @@ bool BetaflightSocket::Connect(const char *_address, const uint16_t _port)
 /// \param[out] _buf Buffer that receives the data.
 /// \param[in] _size Size of the buffer.
 /// \param[in] _timeoutMS Milliseconds to wait for data.
-ssize_t BetaflightSocket::Recv(void *_buf, const size_t _size, uint32_t _timeoutMs)
+ssize_t BetaflightSocket::Recv(void * _buf, const size_t _size, uint32_t _timeoutMs)
 {
   fd_set fds;
   struct timeval tv;
@@ -123,12 +123,11 @@ ssize_t BetaflightSocket::Recv(void *_buf, const size_t _size, uint32_t _timeout
   tv.tv_sec = _timeoutMs / 1000;
   tv.tv_usec = (_timeoutMs % 1000) * 1000UL;
 
-  if (select(this->fd+1, &fds, NULL, NULL, &tv) != 1)
-  {
-      return -1;
+  if (select(this->fd + 1, &fds, NULL, NULL, &tv) != 1) {
+    return -1;
   }
 
   socklen_t len = sizeof(this->recv);
   return recvfrom(this->fd, _buf, _size, 0, (struct sockaddr *)&this->recv, &len);
 }
-}
+}  // betaflight_gazebo

@@ -14,8 +14,8 @@
  * limitations under the License.
  *
 */
-#ifndef BETAFLIGHT_GAZEBO__BETAFLIGHT_PLUGIN_HPP_
-#define BETAFLIGHT_GAZEBO__BETAFLIGHT_PLUGIN_HPP_
+#ifndef BETAFLIGHT_GAZEBO__BETAFLIGHTPLUGIN_HPP_
+#define BETAFLIGHT_GAZEBO__BETAFLIGHTPLUGIN_HPP_
 
 #include <memory>
 
@@ -25,88 +25,124 @@
 namespace betaflight_gazebo
 {
 // The servo packet received from ArduPilot SITL. Defined in SIM_JSON.h.
-struct servo_packet {
-    uint16_t magic;         // 18458 expected magic value
-    uint16_t frame_rate;
-    uint32_t frame_count;
-    uint16_t pwm[16];
+struct servo_packet
+{
+  uint16_t magic;           // 18458 expected magic value
+  uint16_t frame_rate;
+  uint32_t frame_count;
+  uint16_t pwm[16];
 };
 
 class BetaFlightPluginPrivate;
 
-class GZ_SIM_VISIBLE BetaFlightPlugin:
-  public gz::sim::System,
+class GZ_SIM_VISIBLE BetaFlightPlugin
+  : public gz::sim::System,
   public gz::sim::ISystemConfigure,
   public gz::sim::ISystemPostUpdate,
   public gz::sim::ISystemPreUpdate,
   public gz::sim::ISystemReset
 {
   /// \brief Constructor.
-  public: BetaFlightPlugin();
+
+public:
+  BetaFlightPlugin();
 
   /// \brief Destructor.
-  public: ~BetaFlightPlugin();
 
-  public: void Reset(const gz::sim::UpdateInfo &_info,
-                      gz::sim::EntityComponentManager &_ecm) final;
+public:
+  ~BetaFlightPlugin();
+
+public:
+  void Reset(
+    const gz::sim::UpdateInfo & _info,
+    gz::sim::EntityComponentManager & _ecm) final;
 
   /// \brief Load configuration from SDF on startup.
-  public: void Configure(const gz::sim::Entity &_entity,
-                        const std::shared_ptr<const sdf::Element> &_sdf,
-                        gz::sim::EntityComponentManager &_ecm,
-                        gz::sim::EventManager &_eventMgr) final;
+
+public:
+  void Configure(
+    const gz::sim::Entity & _entity,
+    const std::shared_ptr<const sdf::Element> & _sdf,
+    gz::sim::EntityComponentManager & _ecm,
+    gz::sim::EventManager & _eventMgr) final;
 
   /// \brief Do the part of one update loop that involves making
   ///        changes to simulation.
-  public: void PreUpdate(const gz::sim::UpdateInfo &_info,
-                          gz::sim::EntityComponentManager &_ecm) final;
+
+public:
+  void PreUpdate(
+    const gz::sim::UpdateInfo & _info,
+    gz::sim::EntityComponentManager & _ecm) final;
 
   /// \brief Do the part of one update loop that involves
   ///        reading results from simulation.
-  public: void PostUpdate(const gz::sim::UpdateInfo &_info,
-                          const gz::sim::EntityComponentManager &_ecm) final;
+
+public:
+  void PostUpdate(
+    const gz::sim::UpdateInfo & _info,
+    const gz::sim::EntityComponentManager & _ecm) final;
 
   /// \brief Load control channels
-  private: void LoadControlChannels(
-      sdf::ElementPtr _sdf,
-      gz::sim::EntityComponentManager &_ecm);
+
+private:
+  void LoadControlChannels(
+    sdf::ElementPtr _sdf,
+    gz::sim::EntityComponentManager & _ecm);
 
   /// \brief Load IMU sensors
-  private: void LoadImuSensors(
-      sdf::ElementPtr _sdf,
-      gz::sim::EntityComponentManager &_ecm);
+
+private:
+  void LoadImuSensors(
+    sdf::ElementPtr _sdf,
+    gz::sim::EntityComponentManager & _ecm);
 
   /// \brief Update the control surfaces controllers.
   /// \param[in] _info Update information provided by the server.
-  private: void OnUpdate();
+
+private:
+  void OnUpdate();
 
   /// \brief Update PID Joint controllers.
   /// \param[in] _dt time step size since last update.
-  private: void ApplyMotorForces(
-      const double _dt,
-      gz::sim::EntityComponentManager &_ecm);
+
+private:
+  void ApplyMotorForces(
+    const double _dt,
+    gz::sim::EntityComponentManager & _ecm);
 
   /// \brief Reset PID Joint controllers.
-  private: void ResetPIDs();
+
+private:
+  void ResetPIDs();
 
   /// \brief Receive a servo packet from ArduPilot
   ///
   /// Returns true if a servo packet was received, otherwise false.
-  private: bool ReceiveServoPacket(double _simTime, const gz::sim::EntityComponentManager &_ecm);
+
+private:
+  bool ReceiveServoPacket(double _simTime, const gz::sim::EntityComponentManager & _ecm);
 
   /// \brief Update the motor commands given servo PWM values
-  private: void UpdateMotorCommands(const servo_packet &_pkt);
+
+private:
+  void UpdateMotorCommands(const servo_packet & _pkt);
 
   /// \brief Send state to ArduPilot
-  private: void SendState(double _simTime, const gz::sim::EntityComponentManager &_ecm) const;
+
+private:
+  void SendState(double _simTime, const gz::sim::EntityComponentManager & _ecm) const;
 
   /// \brief Initialise flight dynamics model socket
-  private: bool InitSockets(sdf::ElementPtr _sdf) const;
+
+private:
+  bool InitSockets(sdf::ElementPtr _sdf) const;
 
   /// \brief Private data pointer.
-  private: std::unique_ptr<BetaFlightPluginPrivate> dataPtr;
+
+private:
+  std::unique_ptr<BetaFlightPluginPrivate> dataPtr;
 };
 
 }  // namespace betaflight_gazebo
 
-#endif  // ARDUPILOTPLUGIN_HH_
+#endif  // BETAFLIGHT_GAZEBO__BETAFLIGHTPLUGIN_HPP_

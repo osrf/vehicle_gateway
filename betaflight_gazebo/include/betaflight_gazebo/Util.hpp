@@ -38,8 +38,8 @@ namespace betaflight_gazebo
 /// \return All entities that match the unscoped name and relative to
 /// requirements, or an empty set otherwise.
 std::unordered_set<gz::sim::Entity> EntitiesFromUnscopedName(
-    const std::string &_name, const gz::sim::EntityComponentManager &_ecm,
-    gz::sim::Entity _relativeTo = gz::sim::kNullEntity);
+  const std::string & _name, const gz::sim::EntityComponentManager & _ecm,
+  gz::sim::Entity _relativeTo = gz::sim::kNullEntity);
 
 /// \brief Get the ID of a joint entity which is a descendent of this model.
 ///
@@ -49,9 +49,10 @@ std::unordered_set<gz::sim::Entity> EntitiesFromUnscopedName(
 /// \param[in] _entity Model entity.
 /// \param[in] _name Scoped joint name.
 /// \return Joint entity.
-gz::sim::Entity JointByName(gz::sim::EntityComponentManager &_ecm,
-    gz::sim::Entity _modelEntity,
-    const std::string &_name);
+gz::sim::Entity JointByName(
+  gz::sim::EntityComponentManager & _ecm,
+  gz::sim::Entity _modelEntity,
+  const std::string & _name);
 
 }  // namespace betaflight_gazebo
 
