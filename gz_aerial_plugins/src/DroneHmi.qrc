@@ -1,0 +1,13 @@
+<!DOCTYPE RCC><RCC version="1.0">
+  <qresource prefix="DroneHmi/">
+    <file>DroneHmi.qml</file>
+  </qresource>
+
+  <qresource prefix="CompassWidget">
+    <file>CompassWidget.qml</file>
+  </qresource>
+
+  <qresource prefix="AttitudeWidget">
+    <file>AttitudeWidget.qml</file>
+  </qresource>
+</RCC>
