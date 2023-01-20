@@ -54,7 +54,7 @@ We can now build the Vehicle Gateway itself, by overlaying its workspace on top 
 cd ~/vg/vg_ws
 rosdep update && rosdep install --from-paths src --ignore-src -y
 source ~/vg/gz_ws/install/setup.bash
-colcon build --event-handlers console_direct+
+colcon build --merge-install --event-handlers console_direct+
 ```
 
 # Run a PX4 Quadcopter demo

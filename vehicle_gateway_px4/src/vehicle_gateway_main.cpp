@@ -21,7 +21,7 @@
 #include <vehicle_gateway_px4/vehicle_gateway_px4.hpp>
 using namespace std::chrono_literals;
 
-int main(int argc, char ** argv)
+int main(int argc, const char ** argv)
 {
   pluginlib::ClassLoader<vehicle_gateway::VehicleGateway> loader(
     "vehicle_gateway", "vehicle_gateway::VehicleGateway");

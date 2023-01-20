@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="2">
+  <name>vehicle_gateway_python</name>
+  <version>0.0.0</version>
+  <description>Vehicle gateway python wrapper</description>
+
+  <maintainer email="alejandro@openrobotics.org">Alejandro Hernandez Cordero</maintainer>
+  <license>Apache License 2.0</license>
+
+  <author email="alejandro@osrfoundation.org">Alejandro Hernandez Cordero</author>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>python_cmake_module</buildtool_depend>
+
+  <depend>pluginlib</depend>
+  <depend>vehicle_gateway_px4</depend>
+
+  <build_depend>pybind11_vendor</build_depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <doc_depend>python3-sphinx</doc_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

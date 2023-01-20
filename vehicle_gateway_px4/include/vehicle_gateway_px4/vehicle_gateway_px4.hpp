@@ -32,7 +32,7 @@ namespace vehicle_gateway_px4
 class VehicleGatewayPX4 : public vehicle_gateway::VehicleGateway
 {
 public:
-  void init(int argc, char ** argv) override;
+  void init(int argc, const char ** argv) override;
 
 public:
   void destroy() override;
