@@ -18,7 +18,7 @@ jobs:
         with:
           required-ros-distributions: humble
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - run: |
           export DEBIAN_FRONTEND=noninteractive
           apt update -qq
@@ -30,11 +30,13 @@ jobs:
         uses: ros-tooling/action-ros-ci@v0.2
         with:
           package-name: |
-            vehicle_gateway
-            vehicle_gateway_px4
             betaflight_configurator
             betaflight_controller
             betaflight_gazebo
+            gz_aerial_plugins
+            vehicle_gateway
+            vehicle_gateway_px4
+            vehicle_gateway_python
           vcs-repo-file-url: |
             $GITHUB_WORKSPACE/dependencies.repos
           target-ros2-distro: humble
