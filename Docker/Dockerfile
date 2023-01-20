@@ -8,6 +8,7 @@ RUN apt-get update \
     python3-jinja2 \
     python3-jsonschema \
     python3-future \
+    gcc-arm-none-eabi \
     rsync \
     dirmngr \
     build-essential \
@@ -38,7 +39,7 @@ RUN apt-get update && apt-get upgrade -q -y && \
 RUN rosdep init && \
   rosdep update && \
   cd /home/vehicle_gateway && \
-  rosdep install --from-paths ./ -i -y --rosdistro humble --ignore-src --skip-keys="gz-math7 gz-transport12 gz-msgs9 gz-sim7"
+  rosdep install --from-paths ./ -i -y --rosdistro humble --ignore-src --skip-keys="gz-math7 gz-transport12 gz-msgs9 gz-sim7 gz-cmake3"
 
 RUN cd /home/vehicle_gateway && . /opt/ros/humble/local_setup.sh && colcon build --merge-install --event-handlers console_direct+ --cmake-args -DBUILD_TESTING=0
 
