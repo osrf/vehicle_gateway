@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>betaflight_gazebo</name>
+  <version>0.0.0</version>
+  <description>betaflight plugin</description>
+  <maintainer email="alejandro@openrobotics.com">Alejandro Hernández</maintainer>
+  <author>Alejandro Hernández</author>
+  <license>Apache 2</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>gz-sim7</depend>
+  <depend>gz-cmake3</depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+      <build_type>ament_cmake</build_type>
+  </export>
+</package>

@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>betaflight_sim</name>
+  <version>0.0.0</version>
+  <description>The betaflight package</description>
+
+  <maintainer email="alejandro@openrobotics.org">Alejandro Hernandez</maintainer>
+
+  <license>Apache 2.0</license>
+
+  <exec_depend>ament_index_python</exec_depend>
+  <exec_depend>betaflight_configurator</exec_depend>
+  <exec_depend>betaflight_controller</exec_depend>
+  <exec_depend>joy</exec_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
