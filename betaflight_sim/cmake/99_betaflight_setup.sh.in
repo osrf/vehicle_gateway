@@ -1,0 +1,1 @@
+ament_prepend_unique_value PATH "@CMAKE_INSTALL_PREFIX@/share/@PROJECT_NAME@/bin"
