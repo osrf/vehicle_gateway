@@ -24,7 +24,7 @@ RUN apt-get update \
 RUN pip3 install vcstool pyros-genmsg
 
 RUN mkdir -p /home/vehicle_gateway/src && cd /home/vehicle_gateway && git clone https://github.com/osrf/vehicle_gateway src/vehicle_gateway && \
-    vcs import < src/vehicle_gateway/dependencies.repos && vcs import < src/vehicle_gateway/gazebo.repos
+    vcs import src < src/vehicle_gateway/dependencies.repos && vcs import src < src/vehicle_gateway/gazebo.repos
 
 RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $(lsb_release -cs)) main" | tee /etc/apt/sources.list.d/ros2.list > /dev/null & \
@@ -39,7 +39,7 @@ RUN apt-get update && apt-get upgrade -q -y && \
 RUN rosdep init && \
   rosdep update && \
   cd /home/vehicle_gateway && \
-  rosdep install --from-paths ./ -i -y --rosdistro humble --ignore-src --skip-keys="gz-math7 gz-transport12 gz-msgs9 gz-sim7 gz-cmake3"
+  rosdep install --from-paths ./ -i -y --rosdistro humble --ignore-src --skip-keys="gz-math7 gz-transport12 gz-msgs9 gz-sim7 gz-cmake3 gz-common5 gz-gui7 micro-ROS-Agent"
 
 RUN cd /home/vehicle_gateway && . /opt/ros/humble/local_setup.sh && colcon build --merge-install --event-handlers console_direct+ --cmake-args -DBUILD_TESTING=0
 
