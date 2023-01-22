@@ -18,13 +18,25 @@ jobs:
         with:
           required-ros-distributions: humble
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+      - run: |
+          export DEBIAN_FRONTEND=noninteractive
+          apt update -qq
+          apt install -qq -y lsb-release wget curl gnupg2
+          wget https://packages.osrfoundation.org/gazebo.gpg -O /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg
+          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
+          apt-get update && apt-get install -qq -y gz-garden
       - name: build
         uses: ros-tooling/action-ros-ci@v0.2
         with:
           package-name: |
+            betaflight_configurator
+            betaflight_controller
+            betaflight_gazebo
+            gz_aerial_plugins
             vehicle_gateway
             vehicle_gateway_px4
+            vehicle_gateway_python
           vcs-repo-file-url: |
             $GITHUB_WORKSPACE/dependencies.repos
           target-ros2-distro: humble

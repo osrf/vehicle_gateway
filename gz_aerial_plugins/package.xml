@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>gz_aerial_plugins</name>
+  <version>0.0.0</version>
+  <description>Drone Gazebo Simulator GUI Plugins</description>
+  <maintainer email="ahcorde@openrobotics.com">ahcorde</maintainer>
+  <license>Apache 2.0</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>gz-cmake3</buildtool_depend>
+  <buildtool_depend>gz-gui7</buildtool_depend>
+  <buildtool_depend>gz-msgs9</buildtool_depend>
+  <buildtool_depend>gz-common5</buildtool_depend>
+  <depend>qml-module-qtquick-extras</depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

@@ -8,7 +8,7 @@ This package is developed and on Ubuntu 22.04 LTS with ROS 2 Humble. We suggest 
 
 To keep paths short, `vg` stands for "Vehicle Gateway". After these steps, you'll have two workspaces in the `~/vg` directory, like this:
 
-```
+```bash
 vg
 ├── gz_ws
 │   ├── build
@@ -33,6 +33,7 @@ cd ~/vg/vg_ws/src
 git clone https://github.com/osrf/vehicle_gateway
 cd ~/vg/vg_ws
 vcs import src < src/vehicle_gateway/dependencies.repos
+vcs import src < src/vehicle_gateway/gazebo.repos
 ```
 
 Next, build Gazebo Garden from source. The full instructions are [here](https://gazebosim.org/docs/garden/install_ubuntu_src), and summarized in the following command sequence:
@@ -53,16 +54,7 @@ We can now build the Vehicle Gateway itself, by overlaying its workspace on top 
 cd ~/vg/vg_ws
 rosdep update && rosdep install --from-paths src --ignore-src -y
 source ~/vg/gz_ws/install/setup.bash
-colcon build --event-handlers console_direct+
-```
-
-As a last step, we will build the Micro-ROS agent in this workspace
-
-```bash
-cd ~/vg/vg_ws
-source install/setup.bash
-ros2 run micro_ros_setup create_agent_ws.sh
-ros2 run micro_ros_setup build_agent.sh
+colcon build --merge-install --event-handlers console_direct+
 ```
 
 # Run a PX4 Quadcopter demo

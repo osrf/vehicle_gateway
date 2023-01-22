@@ -11,9 +11,9 @@ ExternalProject_Add(px4-firmware
   PREFIX
       ${PROJECT_BINARY_DIR}/px4-src
   GIT_REPOSITORY
-    https://github.com/ahcorde/PX4-Autopilot
+    https://github.com/PX4/PX4-Autopilot
   GIT_TAG
-    ahcorde/support/gazebo_garden
+    pr-gz-bridge-airspeed
   INSTALL_COMMAND
     mkdir -p ${CMAKE_INSTALL_PREFIX}/share/px4_sim &&
     rsync -avL --exclude .git --exclude build
@@ -24,10 +24,6 @@ ExternalProject_Add(px4-firmware
   BUILD_COMMAND pwd && ls && ${MAKE_EXECUTABLE} px4_ros2 -j && make px4_sitl_default -j
   BUILD_IN_SOURCE ON
   CONFIGURE_COMMAND ""
-  PATCH_COMMAND
-    git checkout . &&
-    patch -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/patches/GzBridge.cpp.patch &&
-    patch -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/patches/GzBridge.hpp.patch
 )
 
 install(DIRECTORY
@@ -35,19 +31,6 @@ install(DIRECTORY
   worlds
   DESTINATION
     share/${PROJECT_NAME}
-)
-
-install(DIRECTORY
-  models
-  DESTINATION
-    ${CMAKE_INSTALL_PREFIX}/share/px4_sim
-)
-
-install(FILES
-  airframes/1040_standard_vtol
-  airframes/1030_plane
-  DESTINATION
-    ${CMAKE_INSTALL_PREFIX}/share/px4_sim/etc/init.d-posix/airframes
 )
 
 ament_environment_hooks(cmake/99_px4_setup.sh.in)
