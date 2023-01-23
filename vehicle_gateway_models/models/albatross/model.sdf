@@ -234,7 +234,6 @@
       <visual name="rotor_1_visual">
         <geometry>
           <mesh>
-            <scale>0.2 0.2 0.2</scale>
             <uri>model://albatross/meshes/propeller_cw.dae</uri>
           </mesh>
         </geometry>

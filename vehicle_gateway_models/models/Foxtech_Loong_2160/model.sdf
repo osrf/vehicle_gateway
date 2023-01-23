@@ -280,7 +280,6 @@
       <visual name="rotor_0_visual">
         <geometry>
           <mesh>
-            <scale>0.2 0.2 0.2</scale>
             <uri>model://Foxtech_Loong_2160/meshes/propeller_ccw.dae</uri>
           </mesh>
         </geometry>
@@ -337,7 +336,6 @@
       <visual name="rotor_1_visual">
         <geometry>
           <mesh>
-            <scale>0.2 0.2 0.2</scale>
             <uri>model://Foxtech_Loong_2160/meshes/propeller_ccw.dae</uri>
           </mesh>
         </geometry>
@@ -394,7 +392,6 @@
       <visual name="rotor_2_visual">
         <geometry>
           <mesh>
-            <scale>0.2 0.2 0.2</scale>
             <uri>model://Foxtech_Loong_2160/meshes/propeller_cw.dae</uri>
           </mesh>
         </geometry>
@@ -451,7 +448,6 @@
       <visual name="rotor_3_visual">
         <geometry>
           <mesh>
-            <scale>0.2 0.2 0.2</scale>
             <uri>model://Foxtech_Loong_2160/meshes/propeller_cw.dae</uri>
           </mesh>
         </geometry>
@@ -493,7 +489,7 @@
       </axis>
     </joint>
     <link name='rotor_puller'>
-      <pose>0.0 0.429 0.0 -1.57 0 0</pose>
+      <pose>0.0 0.379 0.0 -1.57 0 0</pose>
       <inertial>
         <pose>0 0 0 0 0 0</pose>
         <mass>0.005</mass>
@@ -523,10 +519,8 @@
         </surface>
       </collision>
       <visual name='rotor_puller_visual'>
-        <pose>0 0 -0.04 0 0 0</pose>
         <geometry>
           <mesh>
-            <scale>0.2 0.2 0.2</scale>
             <uri>model://Foxtech_Loong_2160/meshes/propeller_cw.dae</uri>
           </mesh>
         </geometry>
