@@ -23,7 +23,7 @@ class VehicleGateway
 public:
   virtual ~VehicleGateway() {}
 
-  virtual void init(int argc, char ** argv) = 0;
+  virtual void init(int argc, const char ** argv) = 0;
 
   virtual void destroy() = 0;
 
