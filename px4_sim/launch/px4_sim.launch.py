@@ -48,7 +48,7 @@ def generate_launch_description():
 
     drone_type = LaunchConfiguration('drone_type', default='gz_x500')
     drone_type_args = DeclareLaunchArgument('drone_type', default_value=drone_type,
-                                             choices=['gz_plane', 'gz_x500', 'gz_standard_vtol'],
+                                             choices=['gz_rc_cessna', 'gz_x500', 'gz_standard_vtol'],
                                              description='Sim Models')
 
     world_name = LaunchConfiguration('world_name', default='empty_px4_world')
