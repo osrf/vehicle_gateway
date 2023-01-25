@@ -43,13 +43,13 @@ def generate_launch_description():
         description='If true, use simulated clock')
 
     use_groundcontrol = DeclareLaunchArgument('groundcontrol', default_value='false',
-                          choices=['true', 'false'],
-                          description='Start ground control station.')
+                                              choices=['true', 'false'],
+                                              description='Start ground control station.')
 
     drone_type = LaunchConfiguration('drone_type', default='gz_x500')
     drone_type_args = DeclareLaunchArgument('drone_type', default_value=drone_type,
-                                             choices=['gz_rc_cessna', 'gz_x500', 'gz_standard_vtol'],
-                                             description='Sim Models')
+                                            choices=['gz_rc_cessna', 'gz_x500', 'gz_standard_vtol'],
+                                            description='Sim Models')
 
     world_name = LaunchConfiguration('world_name', default='empty_px4_world')
     world_name_arg = DeclareLaunchArgument('world_name',
