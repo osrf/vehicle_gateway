@@ -45,6 +45,17 @@ public:
   void Takeoff();
   void Land();
   void Arm();
+  void Disarm();
+
+  void TransitionToMultiCopter();
+  void TransitionToFixedWings();
+
+  void PublishLocalPositionSetpoint(float x, float y, float z);
+
+  void SetOffboardControlMode(bool is_trajectory);
+  void SetOffboardMode();
+
+  float GetGroundSpeed();
 
   void Destroy();
 

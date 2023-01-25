@@ -17,6 +17,7 @@
 
 #include "vehicle_gateway/vehicle_gateway.hpp"
 
+#include <chrono>
 #include <memory>
 #include <thread>
 
@@ -25,6 +26,10 @@
 #include <px4_msgs/msg/vehicle_status.hpp>
 #include <px4_msgs/msg/vehicle_command.hpp>
 #include <px4_msgs/msg/sensor_gps.hpp>
+#include <px4_msgs/msg/trajectory_setpoint.hpp>
+#include <px4_msgs/msg/offboard_control_mode.hpp>
+#include <px4_msgs/msg/timesync_status.hpp>
+#include <px4_msgs/msg/vehicle_odometry.hpp>
 
 namespace vehicle_gateway_px4
 {
@@ -34,31 +39,43 @@ class VehicleGatewayPX4 : public vehicle_gateway::VehicleGateway
 public:
   void init(int argc, const char ** argv) override;
 
-public:
   void destroy() override;
 
-public:
   void arm() override;
 
-public:
+  void disarm() override;
+
   bool arming_state() override;
 
-public:
   void takeoff() override;
 
-public:
   void land() override;
 
-public:
   void go_to_waypoint() override;
+
+  void transition_to_fw() override;
+
+  void transition_to_mc() override;
+
+  void publish_local_position_setpoint(float x, float y, float z) override;
+
+  void set_offboard_control_mode(bool is_trajectory) override;
+
+  void set_offboard_mode() override;
+
+  float get_ground_speed() override;
 
 private:
   // Orchestration
   std::thread spin_thread_;
   std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> exec_;
   rclcpp::Subscription<px4_msgs::msg::VehicleStatus>::SharedPtr vehicle_status_sub_;
+  rclcpp::Subscription<px4_msgs::msg::TimesyncStatus>::SharedPtr vehicle_timesync_sub_;
+  rclcpp::Subscription<px4_msgs::msg::VehicleOdometry>::SharedPtr vehicle_odometry_sub_;
   rclcpp::Publisher<px4_msgs::msg::VehicleCommand>::SharedPtr vehicle_command_pub_;
   rclcpp::Subscription<px4_msgs::msg::SensorGps>::SharedPtr vehicle_sensor_gps_sub_;
+  rclcpp::Publisher<px4_msgs::msg::TrajectorySetpoint>::SharedPtr vehicle_trajectory_setpoint_pub_;
+  rclcpp::Publisher<px4_msgs::msg::OffboardControlMode>::SharedPtr vehicle_offboard_control_mode_pub_;
 
   // Service clients
   rclcpp::Node::SharedPtr px4_node_;
@@ -70,6 +87,18 @@ private:
   double lat_{0};
   double lon_{0};
   float alt_{0};
+
+  float current_speed;
+  std::chrono::time_point<std::chrono::high_resolution_clock> odom_timestamp_;
+  float current_pos_x_;
+  float current_pos_y_;
+  float current_pos_z_;
+  float current_vel_x_;
+  float current_vel_y_;
+  float current_vel_z_;
+  float ground_speed_;
+
+  std::chrono::time_point<std::chrono::high_resolution_clock> timestamp_;
 };
 
 }  // namespace vehicle_gateway_px4

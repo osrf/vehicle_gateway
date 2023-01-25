@@ -30,6 +30,8 @@ public:
   // TODO(anyone): add classes for all the fun cool vehicle things
   virtual void arm() = 0;
 
+  virtual void disarm() = 0;
+
   virtual bool arming_state() = 0;
 
   virtual void takeoff() = 0;
@@ -37,6 +39,19 @@ public:
   virtual void land() = 0;
 
   virtual void go_to_waypoint() = 0;
+
+  // VTOL
+  virtual void transition_to_fw() = 0;
+
+  virtual void transition_to_mc() = 0;
+
+  virtual void publish_local_position_setpoint(float x, float y, float z) = 0;
+
+  virtual void set_offboard_control_mode(bool is_trajectory) = 0;
+
+  virtual void set_offboard_mode() = 0;
+
+  virtual float get_ground_speed() = 0;
 
 protected:
   VehicleGateway() {}

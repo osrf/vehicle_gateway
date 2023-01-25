@@ -64,6 +64,41 @@ void VehicleGatewayPython::Arm()
   this->gateway_->arm();
 }
 
+void VehicleGatewayPython::Disarm()
+{
+  this->gateway_->disarm();
+}
+
+void VehicleGatewayPython::TransitionToMultiCopter()
+{
+  this->gateway_->transition_to_mc();
+}
+
+void VehicleGatewayPython::TransitionToFixedWings()
+{
+  this->gateway_->transition_to_fw();
+}
+
+void VehicleGatewayPython::PublishLocalPositionSetpoint(float x, float y, float z)
+{
+  this->gateway_->publish_local_position_setpoint(x, y, z);
+}
+
+void VehicleGatewayPython::SetOffboardControlMode(bool is_trajectory)
+{
+  this->gateway_->set_offboard_control_mode(is_trajectory);
+}
+
+void VehicleGatewayPython::SetOffboardMode()
+{
+  this->gateway_->set_offboard_mode();
+}
+
+float VehicleGatewayPython::GetGroundSpeed()
+{
+  return this->gateway_->get_ground_speed();
+}
+
 void VehicleGatewayPython::Takeoff()
 {
   this->gateway_->takeoff();
@@ -95,8 +130,29 @@ define_vehicle_gateway(py::object module)
     "arm", &VehicleGatewayPython::Arm,
     "Arm vehicle")
   .def(
+    "disarm", &VehicleGatewayPython::Disarm,
+    "Disarm vehicle")
+  .def(
+    "get_ground_speed", &VehicleGatewayPython::GetGroundSpeed,
+    "Get ground speed")
+  .def(
+    "transition_to_fw", &VehicleGatewayPython::TransitionToFixedWings,
+    "Transition to fixed wings")
+  .def(
+    "transition_to_mc", &VehicleGatewayPython::TransitionToMultiCopter,
+    "Transition to multicopter")
+  .def(
     "takeoff", &VehicleGatewayPython::Takeoff,
     "TakeOff")
+  .def(
+    "publish_local_position_setpoint", &VehicleGatewayPython::PublishLocalPositionSetpoint,
+    "PublishLocalPositionSetpoint")
+  .def(
+     "set_offboard_mode", &VehicleGatewayPython::SetOffboardMode,
+     "SetOffboardMode")
+  .def(
+    "set_offboard_control_mode", &VehicleGatewayPython::SetOffboardControlMode,
+    "SetOffboardControlMode")
   .def(
     "land", &VehicleGatewayPython::Land,
     "Land");
