@@ -13,7 +13,7 @@ ExternalProject_Add(px4-firmware
   GIT_REPOSITORY
     https://github.com/PX4/PX4-Autopilot
   GIT_TAG
-    pr-gz-bridge-airspeed
+    main
   INSTALL_COMMAND
     mkdir -p ${CMAKE_INSTALL_PREFIX}/share/px4_sim &&
     rsync -avL --exclude .git --exclude build
