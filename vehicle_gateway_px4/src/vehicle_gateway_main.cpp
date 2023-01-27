@@ -34,7 +34,7 @@ int main(int argc, const char ** argv)
     gateway->init(argc, argv);
     std::this_thread::sleep_for(2000ms);
     std::cerr << "Arm" << '\n';
-    while (!gateway->arming_state()) {
+    while (!gateway->get_arming_state()) {
       gateway->arm();
       std::this_thread::sleep_for(200ms);
     }
@@ -42,7 +42,7 @@ int main(int argc, const char ** argv)
     gateway->takeoff();
     std::this_thread::sleep_for(10000ms);
     gateway->land();
-    while (gateway->arming_state()) {
+    while (gateway->get_arming_state()) {
       std::this_thread::sleep_for(200ms);
     }
     gateway->destroy();

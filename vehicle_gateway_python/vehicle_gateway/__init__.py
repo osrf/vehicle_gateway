@@ -17,6 +17,9 @@ from typing import List, Optional
 from vehicle_gateway.impl.implementation_singleton import vehicle_gateway_implementation \
   as _vehicle_gateway
 
+ArmingState = _vehicle_gateway.ArmingState
+FlightMode = _vehicle_gateway.FlightMode
+
 
 def init(
     args: Optional[List[str]] = None,

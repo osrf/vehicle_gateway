@@ -52,6 +52,13 @@ public:
 
   void PublishLocalPositionSetpoint(float x, float y, float z);
 
+  vehicle_gateway::FLIGHT_MODE GetFlightMode();
+  vehicle_gateway::VEHICLE_TYPE GetVehicleType();
+  vehicle_gateway::ARMING_STATE GetArmingState();
+  vehicle_gateway::ARM_DISARM_REASON GetArmReason();
+  vehicle_gateway::ARM_DISARM_REASON GetDisarmReason();
+  vehicle_gateway::FAILURE GetFailure();
+
   void SetOffboardControlMode(bool is_trajectory);
   void SetOffboardMode();
 

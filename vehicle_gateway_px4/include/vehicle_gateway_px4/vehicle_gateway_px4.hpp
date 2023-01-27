@@ -45,7 +45,12 @@ public:
 
   void disarm() override;
 
-  bool arming_state() override;
+  vehicle_gateway::ARMING_STATE get_arming_state() override;
+  vehicle_gateway::FLIGHT_MODE get_flight_mode() override;
+  vehicle_gateway::VEHICLE_TYPE get_vehicle_type() override;
+  vehicle_gateway::ARM_DISARM_REASON get_arm_reason() override;
+  vehicle_gateway::ARM_DISARM_REASON get_disarm_reason() override;
+  vehicle_gateway::FAILURE get_failure() override;
 
   void takeoff() override;
 
@@ -57,7 +62,7 @@ public:
 
   void transition_to_mc() override;
 
-  void publish_local_position_setpoint(float x, float y, float z) override;
+  void set_local_position_setpoint(float x, float y, float z) override;
 
   void set_offboard_control_mode(bool is_trajectory) override;
 
@@ -75,12 +80,17 @@ private:
   rclcpp::Publisher<px4_msgs::msg::VehicleCommand>::SharedPtr vehicle_command_pub_;
   rclcpp::Subscription<px4_msgs::msg::SensorGps>::SharedPtr vehicle_sensor_gps_sub_;
   rclcpp::Publisher<px4_msgs::msg::TrajectorySetpoint>::SharedPtr vehicle_trajectory_setpoint_pub_;
-  rclcpp::Publisher<px4_msgs::msg::OffboardControlMode>::SharedPtr vehicle_offboard_control_mode_pub_;
+  rclcpp::Publisher<px4_msgs::msg::OffboardControlMode>::SharedPtr
+    vehicle_offboard_control_mode_pub_;
 
   // Service clients
   rclcpp::Node::SharedPtr px4_node_;
-  int arming_state_;
-  int nav_state_;
+  vehicle_gateway::ARMING_STATE arming_state_{vehicle_gateway::ARMING_STATE::MAX};
+  vehicle_gateway::FLIGHT_MODE flight_mode_{vehicle_gateway::FLIGHT_MODE::UNKNOWN_MODE};
+  vehicle_gateway::VEHICLE_TYPE vehicle_type_{vehicle_gateway::VEHICLE_TYPE::UNKNOWN};
+  vehicle_gateway::ARM_DISARM_REASON arm_reason_;
+  vehicle_gateway::ARM_DISARM_REASON disarm_reason_;
+  vehicle_gateway::FAILURE failure_;
 
   int target_system_{1};
 
