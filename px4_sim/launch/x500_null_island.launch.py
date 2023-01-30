@@ -61,9 +61,14 @@ def generate_launch_description():
     use_sim_time_arg = DeclareLaunchArgument(
         'use_sim_time',
         default_value=use_sim_time,
-        description='If true, use simulated clock')
+        description='If true, use simulated clock'
+    )
 
-    world_sdf = os.path.join(get_px4_dir(), "worlds", "null_island.sdf")
+    world_sdf = os.path.join(
+        get_package_share_directory('vehicle_gateway_worlds'),
+        'worlds',
+        'null_island.sdf'
+    )
 
     micro_ros_agent = Node(
         package='micro_ros_agent',
