@@ -61,5 +61,5 @@ colcon build --merge-install --event-handlers console_direct+
 ```bash
 cd ~/vg/vg_ws
 source install/setup.bash
-ros2 launch px4_sim px4_sim.launch.py drone_type='gz_plane'
+ros2 launch px4_sim px4_sim.launch.py drone_type:='gz_x500'
 ```
