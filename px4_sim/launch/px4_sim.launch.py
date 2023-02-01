@@ -55,8 +55,17 @@ def generate_launch_description():
                                            default_value=world_name,
                                            description='World name')
 
+    model_pose = LaunchConfiguration('model_pose', default='1,0,0,0,0,0')
+    model_pose_arg = DeclareLaunchArgument('model_pose',
+                                           default_value=model_pose,
+                                           description='Model pose')
+
+    world_pkgs = get_package_share_directory('vehicle_gateway_worlds')
+
     os.environ["GZ_SIM_RESOURCE_PATH"] = ':' + os.path.join(get_px4_dir(), "models")
     os.environ["GZ_SIM_RESOURCE_PATH"] += ':' + os.path.join(get_px4_dir(), "worlds")
+    os.environ["GZ_SIM_RESOURCE_PATH"] += ':' + os.path.join(world_pkgs, "worlds")
+
     rootfs = tempfile.TemporaryDirectory()
     px4_dir = get_px4_dir()
 
@@ -84,8 +93,10 @@ def generate_launch_description():
         use_sim_time_arg,
         world_name_arg,
         drone_type_args,
-        SetEnvironmentVariable("PX4_SIM_MODEL", LaunchConfiguration('drone_type')),
+        model_pose_arg,
+        SetEnvironmentVariable("PX4_GZ_MODEL", LaunchConfiguration('drone_type')),
         SetEnvironmentVariable("PX4_GZ_WORLD", LaunchConfiguration('world_name')),
+        SetEnvironmentVariable("PX4_GZ_MODEL_POSE", LaunchConfiguration('model_pose')),
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 [os.path.join(get_package_share_directory('ros_gz_sim'),

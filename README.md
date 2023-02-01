@@ -61,7 +61,7 @@ colcon build --merge-install --event-handlers console_direct+
 ```bash
 cd ~/vg/vg_ws
 source install/setup.bash
-ros2 launch px4_sim px4_sim.launch.py drone_type:='gz_x500'
+ros2 launch px4_sim px4_sim.launch.py drone_type:='x500' world_name:=null_island model_pose:="-9.7948, -8.31, 2"
 ```
 
 # Dockerfile
@@ -80,5 +80,5 @@ sudo apt-get install python3-rocker
 Run the container with rocker to visualize the GUI
 
 ```bash
-rocker --x11 vehicle_gateway ros2 launch px4_sim plane.launch.py
+rocker --x11 vehicle_gateway ros2 launch px4_sim px4_sim.launch.py drone_type:='x500' world_name:=null_island model_pose:="-9.7948, -8.31, 2"
 ```
