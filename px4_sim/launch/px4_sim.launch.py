@@ -62,13 +62,14 @@ class WorldPoseFromYaml(Substitution):
         pos_world_config_str = perform_substitutions(context, self.pos_world_config)
         model_pose_str = perform_substitutions(context, self.model_pose)
 
-        with open(pos_world_config_str) as stream:
-            try:
-                yaml_data = yaml.safe_load(stream)
-                if position_name_str in yaml_data:
-                    return yaml_data[position_name_str]['position']
-            except yaml.YAMLError as exc:
-                print('Not able to read the yaml file: ', position_name_str, exc)
+        if pos_world_config_str != '':
+            with open(pos_world_config_str) as stream:
+                try:
+                    yaml_data = yaml.safe_load(stream)
+                    if position_name_str in yaml_data:
+                        return yaml_data[position_name_str]['position']
+                except yaml.YAMLError as exc:
+                    print('Not able to read the yaml file: ', position_name_str, exc)
         if model_pose_str != '':
             return model_pose_str
         return '0, 0, 0.3, 0, 0, 0'
