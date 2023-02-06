@@ -115,7 +115,7 @@ def generate_launch_description():
                                            default_value=world_name,
                                            description='World name (without .sdf)')
 
-    model_pose = LaunchConfiguration('model_pose', default='1,0,0,0,0,0')
+    model_pose = LaunchConfiguration('model_pose', default='0,0,0.3,0,0,0')
     model_pose_arg = DeclareLaunchArgument('model_pose',
                                            default_value=model_pose,
                                            description='Model pose (x, y, z, roll, pitch, yaw)')
@@ -164,6 +164,7 @@ def generate_launch_description():
         SetEnvironmentVariable('PX4_GZ_MODEL', LaunchConfiguration('drone_type')),
         SetEnvironmentVariable('PX4_GZ_WORLD', LaunchConfiguration('world_name')),
         SetEnvironmentVariable('PX4_GZ_MODEL_POSE', position_name),
+        SetEnvironmentVariable('PX4_SIM_MODEL', ['gz_', LaunchConfiguration('drone_type')]),
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 [os.path.join(get_package_share_directory('ros_gz_sim'),
