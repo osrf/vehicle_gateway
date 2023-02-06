@@ -21,7 +21,7 @@ ExternalProject_Add(px4-firmware
       Tools/simulation/gz/models
       build/px4_sitl_default/etc
       ${CMAKE_INSTALL_PREFIX}/share/px4_sim
-  BUILD_COMMAND pwd && ls && ${MAKE_EXECUTABLE} px4_ros2 -j && make px4_sitl_default -j
+  BUILD_COMMAND ${MAKE_EXECUTABLE} px4_ros2 -j && make px4_sitl_default -j
   BUILD_IN_SOURCE ON
   CONFIGURE_COMMAND ""
 )
