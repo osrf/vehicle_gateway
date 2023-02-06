@@ -1,0 +1,5 @@
+float64 target_hagl
+---
+bool success
+---
+float64 current_hagl
