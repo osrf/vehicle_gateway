@@ -26,7 +26,7 @@ First, install ROS 2 Humble using the `.deb` packages using APT [according to th
 
 Next, install a few dependencies and set up our workspace source directories:
 ```bash
-sudo apt install python3-kconfiglib python3-jinja2 python3-jsonschema ros-humble-gps-msgs
+sudo apt install python3-kconfiglib python3-jinja2 python3-jsonschema ros-humble-gps-msgs gcc-arm-none-eabi
 pip3 install pyros-genmsg
 mkdir -p ~/vg/vg_ws/src
 cd ~/vg/vg_ws/src
@@ -61,5 +61,24 @@ colcon build --merge-install --event-handlers console_direct+
 ```bash
 cd ~/vg/vg_ws
 source install/setup.bash
-ros2 launch px4_sim x500_launch.py
+ros2 launch px4_sim px4_sim.launch.py drone_type:='gz_x500'
+```
+
+# Dockerfile
+
+```bash
+cd Docker
+docker build -t vehicle_gateway .
+```
+
+Install rocker
+
+```bash
+sudo apt-get install python3-rocker
+```
+
+Run the container with rocker to visualize the GUI
+
+```bash
+rocker --x11 vehicle_gateway ros2 launch px4_sim plane.launch.py
 ```
