@@ -42,10 +42,61 @@ public:
 
   ~VehicleGatewayPython();
 
+  /// Takeoff
   void Takeoff();
+
+  /// Land
   void Land();
+
+  /// Arm
   void Arm();
 
+  /// Disarm
+  void Disarm();
+
+  /// Transition to multicopter
+  void TransitionToMultiCopter();
+
+  /// Transition to fixed wings
+  void TransitionToFixedWings();
+
+  void PublishLocalPositionSetpoint(float x, float y, float z);
+
+  /// Get flight mode
+  /// \return Flight mode
+  vehicle_gateway::FLIGHT_MODE GetFlightMode();
+
+  /// Get Vehicle type
+  /// \return Vehicle type
+  vehicle_gateway::VEHICLE_TYPE GetVehicleType();
+
+  /// Get the arm state
+  /// \return Arming state of the robot
+  vehicle_gateway::ARMING_STATE GetArmingState();
+
+  /// Get the arm reason
+  /// \return Arm reason
+  vehicle_gateway::ARM_DISARM_REASON GetArmReason();
+
+  /// Get the disarm reason
+  /// \return Disarm reason
+  vehicle_gateway::ARM_DISARM_REASON GetDisarmReason();
+
+  /// Get current failure
+  /// \return Current failure
+  vehicle_gateway::FAILURE GetFailure();
+
+  /// Set offboard_control_mode
+  void SetOffboardControlMode(bool is_trajectory);
+
+  /// Set offboard control mode
+  void SetOffboardMode();
+
+  /// Get ground speed
+  /// \return Get ground speed
+  float GetGroundSpeed();
+
+  // Destroy autopilot API
   void Destroy();
 
 private:
