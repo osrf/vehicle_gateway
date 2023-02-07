@@ -1156,63 +1156,6 @@ bool betaflight_gazebo::BetaFlightPlugin::ReceiveServoPacket(
 }
 
 /////////////////////////////////////////////////
-void betaflight_gazebo::BetaFlightPlugin::UpdateMotorCommands(
-  const servo_packet & _pkt)
-{
-//     // compute command based on requested motorSpeed
-//     for (unsigned i = 0; i < this->dataPtr->controls.size(); ++i)
-//     {
-//         // enforce limit on the number of <control> elements
-//         if (i < MAX_MOTORS)
-//         {
-//             if (this->dataPtr->controls[i].channel < MAX_SERVO_CHANNELS)
-//             {
-//                 // convert pwm to raw cmd: [servo_min, servo_max] => [0, 1],
-//                 // default is: [1000, 2000] => [0, 1]
-//                 const double pwm = _pkt.pwm[this->dataPtr->controls[i].channel];
-//                 const double pwm_min = this->dataPtr->controls[i].servo_min;
-//                 const double pwm_max = this->dataPtr->controls[i].servo_max;
-//                 const double multiplier = this->dataPtr->controls[i].multiplier;
-//                 const double offset = this->dataPtr->controls[i].offset;
-//
-//                 // bound incoming cmd between 0 and 1
-//                 double raw_cmd = (pwm - pwm_min)/(pwm_max - pwm_min);
-//                 raw_cmd = gz::math::clamp(raw_cmd, 0.0, 1.0);
-//                 this->dataPtr->controls[i].cmd =
-//                     multiplier * (raw_cmd + offset);
-//
-// #if 0
-//                 gzdbg << "apply input chan["
-//                     << this->dataPtr->controls[i].channel
-//                     << "] to control chan[" << i
-//                     << "] with joint name ["
-//                     << this->dataPtr->controls[i].jointName
-//                     << "] pwm [" << pwm
-//                     << "] raw cmd [" << raw_cmd
-//                     << "] adjusted cmd [" << this->dataPtr->controls[i].cmd
-//                     << "].\n";
-// #endif
-//             }
-//             else
-//             {
-//                 gzerr << "[" << this->dataPtr->modelName << "] "
-//                     << "control[" << i << "] channel ["
-//                     << this->dataPtr->controls[i].channel
-//                     << "] is greater than the number of servo channels ["
-//                     << MAX_SERVO_CHANNELS
-//                     << "], control not applied.\n";
-//             }
-//         }
-//         else
-//         {
-//             gzerr << "[" << this->dataPtr->modelName << "] "
-//                 << "too many motors, skipping [" << i
-//                 << " > " << MAX_MOTORS << "].\n";
-//         }
-//     }
-}
-
-/////////////////////////////////////////////////
 void betaflight_gazebo::BetaFlightPlugin::SendState(
   double _simTime,
   const gz::sim::EntityComponentManager & _ecm) const
