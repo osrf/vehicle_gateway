@@ -26,7 +26,7 @@ First, install ROS 2 Humble using the `.deb` packages using APT [according to th
 
 Next, install a few dependencies and set up our workspace source directories:
 ```bash
-sudo apt install python3-kconfiglib python3-jinja2 python3-jsonschema ros-humble-gps-msgs gcc-arm-none-eabi
+sudo apt install python3-kconfiglib python3-jinja2 python3-jsonschema ros-humble-gps-msgs gcc-arm-none-eabi libfuse2
 pip3 install pyros-genmsg
 mkdir -p ~/vg/vg_ws/src
 cd ~/vg/vg_ws/src
