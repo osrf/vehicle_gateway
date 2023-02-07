@@ -35,7 +35,7 @@ cd ~/vg/vg_ws
 vcs import src < src/vehicle_gateway/dependencies.repos
 ```
 
-Next, build Gazebo Garden from source. The full instructions are [here](https://gazebosim.org/docs/garden/install_ubuntu_src), and summarized in the following command sequence:
+Next, build Gazebo Garden from source, using some specific branches in some repositories that are currently required for this project. The precise arrangement of branches is described in the `gazebo.repos` file which will be used by the command sequence below. The full instructions are [here](https://gazebosim.org/docs/garden/install_ubuntu_src), and summarized as follows:
 
 ```bash
 mkdir -p ~/vg/gz_ws/src
@@ -53,7 +53,7 @@ We can now build the Vehicle Gateway itself, by overlaying its workspace on top 
 cd ~/vg/vg_ws
 rosdep update && rosdep install --from-paths src --ignore-src -y
 source ~/vg/gz_ws/install/setup.bash
-colcon build --merge-install --event-handlers console_direct+
+colcon build
 ```
 
 # Run a PX4 Quadcopter demo
