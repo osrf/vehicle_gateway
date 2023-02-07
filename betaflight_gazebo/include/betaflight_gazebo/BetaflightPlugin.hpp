@@ -122,11 +122,6 @@ private:
 private:
   bool ReceiveServoPacket(double _simTime, const gz::sim::EntityComponentManager & _ecm);
 
-  /// \brief Update the motor commands given servo PWM values
-
-private:
-  void UpdateMotorCommands(const servo_packet & _pkt);
-
   /// \brief Send state to ArduPilot
 
 private:
