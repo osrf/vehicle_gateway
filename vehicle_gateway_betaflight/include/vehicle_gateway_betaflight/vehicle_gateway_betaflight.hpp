@@ -102,10 +102,10 @@ private:
   // Service clients
   vehicle_gateway::ARMING_STATE arming_state_{vehicle_gateway::ARMING_STATE::MAX};
 
-  void onStatus(const msp::msg::Status& status);
-  void onBoxNames(const msp::msg::BoxNames& box_names);
-  void onImu(const msp::msg::RawImu &imu);
-  void onRc(const msp::msg::Rc& rc) { std::cout << rc; }
+  void onStatus(const msp::msg::Status & status);
+  void onBoxNames(const msp::msg::BoxNames & box_names);
+  void onImu(const msp::msg::RawImu & imu);
+  void onRc(const msp::msg::Rc & rc) {std::cout << rc;}
 
   fcu::FlightController fcu_;
 

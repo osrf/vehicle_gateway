@@ -34,10 +34,10 @@ int main(int argc, const char ** argv)
     gateway->init(argc, argv);
     gateway->arm();
     while (1) {
-      std::cerr << "gateway->get_arming_state() " << static_cast<int>(gateway->get_arming_state()) << '\n';
+      std::cerr << "gateway->get_arming_state() " <<
+        static_cast<int>(gateway->get_arming_state()) << '\n';
       std::this_thread::sleep_for(50ms);
-      if (!gateway->ctbr(0, 0, 0, 0))
-      {
+      if (!gateway->ctbr(0, 0, 0, 0)) {
         std::cerr << "Error sending RC" << '\n';
       }
     }

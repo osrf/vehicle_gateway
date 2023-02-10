@@ -34,7 +34,9 @@ void VehicleGatewayBetaflight::init(int argc, const char ** argv)
     });
 
   this->pub_imu_raw =
-    this->betaflight_node_->create_publisher<sensor_msgs::msg::Imu>("imu/data_raw", rclcpp::SensorDataQoS());
+    this->betaflight_node_->create_publisher<sensor_msgs::msg::Imu>(
+    "imu/data_raw",
+    rclcpp::SensorDataQoS());
 
   std::string device;
   const std::string default_device = "/dev/ttyS0";
@@ -82,7 +84,7 @@ void VehicleGatewayBetaflight::destroy()
   }
 }
 
-void VehicleGatewayBetaflight::onImu(const msp::msg::RawImu &imu)
+void VehicleGatewayBetaflight::onImu(const msp::msg::RawImu & imu)
 {
   const msp::msg::ImuSI imu_si(imu, 512.0, 1.0 / 4.096, 0.092, 9.80665);
 
@@ -102,37 +104,33 @@ void VehicleGatewayBetaflight::onImu(const msp::msg::RawImu &imu)
   this->pub_imu_raw->publish(imu_msg);
 }
 
-void VehicleGatewayBetaflight::onBoxNames(const msp::msg::BoxNames& box_names)
+void VehicleGatewayBetaflight::onBoxNames(const msp::msg::BoxNames & box_names)
 {
-  if (index_box_arm_ != -1)
+  if (index_box_arm_ != -1) {
     return;
+  }
 
   std::vector box_names_vector = box_names.box_names;
   auto it = std::find(box_names_vector.begin(), box_names_vector.end(), "ARM");
   // If element was found
-  if (it != box_names_vector.end())
-  {
+  if (it != box_names_vector.end()) {
     // calculating the index
     this->index_box_arm_ = it - box_names_vector.begin();
   }
 }
 
-void VehicleGatewayBetaflight::onStatus(const msp::msg::Status& status)
+void VehicleGatewayBetaflight::onStatus(const msp::msg::Status & status)
 {
-  if (this->index_box_arm_ == -1)
-  {
+  if (this->index_box_arm_ == -1) {
     this->arming_state_ = vehicle_gateway::ARMING_STATE::MAX;
     return;
   }
 
   auto box_mode_flags = status.box_mode_flags;
   auto it = std::find(box_mode_flags.begin(), box_mode_flags.end(), this->index_box_arm_);
-  if (it != box_mode_flags.end())
-  {
+  if (it != box_mode_flags.end()) {
     this->arming_state_ = vehicle_gateway::ARMING_STATE::ARMED;
-  }
-  else
-  {
+  } else {
     this->arming_state_ = vehicle_gateway::ARMING_STATE::STANDBY;
   }
 }
@@ -175,52 +173,57 @@ bool VehicleGatewayBetaflight::ctbr(float roll, float pitch, float yaw, float th
   cmds[4] = this->arm_;
   cmds[5] = 1234;
 
-  for (const auto & c: cmds)
-  {
+  for (const auto & c: cmds) {
     std::cerr << c << '\t';
   }
   std::cerr << '\t';
   auto control_source = this->fcu_.getControlSource();
-  if (control_source == fcu::ControlSource::MSP)
+  if (control_source == fcu::ControlSource::MSP) {
     std::cerr << "MSP" << '\n';
-  if (control_source == fcu::ControlSource::SBUS)
+  }
+  if (control_source == fcu::ControlSource::SBUS) {
     std::cerr << "SBUS" << '\n';
-  if (control_source == fcu::ControlSource::NONE)
+  }
+  if (control_source == fcu::ControlSource::NONE) {
     std::cerr << "NONE" << '\n';
-  if (control_source == fcu::ControlSource::OTHER)
+  }
+  if (control_source == fcu::ControlSource::OTHER) {
     std::cerr << "OTHER" << '\n';
+  }
 
   return this->fcu_.setRc(cmds);
 }
 
-vehicle_gateway::FLIGHT_MODE VehicleGatewayBetaflight::get_flight_mode(){}
+vehicle_gateway::FLIGHT_MODE VehicleGatewayBetaflight::get_flight_mode() {}
 
-vehicle_gateway::VEHICLE_TYPE VehicleGatewayBetaflight::get_vehicle_type(){}
+vehicle_gateway::VEHICLE_TYPE VehicleGatewayBetaflight::get_vehicle_type() {}
 
-vehicle_gateway::ARM_DISARM_REASON VehicleGatewayBetaflight::get_arm_reason(){}
+vehicle_gateway::ARM_DISARM_REASON VehicleGatewayBetaflight::get_arm_reason() {}
 
-vehicle_gateway::ARM_DISARM_REASON VehicleGatewayBetaflight::get_disarm_reason(){}
+vehicle_gateway::ARM_DISARM_REASON VehicleGatewayBetaflight::get_disarm_reason() {}
 
-vehicle_gateway::FAILURE VehicleGatewayBetaflight::get_failure(){}
+vehicle_gateway::FAILURE VehicleGatewayBetaflight::get_failure() {}
 
-void VehicleGatewayBetaflight::takeoff(){}
+void VehicleGatewayBetaflight::takeoff() {}
 
-void VehicleGatewayBetaflight::land(){}
+void VehicleGatewayBetaflight::land() {}
 
-void VehicleGatewayBetaflight::go_to_waypoint(){}
+void VehicleGatewayBetaflight::go_to_waypoint() {}
 
-void VehicleGatewayBetaflight::transition_to_fw(){}
+void VehicleGatewayBetaflight::transition_to_fw() {}
 
-void VehicleGatewayBetaflight::transition_to_mc(){}
+void VehicleGatewayBetaflight::transition_to_mc() {}
 
-void VehicleGatewayBetaflight::set_local_position_setpoint(float x, float y, float z){}
+void VehicleGatewayBetaflight::set_local_position_setpoint(float x, float y, float z) {}
 
-void VehicleGatewayBetaflight::set_offboard_control_mode(bool is_trajectory){}
+void VehicleGatewayBetaflight::set_offboard_control_mode(bool is_trajectory) {}
 
-void VehicleGatewayBetaflight::set_offboard_mode(){}
+void VehicleGatewayBetaflight::set_offboard_mode() {}
 
-float VehicleGatewayBetaflight::get_ground_speed(){}
+float VehicleGatewayBetaflight::get_ground_speed() {}
 }  // namespace vehicle_gateway_betaflight
 #include <pluginlib/class_list_macros.hpp>
 
-PLUGINLIB_EXPORT_CLASS(vehicle_gateway_betaflight::VehicleGatewayBetaflight, vehicle_gateway::VehicleGateway)
+PLUGINLIB_EXPORT_CLASS(
+  vehicle_gateway_betaflight::VehicleGatewayBetaflight,
+  vehicle_gateway::VehicleGateway)

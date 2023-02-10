@@ -171,6 +171,7 @@ public:
   virtual bool ctbr(float roll, float pitch, float yaw, float throttle) = 0;
 
   virtual bool set_motors(std::vector<uint16_t> motor_values) = 0;
+
 protected:
   VehicleGateway() {}
 };

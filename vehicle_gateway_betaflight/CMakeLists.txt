@@ -41,7 +41,7 @@ ament_target_dependencies(
 )
 
 target_link_libraries(vehicle_gateway_betaflight
-	${PKG_MSP_LIBRARIES}
+  ${PKG_MSP_LIBRARIES}
 )
 
 add_executable(vehicle_gateway_betaflight_node src/vehicle_gateway_betaflight_main.cpp)
@@ -56,7 +56,7 @@ ament_target_dependencies(vehicle_gateway_betaflight_node
 )
 
 target_link_libraries(vehicle_gateway_betaflight_node
- ${PKG_MSP_LIBRARIES}
+  ${PKG_MSP_LIBRARIES}
 )
 
 pluginlib_export_plugin_description_file(vehicle_gateway plugins.xml)
