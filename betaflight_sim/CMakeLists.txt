@@ -13,19 +13,15 @@ externalproject_add(betaflight-firmware
   PREFIX
       ${PROJECT_BINARY_DIR}/betaflight_sim
   GIT_REPOSITORY
-    https://github.com/nikhil-sethi/betaflight
+    https://github.com/ahcorde/betaflight
   GIT_TAG
-    airsim-sitl
+    ahcorde/sitl_gazebo
   INSTALL_COMMAND
     mkdir -p ${CMAKE_INSTALL_PREFIX}/share/betaflight_sim/bin/ &&
     cp ./obj/main/betaflight_SITL.elf ${CMAKE_INSTALL_PREFIX}/share/betaflight_sim/bin/
   BUILD_COMMAND pwd && ${MAKE_EXECUTABLE} TARGET=SITL -j
   BUILD_IN_SOURCE ON
   CONFIGURE_COMMAND ""
-  PATCH_COMMAND git checkout . &&
-  patch -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/patches/target.hh.patch &&
-  patch -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/patches/udp.cc.patch &&
-    patch -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/patches/tools.mk.patch
 )
 
 ament_environment_hooks(cmake/99_betaflight_setup.sh.in)

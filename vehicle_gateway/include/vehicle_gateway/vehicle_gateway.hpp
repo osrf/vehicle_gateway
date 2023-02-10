@@ -15,6 +15,9 @@
 #ifndef VEHICLE_GATEWAY__VEHICLE_GATEWAY_HPP_
 #define VEHICLE_GATEWAY__VEHICLE_GATEWAY_HPP_
 
+#include <cstdint>
+#include <vector>
+
 namespace vehicle_gateway
 {
 
@@ -167,6 +170,7 @@ public:
 
   virtual bool ctbr(float roll, float pitch, float yaw, float throttle) = 0;
 
+  virtual bool set_motors(std::vector<uint16_t> motor_values) = 0;
 protected:
   VehicleGateway() {}
 };

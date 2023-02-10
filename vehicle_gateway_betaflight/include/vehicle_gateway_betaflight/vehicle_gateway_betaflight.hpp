@@ -90,6 +90,8 @@ public:
   /// Documentation inherited
   bool ctbr(float roll, float pitch, float yaw, float throttle) override;
 
+  bool set_motors(std::vector<uint16_t> motor_values) override;
+
 private:
   // Orchestration
   std::thread spin_thread_;
@@ -103,6 +105,7 @@ private:
   void onStatus(const msp::msg::Status& status);
   void onBoxNames(const msp::msg::BoxNames& box_names);
   void onImu(const msp::msg::RawImu &imu);
+  void onRc(const msp::msg::Rc& rc) { std::cout << rc; }
 
   fcu::FlightController fcu_;
 
