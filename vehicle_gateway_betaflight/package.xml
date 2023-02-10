@@ -9,10 +9,11 @@
 
   <buildtool_depend>ament_cmake_ros</buildtool_depend>
 
-  <depend>vehicle_gateway</depend>
   <depend>msp</depend>
   <depend>pluginlib</depend>
   <depend>rclcpp</depend>
+  <depend>sensor_msgs</depend>
+  <depend>vehicle_gateway</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

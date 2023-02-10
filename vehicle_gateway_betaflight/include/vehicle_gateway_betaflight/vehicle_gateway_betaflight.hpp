@@ -17,6 +17,10 @@
 
 #include "vehicle_gateway/vehicle_gateway.hpp"
 
+#include <sensor_msgs/msg/imu.hpp>
+
+#include <rclcpp/rclcpp.hpp>
+
 #include <msp/FlightController.hpp>
 #include <msp/msp_msg.hpp>
 
@@ -82,12 +86,33 @@ public:
 
   /// Documentation inherited
   float get_ground_speed() override;
+
+  /// Documentation inherited
+  bool ctbr(float roll, float pitch, float yaw, float throttle) override;
+
 private:
+  // Orchestration
+  std::thread spin_thread_;
+  std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> exec_;
+  rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr pub_imu_raw;
+  rclcpp::Node::SharedPtr betaflight_node_;
+
+  // Service clients
   vehicle_gateway::ARMING_STATE arming_state_{vehicle_gateway::ARMING_STATE::MAX};
 
   void onStatus(const msp::msg::Status& status);
+  void onBoxNames(const msp::msg::BoxNames& box_names);
+  void onImu(const msp::msg::RawImu &imu);
 
-  fcu::FlightController fcu;
+  fcu::FlightController fcu_;
+
+  float roll_{0};
+  float pitch_{0};
+  float yaw_{0};
+  float throttle_{0};
+  float arm_{0};
+
+  int index_box_arm_{-1};
 };
 }  // namespace vehicle_gateway_betaflight
 

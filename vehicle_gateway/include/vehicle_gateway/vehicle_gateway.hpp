@@ -165,6 +165,8 @@ public:
   /// \return Get ground speed
   virtual float get_ground_speed() = 0;
 
+  virtual bool ctbr(float roll, float pitch, float yaw, float throttle) = 0;
+
 protected:
   VehicleGateway() {}
 };

@@ -19,14 +19,11 @@ find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_ros REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(sensor_msgs REQUIRED)
 find_package(vehicle_gateway REQUIRED)
 
 find_package(PkgConfig REQUIRED)
 pkg_search_module(PKG_MSP REQUIRED IMPORTED_TARGET msp)
-
-message("msp_LIBRARIES " ${PKG_MSP_LIBRARIES})
-message("msp__INCLUDE_DIRS " ${PKG_MSP_INCLUDE_DIRS})
-message("PKG_MSP "  ${PKG_MSP})
 
 include_directories(${PKG_MSP_INCLUDE_DIRS})
 link_directories(${PKG_MSP_LIBRARY_DIRS})
@@ -38,6 +35,8 @@ target_include_directories(vehicle_gateway_betaflight PUBLIC
 ament_target_dependencies(
   vehicle_gateway_betaflight
   pluginlib
+  rclcpp
+  sensor_msgs
   vehicle_gateway
 )
 
@@ -49,10 +48,11 @@ add_executable(vehicle_gateway_betaflight_node src/vehicle_gateway_betaflight_ma
 target_include_directories(vehicle_gateway_betaflight_node PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
-ament_target_dependencies(
-  vehicle_gateway_betaflight_node
-  vehicle_gateway
+ament_target_dependencies(vehicle_gateway_betaflight_node
   pluginlib
+  rclcpp
+  sensor_msgs
+  vehicle_gateway
 )
 
 target_link_libraries(vehicle_gateway_betaflight_node

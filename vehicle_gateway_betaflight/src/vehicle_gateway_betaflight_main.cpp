@@ -32,12 +32,18 @@ int main(int argc, const char ** argv)
       "vehicle_gateway_betaflight::VehicleGatewayBetaflight");
     std::cerr << "Initializing VehicleGatewayBetaflight" << '\n';
     gateway->init(argc, argv);
+    gateway->arm();
     while (1) {
-      // gateway->arm();
       std::cerr << "gateway->get_arming_state() " << static_cast<int>(gateway->get_arming_state()) << '\n';
-      std::this_thread::sleep_for(200ms);
+      std::this_thread::sleep_for(50ms);
+      if (!gateway->ctbr(0, 0, 0, 0))
+      {
+        std::cerr << "Error sending RC" << '\n';
+      }
     }
+    gateway->destroy();
   } catch (pluginlib::PluginlibException & ex) {
     printf("The plugin failed to load: %s\n", ex.what());
-  }  return 0;
+  }
+  return 0;
 }
