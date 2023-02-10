@@ -53,5 +53,6 @@ def generate_launch_description():
             cmd=['betaflight_SITL.elf', "127.0.0.1"],
             cwd=os.path.join(get_betaflight_dir(), "config"),
             output='screen'),
+        ExecuteProcess(cmd=["socat", "-dd", "pty,link=/dev/ttyS0,raw,echo=0", "tcp:127.0.0.1:5761"]),
         ExecuteProcess(cmd=['betaflight-configurator']),
     ])
