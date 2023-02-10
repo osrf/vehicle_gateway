@@ -298,5 +298,9 @@
       </uri>
     </include>
 
+    <frame name="pad_1">
+      <pose>-9.7948 -8.31848 2.0 0.0 0.0 0.0</pose>
+    </frame>
+
   </world>
 </sdf>
