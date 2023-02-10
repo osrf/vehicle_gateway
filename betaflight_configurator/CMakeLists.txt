@@ -5,14 +5,14 @@ find_package(ament_cmake REQUIRED)
 
 include(ExternalProject)
 
-if(NOT EXISTS "${CMAKE_BINARY_DIR}/betaflight-configurator_10.9.0-RC3_linux64-portable.zip")
+if(NOT EXISTS "${CMAKE_BINARY_DIR}/betaflight-configurator_10.9.0_linux64-portable.zip")
   file(DOWNLOAD
-https://github.com/betaflight/betaflight-configurator/releases/download/10.9.0-RC3/betaflight-configurator_10.9.0-RC3_linux64-portable.zip
-    betaflight-configurator_10.9.0-RC3_linux64-portable.zip
+https://github.com/betaflight/betaflight-configurator/releases/download/10.9.0/betaflight-configurator_10.9.0_linux64-portable.zip
+    betaflight-configurator_10.9.0_linux64-portable.zip
     SHOW_PROGRESS
   )
   file(ARCHIVE_EXTRACT
-    INPUT ${CMAKE_BINARY_DIR}/betaflight-configurator_10.9.0-RC3_linux64-portable.zip
+    INPUT ${CMAKE_BINARY_DIR}/betaflight-configurator_10.9.0_linux64-portable.zip
     DESTINATION ${PROJECT_BINARY_DIR}/betaflight-configurator
   )
 endif()
