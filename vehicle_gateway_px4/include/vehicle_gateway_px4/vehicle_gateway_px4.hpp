@@ -94,6 +94,12 @@ public:
   /// Documentation inherited
   float get_ground_speed() override;
 
+  /// Documentation inherited
+  bool ctbr(float roll, float pitch, float yaw, float throttle) override;
+
+  /// Documentation inherited
+  bool set_motors(std::vector<uint16_t> motor_values) override;
+
 private:
   // Orchestration
   std::thread spin_thread_;
