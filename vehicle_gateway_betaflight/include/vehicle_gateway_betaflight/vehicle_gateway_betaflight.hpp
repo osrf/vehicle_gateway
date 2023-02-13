@@ -17,6 +17,9 @@
 
 #include "vehicle_gateway/vehicle_gateway.hpp"
 
+#include <vector>
+#include <memory>
+
 #include <sensor_msgs/msg/imu.hpp>
 
 #include <rclcpp/rclcpp.hpp>

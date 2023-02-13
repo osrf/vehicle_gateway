@@ -48,12 +48,10 @@ void VehicleGatewayBetaflight::init(int argc, const char ** argv)
       this->betaflight_node_->get_logger(),
       "The 'device' parameter was not defined, defaulting to: " <<
         device);
-  }
-  else
-  {
+  } else {
     RCLCPP_INFO_STREAM(
       this->betaflight_node_->get_logger(),
-      "The 'device' parameter is setted to: " <<
+      "The 'device' parameter is set to: " <<
         device);
   }
 
@@ -66,12 +64,10 @@ void VehicleGatewayBetaflight::init(int argc, const char ** argv)
       this->betaflight_node_->get_logger(),
       "The 'baudrate' parameter was not defined, defaulting to: " <<
         baudrate);
-  }
-  else
-  {
+  } else {
     RCLCPP_INFO_STREAM(
       this->betaflight_node_->get_logger(),
-      "The 'baudrate' parameter is setted to: " <<
+      "The 'baudrate' parameter is set to: " <<
         baudrate);
   }
   this->fcu_.setLoggingLevel(msp::client::LoggingLevel::INFO);
@@ -185,23 +181,23 @@ bool VehicleGatewayBetaflight::ctbr(float roll, float pitch, float yaw, float th
   cmds[4] = this->arm_;
   cmds[5] = 1234;
 
-  for (const auto & c: cmds) {
-    std::cerr << c << '\t';
-  }
-  std::cerr << '\t';
-  auto control_source = this->fcu_.getControlSource();
-  if (control_source == fcu::ControlSource::MSP) {
-    std::cerr << "MSP" << '\n';
-  }
-  if (control_source == fcu::ControlSource::SBUS) {
-    std::cerr << "SBUS" << '\n';
-  }
-  if (control_source == fcu::ControlSource::NONE) {
-    std::cerr << "NONE" << '\n';
-  }
-  if (control_source == fcu::ControlSource::OTHER) {
-    std::cerr << "OTHER" << '\n';
-  }
+  // for (const auto & c: cmds) {
+  //   std::cerr << c << '\t';
+  // }
+  // std::cerr << '\t';
+  // auto control_source = this->fcu_.getControlSource();
+  // if (control_source == fcu::ControlSource::MSP) {
+  //   std::cerr << "MSP" << '\n';
+  // }
+  // if (control_source == fcu::ControlSource::SBUS) {
+  //   std::cerr << "SBUS" << '\n';
+  // }
+  // if (control_source == fcu::ControlSource::NONE) {
+  //   std::cerr << "NONE" << '\n';
+  // }
+  // if (control_source == fcu::ControlSource::OTHER) {
+  //   std::cerr << "OTHER" << '\n';
+  // }
 
   return this->fcu_.setRc(cmds);
 }
