@@ -4,7 +4,7 @@ The goal of this project is to create a pluginlib-based C++ library that can int
 
 # Installation
 
-This package is developed and on Ubuntu 22.04 LTS with ROS 2 Humble. We suggest installing ROS 2 Humble from binary packages, and building Gazebo Garden from source. The following steps will describe this process, resulting in two workspaces: one for Gazebo Garden, and an overlaid workspace for the Vehicle Gateway (this project), in order to make rebuilds faster.
+This package is developed and on Ubuntu 22.04 LTS with ROS 2 Humble. We suggest installing ROS 2 Humble from binary packages, and installing Gazebo Garden. The following steps will describe this process, resulting in two workspaces: one for Gazebo Garden, and an overlaid workspace for the Vehicle Gateway (this project), in order to make rebuilds faster.
 
 To keep paths short, `vg` stands for "Vehicle Gateway". After these steps, you'll have two workspaces in the `~/vg` directory, like this:
 
@@ -35,17 +35,22 @@ cd ~/vg/vg_ws
 vcs import src < src/vehicle_gateway/dependencies.repos
 ```
 
-Next, build Gazebo Garden from source, using some specific branches in some repositories that are currently required for this project. The precise arrangement of branches is described in the `gazebo.repos` file which will be used by the command sequence below. The full instructions are [here](https://gazebosim.org/docs/garden/install_ubuntu_src), and summarized as follows:
+Next, install Gazebo Garden. The full instructions are [here](https://gazebosim.org/docs/garden/install_ubuntu), and summarized as follows:
 
 ```bash
-mkdir -p ~/vg/gz_ws/src
-cd ~/vg/gz_ws
-vcs import src < ../vg_ws/src/vehicle_gateway/gazebo.repos
-sudo apt install -y $(sort -u $(find . -iname 'packages-'`lsb_release -cs`'.apt' -o -iname 'packages.apt' | grep -v '/\.git/') | sed '/gz\|sdf/d' | tr '\n' ' ')
-source /opt/ros/humble/setup.bash
-colcon build --merge-install
+sudo apt-get update
+sudo apt-get install lsb-release wget gnupg
 ```
-Now you should have Gazebo available to any terminals that source `~/vg/gz_ws/install/setup.bash`
+
+Then install Gazebo Garden:
+
+```bash
+sudo wget https://packages.osrfoundation.org/gazebo.gpg -O /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
+sudo apt-get update
+sudo apt-get install gz-garden
+```
+Now you should have Gazebo available.
 
 We can now build the Vehicle Gateway itself, by overlaying its workspace on top of the Gazebo Garden workspace (which in turn is overlaying the ROS 2 Humble system installation). The Vehicle Gateway build will also download and build the PX4 firmware, to allow software-in-the-loop (SITL) simulation:
 
