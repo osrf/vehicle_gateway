@@ -301,6 +301,17 @@
     <frame name="pad_1">
       <pose>-9.7948 -8.31848 2.0 0.0 0.0 0.0</pose>
     </frame>
-
+    <frame name="pad_2">
+      <pose>-23.1858 39.8327 2.0 0.0 0.0 -2.0944</pose>
+    </frame>
+    <frame name="pad_3">
+      <pose>-0.518452 21.4937 2 0.0 0.0 0.0</pose>
+    </frame>
+    <frame name="pad_4">
+      <pose>10.1337 -1.14462 2 0.0 0.0 -1.8326</pose>
+    </frame>
+    <frame name="pad_5">
+      <pose>-24.3324 -35.4081 2 0.0 0.0 -0.785398</pose>
+    </frame>
   </world>
 </sdf>

@@ -20,25 +20,33 @@ from launch.actions import SetEnvironmentVariable
 from launch.conditions import IfCondition
 from launch_ros.actions import Node
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+
+# Not sure how to make SDFormat python module load without manually adding
+# WORKSPACE/install/lib/python to PYTHONPATH in the shell that is launching this.
+# maybe has something to do with USE_DIST_PACKAGES_FOR_PYTHON in SDFormat CMakeLists.txt
+# now that we're just treating SDF as regular XML for looking up frames, it
+# doesn't really matter anyway since we can use ElementTree to parse the SDF
+# import sdformat13 as sdf
+
 import tempfile
 import os
 from launch.substitutions import LaunchConfiguration
 from typing import List
+import xml.etree.ElementTree as ET
 import yaml
 
 
-class WorldPoseFromYaml(Substitution):
-    """Substitution that replaces strings on a given file."""
-
+class WorldPoseFromSdfFrame(Substitution):
+    """Substitution that retrieves a frame from SDF"""
     def __init__(self,
-                 position_name: SomeSubstitutionsType,
-                 pos_world_config: SomeSubstitutionsType,
+                 frame_name: SomeSubstitutionsType,
+                 world_name: SomeSubstitutionsType,
                  model_pose: SomeSubstitutionsType) -> None:
         super().__init__()
 
         from launch.utilities import normalize_to_list_of_substitutions  # import here to avoid loop
-        self.__position_name = normalize_to_list_of_substitutions(position_name)
-        self.__pos_world_config = normalize_to_list_of_substitutions(pos_world_config)
+        self.__frame_name = normalize_to_list_of_substitutions(frame_name)
+        self.__world_name = normalize_to_list_of_substitutions(world_name)
         self.__model_pose = normalize_to_list_of_substitutions(model_pose)
 
     @property
@@ -47,33 +55,62 @@ class WorldPoseFromYaml(Substitution):
         return self.__model_pose
 
     @property
-    def position_name(self) -> List[Substitution]:
-        """Getter for position name."""
-        return self.__position_name
+    def frame_name(self) -> List[Substitution]:
+        """Getter for frame name."""
+        return self.__frame_name
 
     @property
-    def pos_world_config(self) -> List[Substitution]:
-        """Getter for position world config file."""
-        return self.__pos_world_config
+    def world_name(self) -> List[Substitution]:
+        """Getter for world name."""
+        return self.__world_name
 
     def perform(self, context: LaunchContext) -> str:
         from launch.utilities import perform_substitutions
-        position_name_str = perform_substitutions(context, self.position_name)
-        pos_world_config_str = perform_substitutions(context, self.pos_world_config)
+        frame_name_str = perform_substitutions(context, self.frame_name)
+        world_name_str = perform_substitutions(context, self.world_name)
         model_pose_str = perform_substitutions(context, self.model_pose)
+        # raise ValueError(f'frame_name_str: [{frame_name_str}] model_pose_str: [{model_pose_str}]')
 
-        if pos_world_config_str != '':
-            with open(pos_world_config_str) as stream:
-                try:
-                    yaml_data = yaml.safe_load(stream)
-                    if position_name_str in yaml_data:
-                        return yaml_data[position_name_str]['position']
-                except yaml.YAMLError as exc:
-                    print('Not able to read the yaml file: ', position_name_str, exc)
+        # allow manually specified model_pose param to override lookup
         if model_pose_str != '':
             return model_pose_str
-        return '0, 0, 0.3, 0, 0, 0'
 
+        if frame_name_str != '':
+            world_sdf_path = os.path.join(
+                get_package_share_directory('vehicle_gateway_worlds'),
+                'worlds',
+                world_name_str + '.sdf')
+            '''
+            root = sdf.Root()
+            sdf_parser_config = sdf.ParserConfig()
+            def testFunc(requested_file):
+                f = tempfile.NamedTemporaryFile()
+                f.write('<sdf />'.encode())
+                sdf_parser_config.add_uri_path(requested_file, f.name)
+                return f.name
+                #raise ValueError(f'requested_file: {requested_file}')
+                #return '/dev/null'
+
+            sdf_parser_config.set_find_callback(testFunc)
+            root.load(world_sdf_path, sdf_parser_config)
+            raise ValueError(f'********** calculated SDF path: {world_sdf_path}')
+            '''
+            # I couldn't get the libsdformat binding to work as expected due
+            # to various troubles. Let's simplify and just treat SDF as
+            # regular XML and do an XPath query
+            sdf_root = ET.parse(world_sdf_path).getroot()
+            frame_node = sdf_root.find(f'.//frame[@name=\'{frame_name_str}\']')
+            if not frame_node:
+                raise ValueError(f'Could not find a frame named {frame_name_str}')
+            pose_node = frame_node.find('pose')
+            pose_str = pose_node.text
+            # SDFormat stores poses space-separated, but we need them comma-separated
+            coords = pose_str.split()
+            comma_interpolated = ', '.join(coords)
+            return comma_interpolated
+
+        # default a bit above the origin; vehicle will drop to the ground plane
+        return '0, 0, 0.3, 0, 0, 0'
 
 def get_px4_dir():
     return get_package_share_directory('px4_sim')
@@ -97,10 +134,10 @@ def generate_launch_description():
         default_value='',
         description='YAML config file with a collection of poses')
 
-    position_name_args = DeclareLaunchArgument(
-        'position_name',
+    frame_name_args = DeclareLaunchArgument(
+        'frame_name',
         default_value='',
-        description='Position name included in the YAML config file')
+        description='Frame name included in the SDF world file')
 
     use_groundcontrol = DeclareLaunchArgument('groundcontrol', default_value='false',
                                               choices=['true', 'false'],
@@ -115,14 +152,14 @@ def generate_launch_description():
                                            default_value=world_name,
                                            description='World name (without .sdf)')
 
-    model_pose = LaunchConfiguration('model_pose', default='0,0,0.3,0,0,0')
+    model_pose = LaunchConfiguration('model_pose', default='')
     model_pose_arg = DeclareLaunchArgument('model_pose',
                                            default_value=model_pose,
                                            description='Model pose (x, y, z, roll, pitch, yaw)')
 
-    position_name = WorldPoseFromYaml(
-        position_name=LaunchConfiguration('position_name'),
-        pos_world_config=LaunchConfiguration('config_position_world'),
+    model_pose = WorldPoseFromSdfFrame(
+        frame_name=LaunchConfiguration('frame_name'),
+        world_name=LaunchConfiguration('world_name'),
         model_pose=LaunchConfiguration('model_pose'))
 
     world_pkgs = get_package_share_directory('vehicle_gateway_worlds')
@@ -159,11 +196,11 @@ def generate_launch_description():
         world_name_arg,
         drone_type_args,
         model_pose_arg,
-        position_name_args,
+        frame_name_args,
         config_position_world_args,
         SetEnvironmentVariable('PX4_GZ_MODEL', LaunchConfiguration('drone_type')),
         SetEnvironmentVariable('PX4_GZ_WORLD', LaunchConfiguration('world_name')),
-        SetEnvironmentVariable('PX4_GZ_MODEL_POSE', position_name),
+        SetEnvironmentVariable('PX4_GZ_MODEL_POSE', model_pose),
         SetEnvironmentVariable('PX4_SIM_MODEL', ['gz_', LaunchConfiguration('drone_type')]),
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
