@@ -38,30 +38,42 @@ void VehicleGatewayBetaflight::init(int argc, const char ** argv)
     "imu/data_raw",
     rclcpp::SensorDataQoS());
 
-  std::string device;
-  const std::string default_device = "/dev/ttyS0";
-  if (!this->betaflight_node_->get_parameter_or(
-      "device",
-      device, default_device))
+  std::string device = "/dev/ttyS0";
+
+  this->betaflight_node_->declare_parameter<std::string>("device", device);
+  if (!this->betaflight_node_->get_parameter(
+      "device", device))
   {
     RCLCPP_WARN_STREAM(
       this->betaflight_node_->get_logger(),
       "The 'device' parameter was not defined, defaulting to: " <<
-        default_device);
+        device);
+  }
+  else
+  {
+    RCLCPP_INFO_STREAM(
+      this->betaflight_node_->get_logger(),
+      "The 'device' parameter is setted to: " <<
+        device);
   }
 
-  size_t baudrate;
-  constexpr size_t default_baudrate = 115200;
-  if (!this->betaflight_node_->get_parameter_or(
-      "baudrate",
-      baudrate, default_baudrate))
+  int baudrate = 115200;
+  this->betaflight_node_->declare_parameter<int>("baudrate", baudrate);
+  if (!this->betaflight_node_->get_parameter(
+      "baudrate", baudrate))
   {
     RCLCPP_WARN_STREAM(
       this->betaflight_node_->get_logger(),
       "The 'baudrate' parameter was not defined, defaulting to: " <<
-        default_baudrate);
+        baudrate);
   }
-
+  else
+  {
+    RCLCPP_INFO_STREAM(
+      this->betaflight_node_->get_logger(),
+      "The 'baudrate' parameter is setted to: " <<
+        baudrate);
+  }
   this->fcu_.setLoggingLevel(msp::client::LoggingLevel::INFO);
 
   // wait for connection
