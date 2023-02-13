@@ -21,19 +21,11 @@ from launch.conditions import IfCondition
 from launch_ros.actions import Node
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
-# Not sure how to make SDFormat python module load without manually adding
-# WORKSPACE/install/lib/python to PYTHONPATH in the shell that is launching this.
-# maybe has something to do with USE_DIST_PACKAGES_FOR_PYTHON in SDFormat CMakeLists.txt
-# now that we're just treating SDF as regular XML for looking up frames, it
-# doesn't really matter anyway since we can use ElementTree to parse the SDF
-# import sdformat13 as sdf
-
 import tempfile
 import os
 from launch.substitutions import LaunchConfiguration
 from typing import List
 import xml.etree.ElementTree as ET
-import yaml
 
 
 class WorldPoseFromSdfFrame(Substitution):
@@ -80,21 +72,6 @@ class WorldPoseFromSdfFrame(Substitution):
                 get_package_share_directory('vehicle_gateway_worlds'),
                 'worlds',
                 world_name_str + '.sdf')
-            '''
-            root = sdf.Root()
-            sdf_parser_config = sdf.ParserConfig()
-            def testFunc(requested_file):
-                f = tempfile.NamedTemporaryFile()
-                f.write('<sdf />'.encode())
-                sdf_parser_config.add_uri_path(requested_file, f.name)
-                return f.name
-                #raise ValueError(f'requested_file: {requested_file}')
-                #return '/dev/null'
-
-            sdf_parser_config.set_find_callback(testFunc)
-            root.load(world_sdf_path, sdf_parser_config)
-            raise ValueError(f'********** calculated SDF path: {world_sdf_path}')
-            '''
             # I couldn't get the libsdformat binding to work as expected due
             # to various troubles. Let's simplify and just treat SDF as
             # regular XML and do an XPath query
@@ -111,6 +88,7 @@ class WorldPoseFromSdfFrame(Substitution):
 
         # default a bit above the origin; vehicle will drop to the ground plane
         return '0, 0, 0.3, 0, 0, 0'
+
 
 def get_px4_dir():
     return get_package_share_directory('px4_sim')
