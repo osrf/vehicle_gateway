@@ -15,13 +15,30 @@
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription
+from launch.actions import RegisterEventHandler
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
+from launch.event_handlers.on_process_io import OnProcessIO
 import os
-
+import time
 
 def get_betaflight_dir():
     return get_package_share_directory('betaflight_sim')
+
+
+run_virtual_tty = ExecuteProcess(cmd=["socat", "-dd", "pty,link=/tmp/ttyS0,raw,echo=0", "tcp:127.0.0.1:5761"]),
+
+
+def _run_virtual_tty_check(event):
+    """
+    Consider betaflight_controller ready when 'bind port 5761 for UART1...' string is printed.
+
+    Launches betaflight_controller node if ready.
+    """
+    target_str = 'bind port 5761 for UART1'
+    if target_str in event.text.decode():
+        time.sleep(2)
+        return run_virtual_tty
 
 
 def generate_launch_description():
@@ -37,6 +54,9 @@ def generate_launch_description():
 
     world_sdf = os.path.join(get_betaflight_dir(), "worlds", "empty_betaflight_world.sdf")
 
+    run_betaflight_sitl = ExecuteProcess(cmd=['betaflight_SITL.elf', "127.0.0.1"],
+                                         cwd=os.path.join(get_betaflight_dir(), "config"),
+                                         output='screen')
     return LaunchDescription([
         # Launch gazebo environment
         IncludeLaunchDescription(
@@ -45,10 +65,13 @@ def generate_launch_description():
                               'launch', 'gz_sim.launch.py')]),
             launch_arguments=[('gz_args', [' -r -v 4 ' + world_sdf])]),
         use_sim_time_arg,
-        ExecuteProcess(
-            cmd=['betaflight_SITL.elf', "127.0.0.1"],
-            cwd=os.path.join(get_betaflight_dir(), "config"),
-            output='screen'),
-        ExecuteProcess(cmd=["socat", "-dd", "pty,link=/dev/ttyS0,raw,echo=0", "tcp:127.0.0.1:5761"]),
+        run_betaflight_sitl,
+        RegisterEventHandler(
+            OnProcessIO(
+                target_action=run_betaflight_sitl,
+                on_stdout=_run_virtual_tty_check,
+                on_stderr=_run_virtual_tty_check
+            )
+        ),
         ExecuteProcess(cmd=['betaflight-configurator']),
     ])

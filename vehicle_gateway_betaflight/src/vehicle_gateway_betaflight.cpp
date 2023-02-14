@@ -173,31 +173,13 @@ bool VehicleGatewayBetaflight::ctbr(float roll, float pitch, float yaw, float th
   this->yaw_ = yaw;
   this->throttle_ = throttle;
   std::vector<uint16_t> cmds(6, 1000);
-  cmds[0] = uint16_t(this->throttle_ * 500) + 1500;
-  cmds[1] = uint16_t(this->yaw_ * 500) + 1500;
-  cmds[2] = uint16_t(this->roll_ * 500) + 1500;
-  cmds[3] = uint16_t(this->pitch_ * 500) + 1500;
+  cmds[2] = uint16_t(this->throttle_ * 500) + 1500;
+  cmds[3] = uint16_t(this->yaw_ * 500) + 1500;
+  cmds[1] = uint16_t(this->roll_ * 500) + 1500;
+  cmds[0] = uint16_t(this->pitch_ * 500) + 1500;
 
   cmds[4] = this->arm_;
   cmds[5] = 1234;
-
-  // for (const auto & c: cmds) {
-  //   std::cerr << c << '\t';
-  // }
-  // std::cerr << '\t';
-  // auto control_source = this->fcu_.getControlSource();
-  // if (control_source == fcu::ControlSource::MSP) {
-  //   std::cerr << "MSP" << '\n';
-  // }
-  // if (control_source == fcu::ControlSource::SBUS) {
-  //   std::cerr << "SBUS" << '\n';
-  // }
-  // if (control_source == fcu::ControlSource::NONE) {
-  //   std::cerr << "NONE" << '\n';
-  // }
-  // if (control_source == fcu::ControlSource::OTHER) {
-  //   std::cerr << "OTHER" << '\n';
-  // }
 
   return this->fcu_.setRc(cmds);
 }

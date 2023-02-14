@@ -117,7 +117,7 @@ private:
   float pitch_{0};
   float yaw_{0};
   float throttle_{0};
-  float arm_{0};
+  uint16_t arm_{0};
 
   int index_box_arm_{-1};
 };

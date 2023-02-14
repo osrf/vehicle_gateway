@@ -33,13 +33,23 @@ int main(int argc, const char ** argv)
     std::cerr << "Initializing VehicleGatewayBetaflight" << '\n';
     gateway->init(argc, argv);
     gateway->arm();
+    int count = 0;
     while (1) {
       std::cerr << "gateway->get_arming_state() " <<
         static_cast<int>(gateway->get_arming_state()) << '\n';
       std::this_thread::sleep_for(50ms);
-      if (!gateway->ctbr(0, 0, 0, 0)) {
+      if (!gateway->ctbr(0, 0, 0, -1)) {
         std::cerr << "Error sending RC" << '\n';
       }
+      if (count == 20)
+        gateway->arm();
+      if (count == 40)
+      {
+        gateway->disarm();
+        count = 0;
+      }
+      count++;
+
     }
     gateway->destroy();
   } catch (pluginlib::PluginlibException & ex) {
