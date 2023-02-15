@@ -62,7 +62,6 @@ class WorldPoseFromSdfFrame(Substitution):
         frame_name_str = perform_substitutions(context, self.frame_name)
         world_name_str = perform_substitutions(context, self.world_name)
         model_pose_str = perform_substitutions(context, self.model_pose)
-        # raise ValueError(f'frame_name_str: [{frame_name_str}] model_pose_str: [{model_pose_str}]')
 
         # allow manually specified model_pose param to override lookup
         if model_pose_str != '':
@@ -107,11 +106,6 @@ def generate_launch_description():
         'use_sim_time',
         default_value=use_sim_time,
         description='If true, use simulated clock')
-
-    config_position_world_args = DeclareLaunchArgument(
-        'config_position_world',
-        default_value='',
-        description='YAML config file with a collection of poses')
 
     frame_name_args = DeclareLaunchArgument(
         'frame_name',
@@ -176,7 +170,6 @@ def generate_launch_description():
         drone_type_args,
         model_pose_arg,
         frame_name_args,
-        config_position_world_args,
         SetEnvironmentVariable('PX4_GZ_MODEL', LaunchConfiguration('drone_type')),
         SetEnvironmentVariable('PX4_GZ_WORLD', LaunchConfiguration('world_name')),
         SetEnvironmentVariable('PX4_GZ_MODEL_POSE', model_pose),

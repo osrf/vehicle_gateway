@@ -60,8 +60,7 @@ colcon build --event-handlers console_direct+
 ```bash
 cd ~/vg/vg_ws
 source install/setup.bash
-ros2 launch px4_sim px4_sim.launch.py drone_type:='x500' world_name:=null_island model_pose:="-9.7948, -8.31, 2"
-ros2 launch px4_sim px4_sim.launch.py drone_type:='x500' position_name:=pad2 config_position_world:="`ros2 pkg prefix vehicle_gateway_worlds --share`/config/null_island_pads.yaml" world_name:=null_island
+ros2 launch px4_sim px4_sim.launch.py drone_type:='x500' position_name:=pad_1 world_name:=null_island
 ```
 
 # Dockerfile
