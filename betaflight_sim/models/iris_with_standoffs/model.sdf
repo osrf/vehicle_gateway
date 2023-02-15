@@ -66,10 +66,6 @@
           </cylinder>
         </geometry>
         <material>
-          <!--script>
-            <name>Gazebo/FlatBlack</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script-->
           <ambient>0.1 0.1 0.1</ambient>
           <diffuse>0.1 0.1 0.1</diffuse>
           <specular>0.01 0.01 0.01 1.0</specular>
@@ -84,10 +80,6 @@
           </cylinder>
         </geometry>
         <material>
-          <!--script>
-            <name>Gazebo/FlatBlack</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script-->
           <ambient>0.1 0.1 0.1</ambient>
           <diffuse>0.1 0.1 0.1</diffuse>
           <specular>0.01 0.01 0.01 1.0</specular>
@@ -102,10 +94,6 @@
           </cylinder>
         </geometry>
         <material>
-          <!--script>
-            <name>Gazebo/FlatBlack</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script-->
           <ambient>0.1 0.1 0.1</ambient>
           <diffuse>0.1 0.1 0.1</diffuse>
           <specular>0.01 0.01 0.01 1.0</specular>
@@ -120,10 +108,6 @@
           </cylinder>
         </geometry>
         <material>
-          <!--script>
-            <name>Gazebo/FlatBlack</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script-->
           <ambient>0.1 0.1 0.1</ambient>
           <diffuse>0.1 0.1 0.1</diffuse>
           <specular>0.01 0.01 0.01 1.0</specular>
@@ -205,10 +189,6 @@
           </mesh>
         </geometry>
         <material>
-          <!--script>
-            <name>Gazebo/Blue</name>
-            <uri>__default__</uri>
-          </script-->
           <ambient>0 0 1</ambient>
           <diffuse>0 0 1</diffuse>
           <specular>0.1 0.1 0.1 1</specular>
@@ -278,10 +258,6 @@
           </mesh>
         </geometry>
         <material>
-          <!--script>
-            <name>Gazebo/White</name>
-            <uri>__default__</uri>
-          </script-->
           <ambient>1 1 1 1</ambient>
           <diffuse>1 1 1 1</diffuse>
           <specular>.1 .1 .1 1</specular>
@@ -351,10 +327,6 @@
           </mesh>
         </geometry>
         <material>
-          <!--script>
-            <name>Gazebo/Blue</name>
-            <uri>__default__</uri>
-          </script-->
           <ambient>0 0 1</ambient>
           <diffuse>0 0 1</diffuse>
           <specular>0.1 0.1 0.1 1</specular>
@@ -424,10 +396,6 @@
           </mesh>
         </geometry>
         <material>
-          <!--script>
-            <name>Gazebo/White</name>
-            <uri>__default__</uri>
-          </script-->
           <ambient>1 1 1 1</ambient>
           <diffuse>1 1 1 1</diffuse>
           <specular>.1 .1 .1 1</specular>

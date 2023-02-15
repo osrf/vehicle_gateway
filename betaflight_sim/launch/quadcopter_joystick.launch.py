@@ -16,6 +16,7 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription
 from launch.actions import RegisterEventHandler
+from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
@@ -76,6 +77,10 @@ def generate_launch_description():
 
     world_sdf = os.path.join(get_betaflight_dir(), "worlds", "empty_betaflight_world.sdf")
 
+    use_groundcontrol = DeclareLaunchArgument('groundcontrol', default_value='false',
+                                              choices=['true', 'false'],
+                                              description='Start ground control station.')
+
     joy_node = Node(
         package='joy',
         executable='joy_node',
@@ -90,6 +95,9 @@ def generate_launch_description():
             launch_arguments=[('gz_args', [' -r -v 4 ' + world_sdf])]),
         joy_node,
         use_sim_time_arg,
+        use_groundcontrol,
+        ExecuteProcess(cmd=['betaflight-configurator'],
+                       condition=IfCondition(LaunchConfiguration('groundcontrol'))),
         RegisterEventHandler(
             OnProcessIO(
                 target_action=joy_node,
@@ -104,5 +112,4 @@ def generate_launch_description():
                 on_stderr=_run_betaflight_controller_check
             )
         ),
-        ExecuteProcess(cmd=['betaflight-configurator']),
     ])
