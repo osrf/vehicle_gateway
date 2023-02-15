@@ -29,7 +29,8 @@ import xml.etree.ElementTree as ET
 
 
 class WorldPoseFromSdfFrame(Substitution):
-    """Substitution that retrieves a frame from SDF"""
+    """Substitution that retrieves a frame from SDF."""
+
     def __init__(self,
                  frame_name: SomeSubstitutionsType,
                  world_name: SomeSubstitutionsType,
