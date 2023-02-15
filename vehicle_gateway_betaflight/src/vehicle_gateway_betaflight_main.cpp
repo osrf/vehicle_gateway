@@ -42,14 +42,15 @@ int main(int argc, const char ** argv)
         std::cerr << "Error sending RC" << '\n';
       }
       if (count == 20)
+      {
         gateway->arm();
+      }
       if (count == 40)
       {
         gateway->disarm();
         count = 0;
       }
       count++;
-
     }
     gateway->destroy();
   } catch (pluginlib::PluginlibException & ex) {
