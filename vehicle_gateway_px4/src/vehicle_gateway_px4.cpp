@@ -441,7 +441,7 @@ void VehicleGatewayPX4::transition_to_mc()
   this->vehicle_command_pub_->publish(msg_vehicle_command);
 }
 
-void VehicleGatewayPX4::set_local_velocity_setpoint(float vx, float vy, float vz)
+void VehicleGatewayPX4::set_local_velocity_setpoint(float vx, float vy, float vz, float yawspeed)
 {
   px4_msgs::msg::TrajectorySetpoint msg;
 
@@ -450,11 +450,12 @@ void VehicleGatewayPX4::set_local_velocity_setpoint(float vx, float vy, float vz
   msg.position[0] = std::numeric_limits<float>::quiet_NaN();
   msg.position[1] = std::numeric_limits<float>::quiet_NaN();
   msg.position[2] = std::numeric_limits<float>::quiet_NaN();
+  msg.yaw = std::numeric_limits<float>::quiet_NaN();
 
   msg.velocity[0] = vx;
   msg.velocity[1] = vy;
   msg.velocity[2] = vz;
-  msg.yaw = -3.14;
+  msg.yawspeed = yawspeed;
   this->vehicle_trajectory_setpoint_pub_->publish(msg);
 }
 

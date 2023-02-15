@@ -84,9 +84,10 @@ void VehicleGatewayPython::PublishLocalPositionSetpoint(float x, float y, float 
   this->gateway_->set_local_position_setpoint(x, y, z);
 }
 
-void VehicleGatewayPython::PublishLocalVelocitySetpoint(float vx, float vy, float vz)
+void VehicleGatewayPython::PublishLocalVelocitySetpoint(
+  float vx, float vy, float vz, float yawspeed)
 {
-  this->gateway_->set_local_velocity_setpoint(vx, vy, vz);
+  this->gateway_->set_local_velocity_setpoint(vx, vy, vz, yawspeed);
 }
 
 void VehicleGatewayPython::SetOffboardControlMode(bool is_trajectory, bool is_velocity)

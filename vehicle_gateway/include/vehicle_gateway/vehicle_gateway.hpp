@@ -159,7 +159,7 @@ public:
   /// \param[in] vx Desired x velocity
   /// \param[in] vy Desired y velocity
   /// \param[in] vz Desired z velocity
-  virtual void set_local_velocity_setpoint(float vx, float vy, float vz) = 0;
+  virtual void set_local_velocity_setpoint(float vx, float vy, float vz, float yawspeed = 0.0f) = 0;
 
   /// Set offboard_control_mode
   virtual void set_offboard_control_mode(bool is_trajectory, bool is_velocity) = 0;

@@ -45,7 +45,7 @@ while 1:
                 time.sleep(0.01)
 
         px4_gateway.set_offboard_control_mode(False, True)
-        px4_gateway.set_local_velocity_setpoint(0, 0, -5)
+        px4_gateway.set_local_velocity_setpoint(0, 0, -5, 5)
 
         _start_time = current_time
     time.sleep(0.1)

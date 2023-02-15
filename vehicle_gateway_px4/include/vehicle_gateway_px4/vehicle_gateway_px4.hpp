@@ -89,7 +89,7 @@ public:
   void set_offboard_control_mode(bool is_trajectory, bool is_velocity) override;
 
   /// Documentation inherited
-  void set_local_velocity_setpoint(float vx, float vy, float vz) override;
+  void set_local_velocity_setpoint(float vx, float vy, float vz, float yawspeed = 0.0f) override;
 
   /// Documentation inherited
   void set_offboard_mode() override;

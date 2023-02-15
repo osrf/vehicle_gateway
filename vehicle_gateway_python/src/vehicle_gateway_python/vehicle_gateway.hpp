@@ -62,7 +62,7 @@ public:
 
   void PublishLocalPositionSetpoint(float x, float y, float z);
 
-  void PublishLocalVelocitySetpoint(float vx, float vy, float vz);
+  void PublishLocalVelocitySetpoint(float vx, float vy, float vz, float yawspeed);
 
   /// Get flight mode
   /// \return Flight mode
