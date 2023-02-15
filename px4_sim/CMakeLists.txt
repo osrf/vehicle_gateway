@@ -7,7 +7,7 @@ include(ExternalProject)
 
 find_program(MAKE_EXECUTABLE NAMES make REQUIRED)
 
-ExternalProject_Add(px4-firmware
+externalproject_add(px4-firmware
   PREFIX
       ${PROJECT_BINARY_DIR}/px4-src
   GIT_REPOSITORY
