@@ -41,10 +41,10 @@ int main(int argc, const char ** argv)
       if (!gateway->ctbr(0, 0, 0, -1)) {
         std::cerr << "Error sending RC" << '\n';
       }
-      if (count == 20)
+      if (count == 20) {
         gateway->arm();
-      if (count == 40)
-      {
+      }
+      if (count == 40) {
         gateway->disarm();
         count = 0;
       }
