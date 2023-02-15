@@ -4,68 +4,47 @@ The goal of this project is to create a pluginlib-based C++ library that can int
 
 # Installation
 
-This package is developed and on Ubuntu 22.04 LTS with ROS 2 Humble. We suggest installing ROS 2 Humble from binary packages, and installing Gazebo Garden. The following steps will describe this process, resulting in two workspaces: one for Gazebo Garden, and an overlaid workspace for the Vehicle Gateway (this project), in order to make rebuilds faster.
+This package is developed and on Ubuntu 22.04 LTS with ROS 2 Humble, and uses Gazebo Garden for simulation. To save lots of compile time, we recommend installing ROS 2 Humble and Gazebo Garden from binary packages.
 
-To keep paths short, `vg` stands for "Vehicle Gateway". After these steps, you'll have two workspaces in the `~/vg` directory, like this:
-
-```bash
-vg
-├── gz_ws
-│   ├── build
-│   ├── install
-│   ├── log
-│   └── src
-└── vg_ws
-    ├── build
-    ├── install
-    ├── log
-    └── src
-```
-
+### Binary ROS 2 Humble Installation
 First, install ROS 2 Humble using the `.deb` packages using APT [according to these instructions](http://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html)
 
-Next, install a few dependencies and set up our workspace source directories:
-```bash
-sudo apt install python3-kconfiglib python3-jinja2 python3-jsonschema ros-humble-gps-msgs gcc-arm-none-eabi libfuse2
-pip3 install pyros-genmsg
-mkdir -p ~/vg/vg_ws/src
-cd ~/vg/vg_ws/src
-git clone https://github.com/osrf/vehicle_gateway
-cd ~/vg/vg_ws
-vcs import src < src/vehicle_gateway/dependencies.repos
-```
-
+### Binary Gazebo Installation
 Next, install Gazebo Garden. The full instructions are [here](https://gazebosim.org/docs/garden/install_ubuntu), and summarized as follows:
 
 ```bash
 sudo apt-get update
 sudo apt-get install lsb-release wget gnupg
-```
-
-Then install Gazebo Garden:
-
-```bash
 sudo wget https://packages.osrfoundation.org/gazebo.gpg -O /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
 sudo apt-get update
 sudo apt-get install gz-garden
 ```
-Now you should have Gazebo available.
 
-We can now build the Vehicle Gateway itself, by overlaying its workspace on top of the Gazebo Garden workspace (which in turn is overlaying the ROS 2 Humble system installation). The Vehicle Gateway build will also download and build the PX4 firmware, to allow software-in-the-loop (SITL) simulation:
+### Build the Vehicle Gateway
+We can now build the Vehicle Gateway itself. To keep paths short, we will make a colcon workspace named `vg` for "Vehicle Gateway", in your home directory. The Vehicle Gateway build will also download and build the PX4 firmware, to allow software-in-the-loop (SITL) simulation.
 
 ```bash
-cd ~/vg/vg_ws
+sudo apt install python3-kconfiglib python3-jinja2 python3-jsonschema ros-humble-gps-msgs gcc-arm-none-eabi libfuse2
+pip3 install pyros-genmsg
+mkdir -p ~/vg/src
+cd ~/vg/src
+git clone https://github.com/osrf/vehicle_gateway
+cd ~/vg
+vcs import src < src/vehicle_gateway/dependencies.repos
 rosdep update && rosdep install --from-paths src --ignore-src -y
-source ~/vg/gz_ws/install/setup.bash
+source /opt/ros/humble/setup.bash
 colcon build --event-handlers console_direct+
 ```
 
+### If necessary: build Gazebo from source
+In the event that you need or want to test out pre-release changes that are only available in the very latest Gazebo source code, you can always build Gazebo Garden from source. Note that this is considerably more complicated and requires significant compile time. Instructions to do this are [provided here](build_gazebo_from_source.md).
+
 # Run a PX4 Quadcopter demo
 ```bash
-cd ~/vg/vg_ws
+cd ~/vg
 source install/setup.bash
-ros2 launch px4_sim px4_sim.launch.py drone_type:='gz_x500'
+ros2 launch px4_sim px4_sim.launch.py drone_type:='x500'
 ```
 
 # Dockerfile
