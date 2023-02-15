@@ -84,9 +84,14 @@ void VehicleGatewayPython::PublishLocalPositionSetpoint(float x, float y, float 
   this->gateway_->set_local_position_setpoint(x, y, z);
 }
 
-void VehicleGatewayPython::SetOffboardControlMode(bool is_trajectory)
+void VehicleGatewayPython::PublishLocalVelocitySetpoint(float vx, float vy, float vz)
 {
-  this->gateway_->set_offboard_control_mode(is_trajectory);
+  this->gateway_->set_local_velocity_setpoint(vx, vy, vz);
+}
+
+void VehicleGatewayPython::SetOffboardControlMode(bool is_trajectory, bool is_velocity)
+{
+  this->gateway_->set_offboard_control_mode(is_trajectory, is_velocity);
 }
 
 void VehicleGatewayPython::SetOffboardMode()
@@ -177,6 +182,9 @@ define_vehicle_gateway(py::object module)
   .def(
     "set_local_position_setpoint", &VehicleGatewayPython::PublishLocalPositionSetpoint,
     "PublishLocalPositionSetpoint")
+  .def(
+    "set_local_velocity_setpoint", &VehicleGatewayPython::PublishLocalVelocitySetpoint,
+    "PublishLocalVelocitySetpoint")
   .def(
     "set_offboard_mode", &VehicleGatewayPython::SetOffboardMode,
     "SetOffboardMode")

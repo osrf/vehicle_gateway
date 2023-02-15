@@ -62,6 +62,8 @@ public:
 
   void PublishLocalPositionSetpoint(float x, float y, float z);
 
+  void PublishLocalVelocitySetpoint(float vx, float vy, float vz);
+
   /// Get flight mode
   /// \return Flight mode
   vehicle_gateway::FLIGHT_MODE GetFlightMode();
@@ -87,7 +89,7 @@ public:
   vehicle_gateway::FAILURE GetFailure();
 
   /// Set offboard_control_mode
-  void SetOffboardControlMode(bool is_trajectory);
+  void SetOffboardControlMode(bool is_trajectory, bool is_velocity);
 
   /// Set offboard control mode
   void SetOffboardMode();
