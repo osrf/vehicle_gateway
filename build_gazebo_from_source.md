@@ -56,5 +56,3 @@ rosdep update && rosdep install --from-paths src --ignore-src -y
 source ~/vg/gz_ws/install/setup.bash
 colcon build --event-handlers console_direct+
 ```
-
-

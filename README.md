@@ -24,6 +24,8 @@ sudo apt-get install gz-garden
 ### Build the Vehicle Gateway
 We can now build the Vehicle Gateway itself. To keep paths short, we will make a colcon workspace named `vg` for "Vehicle Gateway", in your home directory. The Vehicle Gateway build will also download and build the PX4 firmware, to allow software-in-the-loop (SITL) simulation.
 
+At time of writing, the `rosdep` command has to include a lot of `--skip-key` because currently Gazebo Garden is not yet in `rosdep`.
+
 ```bash
 sudo apt install python3-kconfiglib python3-jinja2 python3-jsonschema ros-humble-gps-msgs gcc-arm-none-eabi libfuse2
 pip3 install pyros-genmsg
@@ -32,7 +34,7 @@ cd ~/vg/src
 git clone https://github.com/osrf/vehicle_gateway
 cd ~/vg
 vcs import src < src/vehicle_gateway/dependencies.repos
-rosdep update && rosdep install --from-paths src --ignore-src -y
+rosdep update && rosdep install --from-paths src --ignore-src -y --skip-keys="gz-transport12 gz-common5 gz-math7 gz-msgs9 gz-gui7 gz-cmake3 gz-sim7"
 source /opt/ros/humble/setup.bash
 colcon build --event-handlers console_direct+
 ```
