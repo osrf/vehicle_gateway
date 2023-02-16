@@ -46,6 +46,7 @@ In the event that you need or want to test out pre-release changes that are only
 ```bash
 cd ~/vg
 source install/setup.bash
+ros2 launch px4_sim px4_sim.launch.py drone_type:='x500' position_name:=pad_1 world_name:=null_island
 ros2 launch px4_sim px4_sim.launch.py drone_type:='x500'
 ```
 
@@ -65,5 +66,5 @@ sudo apt-get install python3-rocker
 Run the container with rocker to visualize the GUI
 
 ```bash
-rocker --x11 vehicle_gateway ros2 launch px4_sim plane.launch.py
+rocker --x11 vehicle_gateway ros2 launch px4_sim px4_sim.launch.py drone_type:='x500' world_name:=null_island model_pose:="-9.7948, -8.31, 2"
 ```
