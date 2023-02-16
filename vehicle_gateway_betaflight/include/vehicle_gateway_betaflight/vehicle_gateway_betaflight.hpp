@@ -21,6 +21,10 @@
 #include <memory>
 
 #include <sensor_msgs/msg/imu.hpp>
+#include <sensor_msgs/msg/magnetic_field.hpp>
+#include <sensor_msgs/msg/joy.hpp>
+#include <std_msgs/msg/float64.hpp>
+#include <std_msgs/msg/u_int16_multi_array.hpp>
 
 #include <rclcpp/rclcpp.hpp>
 
@@ -100,7 +104,10 @@ private:
   // Orchestration
   std::thread spin_thread_;
   std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> exec_;
-  rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr pub_imu_raw;
+  rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr pub_imu_raw_;
+  rclcpp::Publisher<sensor_msgs::msg::MagneticField>::SharedPtr pub_imu_mag_;
+  rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr pub_altitude_;
+  rclcpp::Publisher<std_msgs::msg::UInt16MultiArray>::SharedPtr pub_motors_;
   rclcpp::Node::SharedPtr betaflight_node_;
 
   // Service clients
@@ -109,7 +116,11 @@ private:
   void onStatus(const msp::msg::Status & status);
   void onBoxNames(const msp::msg::BoxNames & box_names);
   void onImu(const msp::msg::RawImu & imu);
-  void onRc(const msp::msg::Rc & rc) {std::cout << rc;}
+  void onRc(const msp::msg::Rc & rc) {
+    // std::cout << rc;
+  }
+  void onAltitude(const msp::msg::Altitude & altitude);
+  void onMotor(const msp::msg::Motor &motor);
 
   fcu::FlightController fcu_;
 

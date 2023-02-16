@@ -33,10 +33,20 @@ void VehicleGatewayBetaflight::init(int argc, const char ** argv)
       this->exec_->spin();
     });
 
-  this->pub_imu_raw =
+  this->pub_imu_raw_ =
     this->betaflight_node_->create_publisher<sensor_msgs::msg::Imu>(
     "imu/data_raw",
     rclcpp::SensorDataQoS());
+
+  this->pub_imu_mag_ =
+    this->betaflight_node_->create_publisher<sensor_msgs::msg::MagneticField>(
+      "imu/mag",
+      rclcpp::SensorDataQoS());
+
+   this->pub_altitude_ =
+    this->betaflight_node_->create_publisher<std_msgs::msg::Float64>(
+      "global_position/rel_alt",
+      rclcpp::SensorDataQoS());
 
   std::string device = "/dev/ttyS0";
 
@@ -81,6 +91,8 @@ void VehicleGatewayBetaflight::init(int argc, const char ** argv)
   this->fcu_.subscribe(&VehicleGatewayBetaflight::onBoxNames, this, 1);
   this->fcu_.subscribe(&VehicleGatewayBetaflight::onImu, this, 1);
   this->fcu_.subscribe(&VehicleGatewayBetaflight::onRc, this, 1);
+  this->fcu_.subscribe(&VehicleGatewayBetaflight::onAltitude, this, 1);
+  this->fcu_.subscribe(&VehicleGatewayBetaflight::onMotor, this, 1);
 }
 
 void VehicleGatewayBetaflight::destroy()
@@ -90,6 +102,22 @@ void VehicleGatewayBetaflight::destroy()
     rclcpp::shutdown();
     this->spin_thread_.join();
   }
+}
+
+void VehicleGatewayBetaflight::onAltitude(const msp::msg::Altitude & altitude)
+{
+  std_msgs::msg::Float64 alt; // altitude in meter
+  alt.data = altitude.altitude;
+  this->pub_altitude_->publish(alt);
+}
+
+void VehicleGatewayBetaflight::onMotor(const msp::msg::Motor &motor)
+{
+    std_msgs::msg::UInt16MultiArray motor_out;
+    for(const uint16_t m : motor.motor) {
+        motor_out.data.push_back(m);
+    }
+    this->pub_motors_->publish(motor_out);
 }
 
 void VehicleGatewayBetaflight::onImu(const msp::msg::RawImu & imu)
@@ -109,7 +137,15 @@ void VehicleGatewayBetaflight::onImu(const msp::msg::RawImu & imu)
   imu_msg.angular_velocity.x = imu_si.gyro[0] / 180.0 * M_PI;
   imu_msg.angular_velocity.y = imu_si.gyro[1] / 180.0 * M_PI;
   imu_msg.angular_velocity.z = imu_si.gyro[2] / 180.0 * M_PI;
-  this->pub_imu_raw->publish(imu_msg);
+  this->pub_imu_raw_->publish(imu_msg);
+
+  // magnetic field vector
+  sensor_msgs::msg::MagneticField mag_msg;
+  mag_msg.header = hdr;
+  mag_msg.magnetic_field.x = imu_si.mag[0] * 1e-6;
+  mag_msg.magnetic_field.y = imu_si.mag[1] * 1e-6;
+  mag_msg.magnetic_field.z = imu_si.mag[2] * 1e-6;
+  this->pub_imu_mag_->publish(mag_msg);
 }
 
 void VehicleGatewayBetaflight::onBoxNames(const msp::msg::BoxNames & box_names)
@@ -179,7 +215,6 @@ bool VehicleGatewayBetaflight::ctbr(float roll, float pitch, float yaw, float th
   cmds[0] = uint16_t(this->pitch_ * 500) + 1500;
 
   cmds[4] = this->arm_;
-  cmds[5] = 1234;
 
   return this->fcu_.setRc(cmds);
 }

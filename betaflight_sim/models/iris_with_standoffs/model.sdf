@@ -132,6 +132,13 @@
         <always_on>1</always_on>
         <update_rate>1000.0</update_rate>
       </sensor>
+      <sensor name="air_pressure_sensor" type="air_pressure">
+        <always_on>1</always_on>
+        <update_rate>30</update_rate>
+        <air_pressure>
+          <reference_altitude>0</reference_altitude>
+        </air_pressure>
+      </sensor>
     </link>
     <joint name='imu_joint' type='revolute'>
       <child>imu_link</child>

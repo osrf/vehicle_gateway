@@ -26,6 +26,10 @@
       name="gz::sim::systems::Imu">
     </plugin>
     <plugin
+      filename="gz-sim-air-pressure-system"
+      name="gz::sim::systems::AirPressure">
+    </plugin>
+    <plugin
       filename="gz-sim-air-speed-system"
       name="gz::sim::systems::AirSpeed">
     </plugin>

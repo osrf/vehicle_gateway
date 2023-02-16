@@ -32,25 +32,35 @@ int main(int argc, const char ** argv)
       "vehicle_gateway_betaflight::VehicleGatewayBetaflight");
     std::cerr << "Initializing VehicleGatewayBetaflight" << '\n';
     gateway->init(argc, argv);
-    gateway->arm();
     int count = 0;
-    while (1) {
-      std::cerr << "gateway->get_arming_state() " <<
-        static_cast<int>(gateway->get_arming_state()) << '\n';
-      std::this_thread::sleep_for(50ms);
+    while (gateway->get_arming_state() != vehicle_gateway::ARMING_STATE::ARMED)
+    {
       if (!gateway->ctbr(0, 0, 0, -1)) {
         std::cerr << "Error sending RC" << '\n';
       }
-      if (count == 20)
+      if (count == 1)
       {
         gateway->arm();
       }
-      if (count == 40)
+      if (count == 30)
       {
         gateway->disarm();
         count = 0;
       }
       count++;
+      std::this_thread::sleep_for(50ms);
+      std::cout << "Trying to arm vehicle " << gateway->get_arming_state() << '\n';
+    }
+
+    std::cout << "Vehicle is armed" << '\n';
+
+    while (1) {
+      std::cerr << "gateway->get_arming_state() " <<
+        static_cast<int>(gateway->get_arming_state()) << '\n';
+      std::this_thread::sleep_for(50ms);
+      if (!gateway->ctbr(0, 0, 0, 0.1)) {
+        std::cerr << "Error sending RC" << '\n';
+      }
     }
     gateway->destroy();
   } catch (pluginlib::PluginlibException & ex) {
