@@ -37,11 +37,11 @@ while 1:
         if offboard_setpoint_counter_ == 5:
             while px4_gateway.get_flight_mode() != FlightMode.OFFBOARD:
                 px4_gateway.set_offboard_mode()
-                print("Setting offboard mode")
+                print('Setting offboard mode')
                 time.sleep(0.01)
             while px4_gateway.get_arming_state() != ArmingState.ARMED:
                 px4_gateway.arm()
-                print("Arming")
+                print('Arming')
                 time.sleep(0.01)
 
         px4_gateway.set_offboard_control_mode(False, True)
