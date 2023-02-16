@@ -40,7 +40,8 @@ public:
   : Node("minimal_subscriber"), loader_("vehicle_gateway", "vehicle_gateway::VehicleGateway")
   {
     this->subscription_ = this->create_subscription<std_msgs::msg::Float64>(
-      "global_position/rel_alt", rclcpp::SensorDataQoS(), std::bind(&MinimalSubscriber::topic_callback, this, _1));
+      "global_position/rel_alt", rclcpp::SensorDataQoS(),
+      std::bind(&MinimalSubscriber::topic_callback, this, _1));
 
     this->gateway_ = this->loader_.createSharedInstance(
       "vehicle_gateway_betaflight::VehicleGatewayBetaflight");
@@ -70,13 +71,16 @@ public:
       }
       count++;
       std::this_thread::sleep_for(50ms);
-      RCLCPP_INFO(this->get_logger(), "Trying to arm vehicle %d", this->gateway_->get_arming_state());
+      RCLCPP_INFO(
+        this->get_logger(), "Trying to arm vehicle %d",
+        this->gateway_->get_arming_state());
     }
 
     RCLCPP_INFO(this->get_logger(), "Vehicle is armed");
 
 
-    std::chrono::time_point<std::chrono::system_clock> last_update_time = std::chrono::system_clock::now();
+    std::chrono::time_point<std::chrono::system_clock> last_update_time =
+      std::chrono::system_clock::now();
 
     while (1) {
       std::this_thread::sleep_for(50ms);
@@ -88,7 +92,8 @@ public:
       }
       std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
 
-      auto nanoseconds = std::chrono::duration_cast<std::chrono::nanoseconds>(now - last_update_time);
+      auto nanoseconds =
+        std::chrono::duration_cast<std::chrono::nanoseconds>(now - last_update_time);
 
       last_update_time = now;
 
@@ -98,7 +103,9 @@ public:
         error,
         nanoseconds.count());
       target_vel = clamp(target_vel, -1.0, 1.0);
-      RCLCPP_INFO(this->get_logger(), "target_vel %.2f desired alt: %.2f real alt: %.2f ", target_vel, this->desired_altitude_, altitude);
+      RCLCPP_INFO(
+        this->get_logger(), "target_vel %.2f desired alt: %.2f real alt: %.2f ",
+        target_vel, this->desired_altitude_, altitude);
       if (!this->gateway_->ctbr(0, 0, 0, target_vel)) {
         RCLCPP_ERROR(this->get_logger(), "Error sending RC");
       }
