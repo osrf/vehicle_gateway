@@ -37,6 +37,7 @@ jobs:
             vehicle_gateway
             vehicle_gateway_px4
             vehicle_gateway_python
+            vehicle_gateway_worlds
           vcs-repo-file-url: |
             $GITHUB_WORKSPACE/dependencies.repos
           target-ros2-distro: humble

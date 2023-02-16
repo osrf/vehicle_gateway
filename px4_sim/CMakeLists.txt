@@ -28,7 +28,6 @@ externalproject_add(px4-firmware
 
 install(DIRECTORY
   launch
-  worlds
   DESTINATION
     share/${PROJECT_NAME}
 )
