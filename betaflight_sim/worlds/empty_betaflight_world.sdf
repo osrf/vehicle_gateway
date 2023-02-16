@@ -75,23 +75,10 @@
       </link>
     </model>
 
-    <include>
-      <uri>model://aruco_marker</uri>
-    </include>
-
     <model name="iris_with_Betaflight">
         <include>
           <uri>model://iris_with_standoffs</uri>
         </include>
-
-        <include>
-          <uri>model://camera</uri>
-        </include>
-
-        <joint name="camera_joint" type="fixed">
-          <parent>iris_with_standoffs::base_link</parent>
-          <child>camera::link</child>
-        </joint>
 
         <!-- plugins -->
         <plugin filename="gz-sim-joint-state-publisher-system"
