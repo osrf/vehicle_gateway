@@ -52,9 +52,10 @@ def generate_launch_description():
         description='If true, use simulated clock')
 
     os.environ["GZ_SIM_RESOURCE_PATH"] = os.path.join(get_betaflight_dir(), "models")
+    os.environ["GZ_SIM_RESOURCE_PATH"] += ":" + os.path.join(get_betaflight_dir(), "worlds")
     os.environ["GZ_SIM_RESOURCE_PATH"] += ":" + os.path.join(get_package_share_directory('vehicle_gateway_models'), "models")
     os.environ["GZ_SIM_RESOURCE_PATH"] += ":" + os.path.join(get_package_share_directory('vehicle_gateway_worlds'), "worlds")
-
+    print("os.environ[GZ_SIM_RESOURCE_PATH]", os.environ["GZ_SIM_RESOURCE_PATH"])
     world_name = LaunchConfiguration('world_name', default='empty_px4_world')
     world_name_arg = DeclareLaunchArgument('world_name',
                                            default_value=world_name,

@@ -11,6 +11,12 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
+  <depend>control_toolbox</depend>
+  <depend>rclcpp</depend>
+  <depend>std_msgs</depend>
+  <depend>vehicle_gateway</depend>
+  <depend>vehicle_gateway_betaflight</depend>
+
   <exec_depend>ament_index_python</exec_depend>
   <exec_depend>betaflight_sim</exec_depend>
   <exec_depend>launch</exec_depend>
