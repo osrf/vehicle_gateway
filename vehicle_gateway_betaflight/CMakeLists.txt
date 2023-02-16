@@ -95,7 +95,6 @@ ament_export_targets(
   export_${PROJECT_NAME}
 )
 ament_export_dependencies(
-  msp
   pluginlib
   rclcpp
   vehicle_gateway

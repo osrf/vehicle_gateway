@@ -24,7 +24,10 @@ namespace vehicle_gateway_betaflight
 
 void VehicleGatewayBetaflight::init(int argc, const char ** argv)
 {
-  rclcpp::init(argc, argv);
+  if (argc != 0 && argv != nullptr)
+  {
+    rclcpp::init(argc, argv);
+  }
   this->exec_ = std::make_shared<rclcpp::executors::MultiThreadedExecutor>();
   this->betaflight_node_ = std::make_shared<rclcpp::Node>("VehicleGatewayBetaflight");
   this->exec_->add_node(this->betaflight_node_);
@@ -46,6 +49,11 @@ void VehicleGatewayBetaflight::init(int argc, const char ** argv)
   this->pub_altitude_ =
     this->betaflight_node_->create_publisher<std_msgs::msg::Float64>(
     "global_position/rel_alt",
+    rclcpp::SensorDataQoS());
+
+  this->pub_motors_ =
+    this->betaflight_node_->create_publisher<std_msgs::msg::UInt16MultiArray>(
+    "motors_out",
     rclcpp::SensorDataQoS());
 
   std::string device = "/dev/ttyS0";
