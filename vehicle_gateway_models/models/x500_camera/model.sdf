@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sdf version='1.9'>
+  <model name='x500_camera'>
+
+    <include merge="true">
+      <uri>model://x500</uri>
+    </include>
+
+    <include merge="true">
+      <uri>model://camera</uri>
+    </include>
+
+    <joint name="camera_joint" type="fixed">
+      <parent>base_link</parent>
+      <child>camera_link</child>
+    </joint>
+
+  </model>
+</sdf>

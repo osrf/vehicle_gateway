@@ -16,8 +16,9 @@ from ament_index_python.packages import get_package_share_directory
 from distutils.dir_util import copy_tree
 from launch import LaunchDescription, Substitution, SomeSubstitutionsType, LaunchContext
 from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription
-from launch.actions import SetEnvironmentVariable
+from launch.actions import RegisterEventHandler, SetEnvironmentVariable
 from launch.conditions import IfCondition
+from launch.event_handlers import OnProcessExit
 from launch_ros.actions import Node
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
@@ -34,13 +35,21 @@ class WorldPoseFromSdfFrame(Substitution):
     def __init__(self,
                  frame_name: SomeSubstitutionsType,
                  world_name: SomeSubstitutionsType,
-                 model_pose: SomeSubstitutionsType) -> None:
+                 model_pose: SomeSubstitutionsType,
+                 coor_name: str) -> None:
         super().__init__()
 
         from launch.utilities import normalize_to_list_of_substitutions  # import here to avoid loop
         self.__frame_name = normalize_to_list_of_substitutions(frame_name)
         self.__world_name = normalize_to_list_of_substitutions(world_name)
         self.__model_pose = normalize_to_list_of_substitutions(model_pose)
+        self.__x = "0.0"
+        self.__y = "0.0"
+        self.__z = "0.3"
+        self.__roll = "0.0"
+        self.__pitch = "0.0"
+        self.__yaw = "0.0"
+        self.__coord_name = coor_name
 
     @property
     def model_pose(self) -> List[Substitution]:
@@ -57,6 +66,23 @@ class WorldPoseFromSdfFrame(Substitution):
         """Getter for world name."""
         return self.__world_name
 
+    def parseCoords(self, strCoords: str, key: str, strSplit: str):
+        x, y, z, roll, pitch, yaw = strCoords.split(strSplit)
+        if (self.__coord_name == "x"):
+            return str(x)
+        if (self.__coord_name == "y"):
+            return str(y)
+        if (self.__coord_name == "z"):
+            return str(z)
+        if (self.__coord_name == "roll"):
+            return str(roll)
+        if (self.__coord_name == "pitch"):
+            return str(pitch)
+        if (self.__coord_name == "yaw"):
+            return str(yaw)
+        return "0.0"
+
+
     def perform(self, context: LaunchContext) -> str:
         from launch.utilities import perform_substitutions
         frame_name_str = perform_substitutions(context, self.frame_name)
@@ -65,7 +91,7 @@ class WorldPoseFromSdfFrame(Substitution):
 
         # allow manually specified model_pose param to override lookup
         if model_pose_str != '':
-            return model_pose_str
+            return self.parseCoords(model_pose_str, self.__coord_name, ", ")
 
         if frame_name_str != '':
             world_sdf_path = os.path.join(
@@ -82,12 +108,10 @@ class WorldPoseFromSdfFrame(Substitution):
             pose_node = frame_node.find('pose')
             pose_str = pose_node.text
             # SDFormat stores poses space-separated, but we need them comma-separated
-            coords = pose_str.split()
-            comma_interpolated = ', '.join(coords)
-            return comma_interpolated
+            return self.parseCoords(coords, self.__coord_name, " ")
 
         # default a bit above the origin; vehicle will drop to the ground plane
-        return '0, 0, 0.3, 0, 0, 0'
+        return self.parseCoords("0, 0, 0.3, 0, 0, 0", self.__coord_name, ", ")
 
 
 def get_px4_dir():
@@ -130,16 +154,48 @@ def generate_launch_description():
                                            default_value=model_pose,
                                            description='Model pose (x, y, z, roll, pitch, yaw)')
 
-    model_pose = WorldPoseFromSdfFrame(
+    model_pose_x = WorldPoseFromSdfFrame(
         frame_name=LaunchConfiguration('frame_name'),
         world_name=LaunchConfiguration('world_name'),
-        model_pose=LaunchConfiguration('model_pose'))
+        model_pose=LaunchConfiguration('model_pose'),
+        coor_name='x')
+
+    model_pose_y = WorldPoseFromSdfFrame(
+        frame_name=LaunchConfiguration('frame_name'),
+        world_name=LaunchConfiguration('world_name'),
+        model_pose=LaunchConfiguration('model_pose'),
+        coor_name='y')
+
+    model_pose_z = WorldPoseFromSdfFrame(
+        frame_name=LaunchConfiguration('frame_name'),
+        world_name=LaunchConfiguration('world_name'),
+        model_pose=LaunchConfiguration('model_pose'),
+        coor_name='z')
+
+    model_pose_roll = WorldPoseFromSdfFrame(
+        frame_name=LaunchConfiguration('frame_name'),
+        world_name=LaunchConfiguration('world_name'),
+        model_pose=LaunchConfiguration('model_pose'),
+        coor_name='roll')
+
+    model_pose_pitch = WorldPoseFromSdfFrame(
+        frame_name=LaunchConfiguration('frame_name'),
+        world_name=LaunchConfiguration('world_name'),
+        model_pose=LaunchConfiguration('model_pose'),
+        coor_name='pitch')
+
+    model_pose_yaw = WorldPoseFromSdfFrame(
+        frame_name=LaunchConfiguration('frame_name'),
+        world_name=LaunchConfiguration('world_name'),
+        model_pose=LaunchConfiguration('model_pose'),
+        coor_name='yaw')
 
     world_pkgs = get_package_share_directory('vehicle_gateway_worlds')
 
     os.environ['GZ_SIM_RESOURCE_PATH'] = ':' + os.path.join(get_px4_dir(), 'models')
     os.environ['GZ_SIM_RESOURCE_PATH'] += ':' + os.path.join(get_px4_dir(), 'worlds')
     os.environ['GZ_SIM_RESOURCE_PATH'] += ':' + os.path.join(world_pkgs, 'worlds')
+    os.environ['GZ_SIM_RESOURCE_PATH'] += ':' + os.path.join(get_package_share_directory('vehicle_gateway_models'), 'models')
 
     rootfs = tempfile.TemporaryDirectory()
     px4_dir = get_px4_dir()
@@ -151,7 +207,7 @@ def generate_launch_description():
     run_px4 = ExecuteProcess(
         cmd=['px4', '%s/ROMFS/px4fmu_common' % rootfs.name,
              '-s', rc_script,
-             '-i', 'id0',
+             '-i', '0',
              '-d'],
         cwd=get_px4_dir(),
         output='screen',
@@ -163,6 +219,22 @@ def generate_launch_description():
         arguments=['udp4', '-p', '8888'],
         output='screen')
 
+    spawn_entity = Node(
+        package='ros_gz_sim',
+        executable='create',
+        output='screen',
+        arguments=['-file', [get_package_share_directory('vehicle_gateway_models'), '/models/', "x500_camera", '/', 'model.sdf'],
+                   '-name', "x500_0",
+                   '-allow_renaming', 'true',
+                   '-x', model_pose_x,
+                   '-y', model_pose_y,
+                   '-z', model_pose_z,
+                   '-R', model_pose_roll,
+                   '-P', model_pose_pitch,
+                   '-Y', model_pose_yaw],
+    )
+
+    os.environ['PX4_GZ_WORLD'] = ""
     return LaunchDescription([
         # Launch gazebo environment
         use_sim_time_arg,
@@ -170,19 +242,23 @@ def generate_launch_description():
         drone_type_args,
         model_pose_arg,
         frame_name_args,
-        SetEnvironmentVariable('PX4_GZ_MODEL', LaunchConfiguration('drone_type')),
-        SetEnvironmentVariable('PX4_GZ_WORLD', LaunchConfiguration('world_name')),
-        SetEnvironmentVariable('PX4_GZ_MODEL_POSE', model_pose),
-        SetEnvironmentVariable('PX4_SIM_MODEL', ['gz_', LaunchConfiguration('drone_type')]),
+        spawn_entity,
+        run_px4,
+        SetEnvironmentVariable('PX4_GZ_MODEL_NAME', [LaunchConfiguration('drone_type')]),
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 [os.path.join(get_package_share_directory('ros_gz_sim'),
                               'launch', 'gz_sim.launch.py')]),
             launch_arguments=[('gz_args', [' -r -v 4 ', LaunchConfiguration('world_name'), '.sdf'])]
         ),
-        run_px4,
+        # RegisterEventHandler(
+        #     event_handler=OnProcessExit(
+        #         target_action=spawn_entity,
+        #         on_exit=[run_px4],
+        #     )
+        # ),
         use_groundcontrol,
         ExecuteProcess(cmd=['QGroundControl.AppImage'],
                        condition=IfCondition(LaunchConfiguration('groundcontrol'))),
-        micro_ros_agent
+        # micro_ros_agent
     ])
