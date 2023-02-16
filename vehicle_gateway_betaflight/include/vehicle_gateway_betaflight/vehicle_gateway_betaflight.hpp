@@ -116,11 +116,12 @@ private:
   void onStatus(const msp::msg::Status & status);
   void onBoxNames(const msp::msg::BoxNames & box_names);
   void onImu(const msp::msg::RawImu & imu);
-  void onRc(const msp::msg::Rc & rc) {
+  void onRc(const msp::msg::Rc & rc)
+  {
     // std::cout << rc;
   }
   void onAltitude(const msp::msg::Altitude & altitude);
-  void onMotor(const msp::msg::Motor &motor);
+  void onMotor(const msp::msg::Motor & motor);
 
   fcu::FlightController fcu_;
 

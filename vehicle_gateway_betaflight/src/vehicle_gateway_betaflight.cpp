@@ -40,13 +40,13 @@ void VehicleGatewayBetaflight::init(int argc, const char ** argv)
 
   this->pub_imu_mag_ =
     this->betaflight_node_->create_publisher<sensor_msgs::msg::MagneticField>(
-      "imu/mag",
-      rclcpp::SensorDataQoS());
+    "imu/mag",
+    rclcpp::SensorDataQoS());
 
-   this->pub_altitude_ =
+  this->pub_altitude_ =
     this->betaflight_node_->create_publisher<std_msgs::msg::Float64>(
-      "global_position/rel_alt",
-      rclcpp::SensorDataQoS());
+    "global_position/rel_alt",
+    rclcpp::SensorDataQoS());
 
   std::string device = "/dev/ttyS0";
 
@@ -106,18 +106,19 @@ void VehicleGatewayBetaflight::destroy()
 
 void VehicleGatewayBetaflight::onAltitude(const msp::msg::Altitude & altitude)
 {
-  std_msgs::msg::Float64 alt; // altitude in meter
+  // altitude in meter
+  std_msgs::msg::Float64 alt;
   alt.data = altitude.altitude;
   this->pub_altitude_->publish(alt);
 }
 
-void VehicleGatewayBetaflight::onMotor(const msp::msg::Motor &motor)
+void VehicleGatewayBetaflight::onMotor(const msp::msg::Motor & motor)
 {
-    std_msgs::msg::UInt16MultiArray motor_out;
-    for(const uint16_t m : motor.motor) {
-        motor_out.data.push_back(m);
-    }
-    this->pub_motors_->publish(motor_out);
+  std_msgs::msg::UInt16MultiArray motor_out;
+  for (const uint16_t m : motor.motor) {
+    motor_out.data.push_back(m);
+  }
+  this->pub_motors_->publish(motor_out);
 }
 
 void VehicleGatewayBetaflight::onImu(const msp::msg::RawImu & imu)

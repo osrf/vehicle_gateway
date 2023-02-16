@@ -339,7 +339,7 @@ public:
   float pressure = 101325;    // pressure in Pa (0m MSL);
   std::mutex airPressureMsgMutex;
 
-  void onAirPressureMessageReceived(const gz::msgs::FluidPressure &_msg)
+  void onAirPressureMessageReceived(const gz::msgs::FluidPressure & _msg)
   {
     std::lock_guard<std::mutex> lock(this->airPressureMsgMutex);
     this->pressure = _msg.pressure();
@@ -482,7 +482,10 @@ void betaflight_gazebo::BetaFlightPlugin::Configure(
       sdfClone->Get<gz::math::Pose3d>("gazeboXYZToNED");
   }
 
-  this->dataPtr->node.Subscribe("/world/empty_betaflight_world/model/iris_with_Betaflight/model/iris_with_standoffs/link/imu_link/sensor/air_pressure_sensor/air_pressure",
+  // TODO(ahcorde): fix this topic name
+  this->dataPtr->node.Subscribe(
+    "/world/empty_betaflight_world/model/iris_with_Betaflight/model/iris_with_standoffs/"
+    "link/imu_link/sensor/air_pressure_sensor/air_pressure",
     &BetaFlightPluginPrivate::onAirPressureMessageReceived, this->dataPtr.get());
 
   // Load control channel params

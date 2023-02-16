@@ -33,17 +33,14 @@ int main(int argc, const char ** argv)
     std::cerr << "Initializing VehicleGatewayBetaflight" << '\n';
     gateway->init(argc, argv);
     int count = 0;
-    while (gateway->get_arming_state() != vehicle_gateway::ARMING_STATE::ARMED)
-    {
+    while (gateway->get_arming_state() != vehicle_gateway::ARMING_STATE::ARMED) {
       if (!gateway->ctbr(0, 0, 0, -1)) {
         std::cerr << "Error sending RC" << '\n';
       }
-      if (count == 1)
-      {
+      if (count == 1) {
         gateway->arm();
       }
-      if (count == 30)
-      {
+      if (count == 30) {
         gateway->disarm();
         count = 0;
       }
