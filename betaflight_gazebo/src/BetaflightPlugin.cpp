@@ -65,11 +65,11 @@ GZ_ADD_PLUGIN_ALIAS(betaflight_gazebo::BetaFlightPlugin, "BetaFlightPlugin")
 struct ServoPacket
 {
   /// \brief Motor speed data.
-  /// should rename to servo_command here and in ArduPilot SIM_Gazebo.cpp
+  /// should rename to servo_command here and in Betaflight SIM_Gazebo.cpp
   float motorSpeed[MAX_MOTORS] = {0.0f};
 };
 
-/// \brief Flight Dynamics Model packet that is sent back to the ArduPilot
+/// \brief Flight Dynamics Model packet that is sent back to the Betaflight
 struct fdmPacket
 {
   /// \brief packet timestamp
@@ -89,6 +89,9 @@ struct fdmPacket
 
   /// \brief Model position in NEED frame
   double positionXYZ[3];
+
+  /// \brief Pressure value
+  double pressure;
 };
 
 /// \brief Control class
@@ -292,12 +295,12 @@ public:
 public:
   std::mutex mutex;
   //
-  /// \brief Ardupilot Socket for receive motor command on gazebo
+  /// \brief Betaflight Socket for receive motor command on gazebo
 
 public:
   BetaflightSocket socket_in;
 
-  /// \brief Ardupilot Socket to send state to Ardupilot
+  /// \brief Betaflight Socket to send state to Betaflight
 
 public:
   BetaflightSocket socket_out;
@@ -333,6 +336,15 @@ public:
     imuMsgValid = true;
   }
 
+  float pressure = 101325;    // pressure in Pa (0m MSL);
+  std::mutex airPressureMsgMutex;
+
+  void onAirPressureMessageReceived(const gz::msgs::FluidPressure & _msg)
+  {
+    std::lock_guard<std::mutex> lock(this->airPressureMsgMutex);
+    this->pressure = _msg.pressure();
+  }
+
   /// \brief keep track of controller update sim-time.
 
 public:
@@ -348,7 +360,7 @@ public:
 public:
   bool isLockStep{false};
 
-  /// \brief false before ardupilot controller is online
+  /// \brief false before Betaflight controller is online
   /// to allow gazebo to continue without waiting
 
 public:
@@ -469,6 +481,12 @@ void betaflight_gazebo::BetaFlightPlugin::Configure(
     this->dataPtr->gazeboXYZToNED =
       sdfClone->Get<gz::math::Pose3d>("gazeboXYZToNED");
   }
+
+  // TODO(ahcorde): fix this topic name
+  this->dataPtr->node.Subscribe(
+    "/world/empty_betaflight_world/model/iris_with_Betaflight/model/iris_with_standoffs/"
+    "link/imu_link/sensor/air_pressure_sensor/air_pressure",
+    &BetaFlightPluginPrivate::onAirPressureMessageReceived, this->dataPtr.get());
 
   // Load control channel params
   this->LoadControlChannels(sdfClone, _ecm);
@@ -1081,7 +1099,7 @@ bool betaflight_gazebo::BetaFlightPlugin::ReceiveServoPacket(
     // gazebo::common::Time::NSleep(100);
     if (this->dataPtr->betaflightOnline) {
       // gzwarn << "[" << this->dataPtr->modelName << "] "
-      //        << "Broken ArduPilot connection, count ["
+      //        << "Broken Betaflight connection, count ["
       //        << this->dataPtr->connectionTimeoutCount
       //        << "/" << this->dataPtr->connectionTimeoutMaxCount
       //        << "]\n";
@@ -1095,7 +1113,7 @@ bool betaflight_gazebo::BetaFlightPlugin::ReceiveServoPacket(
         } else {
           this->dataPtr->betaflightOnline = false;
           gzwarn << "[" << this->dataPtr->modelName << "] "
-                 << "Broken ArduPilot connection, resetting motor control.\n";
+                 << "Broken Betaflight connection, resetting motor control.\n";
           this->ResetPIDs();
         }
       }
@@ -1112,7 +1130,7 @@ bool betaflight_gazebo::BetaFlightPlugin::ReceiveServoPacket(
 
     if (!this->dataPtr->betaflightOnline) {
       gzdbg << "[" << this->dataPtr->modelName << "] "
-            << "ArduPilot controller online detected.\n";
+            << "Betaflight controller online detected.\n";
       // made connection, set some flags
       this->dataPtr->connectionTimeoutCount = 0;
       this->dataPtr->betaflightOnline = true;
@@ -1177,6 +1195,11 @@ void betaflight_gazebo::BetaFlightPlugin::SendState(
     imuMsg = this->dataPtr->imuMsg;
   }
 
+  {
+    std::lock_guard<std::mutex> lock(this->dataPtr->airPressureMsgMutex);
+    pkt.pressure = this->dataPtr->pressure;
+  }
+
   // asssumed that the imu orientation is:
   //   x forward
   //   y right
@@ -1216,12 +1239,11 @@ void betaflight_gazebo::BetaFlightPlugin::SendState(
     _ecm.Component<gz::sim::components::WorldLinearVelocity>(
     this->dataPtr->imuLink);
 
-
   // get inertial pose and velocity
   // position of the uav in world frame
   // this position is used to calculate bearing and distance
   // from starting location, then use that to update gps position.
-  // The algorithm looks something like below (from ardupilot helper
+  // The algorithm looks something like below (from Betaflight helper
   // libraries):
   //   bearing = to_degrees(atan2(position.y, position.x));
   //   distance = math.sqrt(self.position.x**2 + self.position.y**2)
