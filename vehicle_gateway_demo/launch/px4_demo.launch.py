@@ -197,6 +197,8 @@ def generate_launch_description():
     os.environ['GZ_SIM_RESOURCE_PATH'] += ':' + os.path.join(world_pkgs, 'worlds')
     os.environ['GZ_SIM_RESOURCE_PATH'] += ':' + os.path.join(get_package_share_directory('vehicle_gateway_models'), 'models')
 
+    os.environ['SDF_PATH'] = os.environ['GZ_SIM_RESOURCE_PATH']
+
     rootfs = tempfile.TemporaryDirectory()
     px4_dir = get_px4_dir()
 
@@ -219,6 +221,26 @@ def generate_launch_description():
         arguments=['udp4', '-p', '8888'],
         output='screen')
 
+    rviz2 = Node(
+        package='rviz2',
+        executable='rviz2',
+        arguments=['-d', os.path.join(get_package_share_directory('vehicle_gateway_demo'), 'config','config.rviz')],
+        output='screen')
+
+    aruco_opencv = Node(
+        package='aruco_opencv',
+        executable='single_marker_tracker_autostart',
+        name="aruco_markers",
+        parameters=[os.path.join(get_package_share_directory('vehicle_gateway_demo'), 'config', 'single_marker_tracker.yaml')],
+        output='screen')
+
+    node_static_transform_publisher = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        output='screen',
+        arguments=["--x", "0", "--y", "0", "--z", "0.1", "--roll", "0", "--pitch", "1.57", "--yaw", "0.0" , "--frame-id", "x500_0/camera_link", "--child-frame-id", "x500_0/camera_link/camera"]
+    )
+
     spawn_entity = Node(
         package='ros_gz_sim',
         executable='create',
@@ -234,16 +256,36 @@ def generate_launch_description():
                    '-Y', model_pose_yaw],
     )
 
+    # Bridge
+    bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/world/aruco_px4_world/model/x500_0/link/camera_link/sensor/camera/image@sensor_msgs/msg/Image@gz.msgs.Image',
+                   '/world/aruco_px4_world/model/x500_0/link/camera_link/sensor/camera/camera_info@sensor_msgs/msg/CameraInfo@gz.msgs.CameraInfo'],
+        output='screen'
+    )
+
+    bridge_pose = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/model/x500_0/pose@tf2_msgs/msg/TFMessage@gz.msgs.Pose_V'],
+        remappings=[("/model/x500_0/pose", "/tf")],
+        output='screen'
+    )
+
     os.environ['PX4_GZ_WORLD'] = ""
     return LaunchDescription([
         # Launch gazebo environment
+        node_static_transform_publisher,
         use_sim_time_arg,
         world_name_arg,
         drone_type_args,
         model_pose_arg,
         frame_name_args,
         spawn_entity,
-        # run_px4,
+        bridge,
+        bridge_pose,
+        aruco_opencv,
         SetEnvironmentVariable('PX4_GZ_MODEL_NAME', [LaunchConfiguration('drone_type'), "_0"]),
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
@@ -266,5 +308,6 @@ def generate_launch_description():
         use_groundcontrol,
         ExecuteProcess(cmd=['QGroundControl.AppImage'],
                        condition=IfCondition(LaunchConfiguration('groundcontrol'))),
-        micro_ros_agent
+        micro_ros_agent,
+        rviz2
     ])

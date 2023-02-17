@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>vehicle_gateway_demo</name>
+  <version>0.0.0</version>
+  <description>Betaflight demo</description>
+  <maintainer email="alejandro@openrobotics.com">Alejandro Hernandez Cordero</maintainer>
+  <license>Apache License 2.0</license>
+
+  <author>Alejandro Hernandez Cordero</author>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>aruco_opencv_msgs</depend>
+  <depend>control_toolbox</depend>
+  <depend>rclcpp</depend>
+  <depend>std_msgs</depend>
+  <depend>vehicle_gateway</depend>
+  <depend>vehicle_gateway_px4</depend>
+
+  <exec_depend>ament_index_python</exec_depend>
+  <exec_depend>betaflight_sim</exec_depend>
+  <exec_depend>px4_sim</exec_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>vehicle_gateway_models</exec_depend>
+  <exec_depend>vehicle_gateway_worlds</exec_depend>
+  <exec_depend>ros_gz_bridge</exec_depend>
+  <exec_depend>ros_gz_sim</exec_depend>
+  <exec_depend>aruco_opencv</exec_depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_cmake_lint_cmake</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+
+</package>

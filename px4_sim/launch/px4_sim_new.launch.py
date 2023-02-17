@@ -212,7 +212,7 @@ def generate_launch_description():
         cwd=get_px4_dir(),
         output='screen',
     )
-    wait_spawn = ExecuteProcess(cmd=["sleep", "5"])
+
     micro_ros_agent = Node(
         package='micro_ros_agent',
         executable='micro_ros_agent',
@@ -243,8 +243,7 @@ def generate_launch_description():
         model_pose_arg,
         frame_name_args,
         spawn_entity,
-        # run_px4,
-        SetEnvironmentVariable('PX4_GZ_MODEL_NAME', [LaunchConfiguration('drone_type'), "_0"]),
+        SetEnvironmentVariable('PX4_GZ_MODEL_NAME', [LaunchConfiguration('drone_type')]),
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 [os.path.join(get_package_share_directory('ros_gz_sim'),
@@ -254,12 +253,6 @@ def generate_launch_description():
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=spawn_entity,
-                on_exit=[wait_spawn],
-            )
-        ),
-        RegisterEventHandler(
-            event_handler=OnProcessExit(
-                target_action=wait_spawn,
                 on_exit=[run_px4],
             )
         ),

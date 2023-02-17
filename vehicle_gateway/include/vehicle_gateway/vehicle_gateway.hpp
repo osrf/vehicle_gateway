@@ -165,6 +165,12 @@ public:
   /// \return Get ground speed
   virtual float get_ground_speed() = 0;
 
+  /// Get altitude
+  /// \return Get altitude
+  virtual float get_altitude() = 0;
+
+  virtual void get_local_position(float &x, float &y, float &z) = 0;
+
 protected:
   VehicleGateway() {}
 };

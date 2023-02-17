@@ -23,7 +23,10 @@ namespace vehicle_gateway_px4
 {
 void VehicleGatewayPX4::init(int argc, const char ** argv)
 {
-  rclcpp::init(argc, argv);
+  if (argc != 0 && argv != nullptr)
+  {
+    rclcpp::init(argc, argv);
+  }
   this->exec_ = std::make_shared<rclcpp::executors::MultiThreadedExecutor>();
   this->px4_node_ = std::make_shared<rclcpp::Node>("VehicleGatewayPX4");
   this->exec_->add_node(px4_node_);
@@ -255,12 +258,12 @@ void VehicleGatewayPX4::init(int argc, const char ** argv)
           msg->velocity[1],
           2));
 
-      current_pos_x_ = msg->position[0];
-      current_pos_y_ = msg->position[1];
-      current_pos_z_ = msg->position[2];
-      current_vel_x_ = msg->velocity[0];
-      current_vel_y_ = msg->velocity[1];
-      current_vel_z_ = msg->velocity[2];
+      this->current_pos_x_ = msg->position[0];
+      this->current_pos_y_ = msg->position[1];
+      this->current_pos_z_ = msg->position[2];
+      this->current_vel_x_ = msg->velocity[0];
+      this->current_vel_y_ = msg->velocity[1];
+      this->current_vel_z_ = msg->velocity[2];
     });
 
   this->vehicle_command_pub_ = this->px4_node_->create_publisher<px4_msgs::msg::VehicleCommand>(
@@ -453,21 +456,21 @@ void VehicleGatewayPX4::set_local_position_setpoint(float x, float y, float z)
   msg.yaw = -3.14;
   this->vehicle_trajectory_setpoint_pub_->publish(msg);
 
-  px4_msgs::msg::VehicleCommand msg_vehicle_command;
-
-  msg_vehicle_command.timestamp = this->px4_node_->get_clock()->now().nanoseconds() / 1000;
-  msg_vehicle_command.param1 = 0;
-  msg_vehicle_command.param2 = 0.1;
-  msg_vehicle_command.param3 = -1;
-  // command ID
-  msg_vehicle_command.command = px4_msgs::msg::VehicleCommand::VEHICLE_CMD_DO_CHANGE_SPEED;
-  // system which should execute the command
-  msg_vehicle_command.target_system = this->target_system_;
-  msg_vehicle_command.target_component = 1;  // component to execute the command, 0 for all
-  msg_vehicle_command.source_system = 255;  // system sending the command
-  msg_vehicle_command.source_component = 1;  // component sending the command
-  msg_vehicle_command.from_external = true;
-  this->vehicle_command_pub_->publish(msg_vehicle_command);
+  // px4_msgs::msg::VehicleCommand msg_vehicle_command;
+  //
+  // msg_vehicle_command.timestamp = this->px4_node_->get_clock()->now().nanoseconds() / 1000;
+  // msg_vehicle_command.param1 = 0;
+  // msg_vehicle_command.param2 = 0.1;
+  // msg_vehicle_command.param3 = -1;
+  // // command ID
+  // msg_vehicle_command.command = px4_msgs::msg::VehicleCommand::VEHICLE_CMD_DO_CHANGE_SPEED;
+  // // system which should execute the command
+  // msg_vehicle_command.target_system = this->target_system_;
+  // msg_vehicle_command.target_component = 1;  // component to execute the command, 0 for all
+  // msg_vehicle_command.source_system = 255;  // system sending the command
+  // msg_vehicle_command.source_component = 1;  // component sending the command
+  // msg_vehicle_command.from_external = true;
+  // this->vehicle_command_pub_->publish(msg_vehicle_command);
 }
 
 void VehicleGatewayPX4::set_offboard_control_mode(bool is_trajectory)
@@ -486,6 +489,19 @@ void VehicleGatewayPX4::set_offboard_control_mode(bool is_trajectory)
 
 void VehicleGatewayPX4::go_to_waypoint()
 {
+}
+
+void VehicleGatewayPX4::get_local_position(float &x, float &y, float &z)
+{
+  x = this->current_pos_x_;
+  y = this->current_pos_y_;
+  z = this->current_pos_z_;
+}
+
+/// Documentation inherited
+float VehicleGatewayPX4::get_altitude()
+{
+  return this->current_pos_z_;
 }
 
 }  // namespace vehicle_gateway_px4

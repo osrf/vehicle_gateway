@@ -94,6 +94,11 @@ public:
   /// Documentation inherited
   float get_ground_speed() override;
 
+  /// Documentation inherited
+  float get_altitude() override;
+
+  void get_local_position(float &x, float &y, float &z) override;
+
 private:
   // Orchestration
   std::thread spin_thread_;
