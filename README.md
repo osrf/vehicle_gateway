@@ -43,11 +43,21 @@ colcon build --event-handlers console_direct+
 In the event that you need or want to test out pre-release changes that are only available in the very latest Gazebo source code, you can always build Gazebo Garden from source. Note that this is considerably more complicated and requires significant compile time. Instructions to do this are [provided here](build_gazebo_from_source.md).
 
 # Run a PX4 Quadcopter demo
+
+Now that the software stack is built, we can do some fun and interesting things! Here is a minimal example that runs the PX4 software-in-the-loop (SITL) in an empty Gazebo world. Gazebo is used to generate all the sensors used to feed the PX4, and the PX4 SITL actuator commands are simulated by the Gazebo physics engine:
+
+```bash
+cd ~/vg
+source install/setup.bash
+ros2 launch px4_sim px4_sim.launch.py drone_type:='x500'
+```
+
+For a more visually-interesting world that can be used for simulating vision-guided experiments, we created Null Island, a tiny island with a few launch pads for small drones. The launch pad can be selected as a command-line paramter to `ros2 launch` as shown here:
+
 ```bash
 cd ~/vg
 source install/setup.bash
 ros2 launch px4_sim px4_sim.launch.py drone_type:='x500' position_name:=pad_1 world_name:=null_island
-ros2 launch px4_sim px4_sim.launch.py drone_type:='x500'
 ```
 
 # Dockerfile
