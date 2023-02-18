@@ -27,7 +27,7 @@ We can now build the Vehicle Gateway itself. To keep paths short, we will make a
 At time of writing, the `rosdep` command has to include a lot of `--skip-key` because currently Gazebo Garden is not yet in `rosdep`.
 
 ```bash
-sudo apt install python3-kconfiglib python3-jinja2 python3-jsonschema ros-humble-gps-msgs gcc-arm-none-eabi libfuse2 python3-pip git python3-vcstool python3-future
+sudo apt install python3-kconfiglib python3-jinja2 python3-jsonschema ros-humble-gps-msgs gcc-arm-none-eabi libfuse2 python3-pip git python3-vcstool python3-future rsync
 pip3 install pyros-genmsg
 mkdir -p ~/vg/src
 cd ~/vg/src
