@@ -34,8 +34,8 @@ cd ~/vg/src
 git clone https://github.com/osrf/vehicle_gateway
 cd ~/vg
 vcs import src < src/vehicle_gateway/dependencies.repos
-rosdep update && rosdep install --from-paths src --ignore-src -y --skip-keys="gz-transport12 gz-common5 gz-math7 gz-msgs9 gz-gui7 gz-cmake3 gz-sim7"
 source /opt/ros/humble/setup.bash
+rosdep update && rosdep install --from-paths src --ignore-src -y --skip-keys="gz-transport12 gz-common5 gz-math7 gz-msgs9 gz-gui7 gz-cmake3 gz-sim7"
 colcon build --event-handlers console_direct+
 ```
 
