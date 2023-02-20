@@ -31,28 +31,34 @@ cd ~/vg/vg_ws
 vcs import src < src/vehicle_gateway/dependencies.repos
 ```
 
-Next, install Gazebo Garden. The full instructions are [here](https://gazebosim.org/docs/garden/install_ubuntu), and summarized as follows:
+Next, install Gazebo Garden. The full instructions are [here](https://gazebosim.org/docs/garden/install_ubuntu), and summarized as follows. Note that even when building Gazebo from source, the `packages.osrfoundation.org/gazebo` repository must still be added in order to use the pre-built Ogre Next library supplied by OSRF. This can also be built from source if needed, but that complicates things further and we recommend using the pre-built version if possible.
 
 ```bash
 sudo apt-get update
 sudo apt-get install lsb-release wget gnupg
-```
-
-Then install Gazebo Garden:
-
-```bash
 sudo wget https://packages.osrfoundation.org/gazebo.gpg -O /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
 sudo apt-get update
-sudo apt-get install gz-garden
+mkdir -p ~/vg/gz_ws/src
+cd ~/vg/gz_ws
+vcs import src < ../vg_ws/src/vehicle_gateway/gazebo.repos
+sudo apt install -y $(sort -u $(find . -iname 'packages-'`lsb_release -cs`'.apt' -o -iname 'packages.apt' | grep -v '/\.git/') | sed '/gz\|sdf/d' | tr '\n' ' ')
 ```
-Now you should have Gazebo available.
 
-We can now build the Vehicle Gateway itself, by overlaying its workspace on top of the Gazebo Garden workspace (which in turn is overlaying the ROS 2 Humble system installation). The Vehicle Gateway build will also download and build the PX4 firmware, to allow software-in-the-loop (SITL) simulation:
+Now we can compile Gazebo Garden:
+
+```bash
+cd ~/vg/gz_ws
+colcon build --merge-install
+```
+Now you should have Gazebo available in `~/vg/gz_ws`.
+
+We can now build the Vehicle Gateway itself, by overlaying its workspace on top of the Gazebo Garden workspace as well as the ROS 2 Humble system install. The Vehicle Gateway build will also download and build the PX4 firmware, to allow software-in-the-loop (SITL) simulation:
 
 ```bash
 cd ~/vg/vg_ws
 rosdep update && rosdep install --from-paths src --ignore-src -y
 source ~/vg/gz_ws/install/setup.bash
+source /opt/ros/humble/setup.bash
 colcon build --event-handlers console_direct+
 ```
