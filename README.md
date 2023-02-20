@@ -21,6 +21,11 @@ sudo apt-get update
 sudo apt-get install gz-garden
 ```
 
+Note that Gazebo uses multicast sockets to communicate between its components, and depending on your firewall configuration, these may be blocked and prevent Gazebo from starting. If Gazebo does not start, or if it only shows an empty black window, try this:
+```bash
+sudo ufw disable
+```
+
 ### Build the Vehicle Gateway
 We can now build the Vehicle Gateway itself. To keep paths short, we will make a colcon workspace named `vg` for "Vehicle Gateway", in your home directory. The Vehicle Gateway build will also download and build the PX4 firmware, to allow software-in-the-loop (SITL) simulation.
 
