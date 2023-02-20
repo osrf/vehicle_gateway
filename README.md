@@ -52,7 +52,7 @@ source install/setup.bash
 ros2 launch px4_sim px4_sim.launch.py drone_type:='x500'
 ```
 
-For a more visually-interesting world that can be used for simulating vision-guided experiments, we created Null Island, a tiny island with a few launch pads for small drones. The launch pad can be selected as a command-line paramter to `ros2 launch` as shown here:
+For a more visually-interesting world that can be used for simulating vision-guided experiments, we created Null Island, a tiny island with a few launch pads for small drones. The launch pad can be selected as a command-line parameter to `ros2 launch` as shown here:
 
 ```bash
 cd ~/vg
