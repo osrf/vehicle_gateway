@@ -477,18 +477,14 @@ void VehicleGatewayPX4::set_offboard_control_mode(vehicle_gateway::CONTROLLER_TY
   px4_msgs::msg::OffboardControlMode msg;
   msg.timestamp = this->px4_node_->get_clock()->now().nanoseconds() / 1000;
 
-  if (type == vehicle_gateway::CONTROLLER_TYPE::POSITION)
-  {
+  if (type == vehicle_gateway::CONTROLLER_TYPE::POSITION) {
     msg.position = true;
     msg.velocity = false;
   }
-  else if (type == vehicle_gateway::CONTROLLER_TYPE::VELOCITY)
-  {
+  else if (type == vehicle_gateway::CONTROLLER_TYPE::VELOCITY) {
     msg.position = false;
     msg.velocity = true;
-  }
-  else
-  {
+  } else {
     msg.position = false;
     msg.velocity = false;
     RCLCPP_INFO(this->px4_node_->get_logger(), "No controller is defined");
