@@ -21,6 +21,11 @@ sudo apt-get update
 sudo apt-get install gz-garden
 ```
 
+Note that Gazebo uses multicast sockets to communicate between its components, and depending on your firewall configuration, these may be blocked and prevent Gazebo from starting. If Gazebo does not start, or if it only shows an empty black window, try this:
+```bash
+sudo ufw disable
+```
+
 Because the `ros_gz` bridge that ships with ROS 2 Humble targets the previous version of Gazebo (Fortress), we will remove it and build our own version of the ROS-Gazebo link packages in the next section. To avoid some warning about having multiple versions of those packages, you can remove them from your ROS 2 Humble installation:
 ```bash
 sudo apt remove ros-humble-ros-gz-bridge
