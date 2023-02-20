@@ -26,6 +26,11 @@ Note that Gazebo uses multicast sockets to communicate between its components, a
 sudo ufw disable
 ```
 
+Because the `ros_gz` bridge that ships with ROS 2 Humble targets the previous version of Gazebo (Fortress), we will remove it and build our own version of the ROS-Gazebo link packages in the next section. To avoid some warning about having multiple versions of those packages, you can remove them from your ROS 2 Humble installation:
+```bash
+sudo apt remove ros-humble-ros-gz-bridge
+```
+
 ### Build the Vehicle Gateway
 We can now build the Vehicle Gateway itself. To keep paths short, we will make a colcon workspace named `vg` for "Vehicle Gateway", in your home directory. The Vehicle Gateway build will also download and build the PX4 firmware, to allow software-in-the-loop (SITL) simulation.
 
