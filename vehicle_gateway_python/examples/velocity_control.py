@@ -17,7 +17,7 @@ import sys
 import time
 
 import vehicle_gateway
-from vehicle_gateway import ArmingState, FlightMode
+from vehicle_gateway import ArmingState, FlightMode, ControllerType
 
 px4_gateway = vehicle_gateway.init(args=sys.argv, plugin_type='px4')
 
@@ -44,7 +44,7 @@ while 1:
                 print('Arming')
                 time.sleep(0.01)
 
-        px4_gateway.set_offboard_control_mode(False, True)
+        px4_gateway.set_offboard_control_mode(ControllerType.VELOCITY)
         px4_gateway.set_local_velocity_setpoint(0, 0, -5, 5)
 
         _start_time = current_time

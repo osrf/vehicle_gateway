@@ -90,6 +90,13 @@ enum FLIGHT_MODE
   UNKNOWN_MODE = 17
 };
 
+enum CONTROLLER_TYPE
+{
+  NO_CONTROLLER = 0,        // No controller defined
+  POSITION = 1,             // Position control
+  VELOCITY = 2              // Velocity control
+};
+
 class VehicleGateway
 {
 public:
@@ -153,16 +160,17 @@ public:
   /// \param[in] x Desired x position
   /// \param[in] y Desired y position
   /// \param[in] z Desired z position
-  virtual void set_local_position_setpoint(float x, float y, float z) = 0;
+  virtual void set_local_position_setpoint(float x, float y, float z, float yaw) = 0;
 
   /// Set local velocity
   /// \param[in] vx Desired x velocity
   /// \param[in] vy Desired y velocity
   /// \param[in] vz Desired z velocity
-  virtual void set_local_velocity_setpoint(float vx, float vy, float vz, float yawspeed = 0.0f) = 0;
+  virtual void set_local_velocity_setpoint(float vx, float vy, float vz, float yaw_rate = 0.0f) = 0;
 
-  /// Set offboard_control_mode
-  virtual void set_offboard_control_mode(bool is_trajectory, bool is_velocity) = 0;
+  /// Set controller type
+  /// \param[in] type Controller type
+  virtual void set_offboard_control_mode(CONTROLLER_TYPE type) = 0;
 
   /// Set offboard mode
   virtual void set_offboard_mode() = 0;
