@@ -480,8 +480,7 @@ void VehicleGatewayPX4::set_offboard_control_mode(vehicle_gateway::CONTROLLER_TY
   if (type == vehicle_gateway::CONTROLLER_TYPE::POSITION) {
     msg.position = true;
     msg.velocity = false;
-  }
-  else if (type == vehicle_gateway::CONTROLLER_TYPE::VELOCITY) {
+  } else if (type == vehicle_gateway::CONTROLLER_TYPE::VELOCITY) {
     msg.position = false;
     msg.velocity = true;
   } else {
