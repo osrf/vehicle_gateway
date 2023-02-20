@@ -13,9 +13,9 @@ externalproject_add(betaflight-firmware
   PREFIX
       ${PROJECT_BINARY_DIR}/betaflight_sim
   GIT_REPOSITORY
-    https://github.com/nikhil-sethi/betaflight
+    https://github.com/betaflight/betaflight
   GIT_TAG
-    airsim-sitl
+    master
   INSTALL_COMMAND
     mkdir -p ${CMAKE_INSTALL_PREFIX}/share/betaflight_sim/bin/ &&
     cp ./obj/main/betaflight_SITL.elf ${CMAKE_INSTALL_PREFIX}/share/betaflight_sim/bin/
