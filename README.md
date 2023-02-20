@@ -27,15 +27,15 @@ We can now build the Vehicle Gateway itself. To keep paths short, we will make a
 At time of writing, the `rosdep` command has to include a lot of `--skip-key` because currently Gazebo Garden is not yet in `rosdep`.
 
 ```bash
-sudo apt install python3-kconfiglib python3-jinja2 python3-jsonschema ros-humble-gps-msgs gcc-arm-none-eabi libfuse2 python3-pip git python3-vcstool
+sudo apt install python3-kconfiglib python3-jinja2 python3-jsonschema ros-humble-gps-msgs gcc-arm-none-eabi libfuse2 python3-pip git python3-vcstool python3-future rsync
 pip3 install pyros-genmsg
 mkdir -p ~/vg/src
 cd ~/vg/src
 git clone https://github.com/osrf/vehicle_gateway
 cd ~/vg
 vcs import src < src/vehicle_gateway/dependencies.repos
-rosdep update && rosdep install --from-paths src --ignore-src -y --skip-keys="gz-transport12 gz-common5 gz-math7 gz-msgs9 gz-gui7 gz-cmake3 gz-sim7"
 source /opt/ros/humble/setup.bash
+rosdep update && rosdep install --from-paths src --ignore-src -y --skip-keys="gz-transport12 gz-common5 gz-math7 gz-msgs9 gz-gui7 gz-cmake3 gz-sim7"
 colcon build --event-handlers console_direct+
 ```
 
