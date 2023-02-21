@@ -19,6 +19,7 @@ from launch.actions import RegisterEventHandler
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 from launch.event_handlers.on_process_io import OnProcessIO
+from launch_ros.actions import Node
 import os
 import time
 
@@ -56,10 +57,19 @@ def generate_launch_description():
     os.environ["GZ_SIM_RESOURCE_PATH"] += ":" + os.path.join(get_package_share_directory('vehicle_gateway_models'), "models")
     os.environ["GZ_SIM_RESOURCE_PATH"] += ":" + os.path.join(get_package_share_directory('vehicle_gateway_worlds'), "worlds")
     print("os.environ[GZ_SIM_RESOURCE_PATH]", os.environ["GZ_SIM_RESOURCE_PATH"])
-    world_name = LaunchConfiguration('world_name', default='empty_px4_world')
+    world_name = LaunchConfiguration('world_name', default='empty_betaflight_world')
     world_name_arg = DeclareLaunchArgument('world_name',
                                            default_value=world_name,
                                            description='World name')
+
+    gz_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/model/iris_with_Betaflight/model/iris_with_standoffs/pose@tf2_msgs/msg/TFMessage@gz.msgs.Pose_V',
+                   '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
+        remappings=[("/model/iris_with_Betaflight/model/iris_with_standoffs/pose", "/tf")],
+        output='screen'
+    )
 
     run_betaflight_sitl = ExecuteProcess(cmd=['betaflight_SITL.elf', "127.0.0.1"],
                                          cwd=os.path.join(get_betaflight_dir(), "config"),
@@ -68,6 +78,7 @@ def generate_launch_description():
         # Launch gazebo environment
         world_name_arg,
         use_sim_time_arg,
+        gz_bridge,
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 [os.path.join(get_package_share_directory('ros_gz_sim'),
