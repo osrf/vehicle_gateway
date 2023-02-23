@@ -13,28 +13,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-
-from ament_index_python.packages import get_package_share_directory
-
-from distutils.dir_util import copy_tree
-
-import launch
-import launch_testing.actions
-import launch_testing.markers
 import os
 import pytest
 import subprocess
 import sys
 import tempfile
 import time
+import unittest
 
+from distutils.dir_util import copy_tree
+
+from ament_index_python.packages import get_package_share_directory
+
+import launch
 from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription
 from launch.actions import SetEnvironmentVariable
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 from launch.substitutions import LaunchConfiguration
-
+from launch_testing.actions import ReadyToTest
+from launch_testing.utils import KeepAliveProc
 import vehicle_gateway
 from vehicle_gateway import ArmingState
 
@@ -104,13 +102,13 @@ def generate_test_description():
         SetEnvironmentVariable('PX4_GZ_MODEL', LaunchConfiguration('vehicle_type')),
         SetEnvironmentVariable('PX4_GZ_WORLD', 'empty_px4_world'),
         SetEnvironmentVariable('PX4_SIM_MODEL', ['gz_', LaunchConfiguration('vehicle_type')]),
-        SetEnvironmentVariable('PX4_GZ_MODEL_POSE', "0, 0, 0.3, 0, 0, 0"),
+        SetEnvironmentVariable('PX4_GZ_MODEL_POSE', '0, 0, 0.3, 0, 0, 0'),
         included_launch,
         run_px4,
         micro_ros_agent,
-        launch_testing.util.KeepAliveProc(),
+        KeepAliveProc(),
         # Tell launch to start the test
-        launch_testing.actions.ReadyToTest()
+        ReadyToTest()
     ]), context
 
 
