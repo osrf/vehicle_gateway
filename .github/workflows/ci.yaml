@@ -43,3 +43,11 @@ jobs:
           vcs-repo-file-url: |
             $GITHUB_WORKSPACE/dependencies.repos
           target-ros2-distro: humble
+          colcon-defaults: |
+            {
+              "build": {
+                "cmake-args": [
+                  "-DSKIP_QGROUNDCONTROL=1"
+                ]
+              }
+            }
