@@ -1,0 +1,4 @@
+*.pyc
+install
+build
+log
