@@ -31,8 +31,9 @@ from launch.actions import SetEnvironmentVariable
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 from launch.substitutions import LaunchConfiguration
+import launch_testing
 from launch_testing.actions import ReadyToTest
-from launch_testing.utils import KeepAliveProc
+from launch_testing.util import KeepAliveProc
 import vehicle_gateway
 from vehicle_gateway import ArmingState
 
