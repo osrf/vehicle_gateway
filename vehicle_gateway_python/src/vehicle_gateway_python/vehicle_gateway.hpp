@@ -99,6 +99,8 @@ public:
   // Destroy autopilot API
   void Destroy();
 
+  float GetAltitude();
+
 private:
   std::shared_ptr<vehicle_gateway::VehicleGateway> gateway_;
   std::shared_ptr<pluginlib::ClassLoader<vehicle_gateway::VehicleGateway>> loader_;

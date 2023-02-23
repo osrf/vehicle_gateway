@@ -1,0 +1,152 @@
+#!/usr/bin/env python3
+# Copyright 2023 Open Source Robotics Foundation, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import unittest
+
+from ament_index_python.packages import get_package_share_directory
+
+from distutils.dir_util import copy_tree
+
+import launch
+import launch_testing.actions
+import launch_testing.markers
+import os
+import pytest
+import subprocess
+import sys
+import tempfile
+import time
+
+from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription
+from launch.actions import SetEnvironmentVariable
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch_ros.actions import Node
+from launch.substitutions import LaunchConfiguration
+
+import vehicle_gateway
+from vehicle_gateway import ArmingState
+
+
+def get_px4_dir():
+    return get_package_share_directory('px4_sim')
+
+
+def seed_rootfs(rootfs):
+    px4_dir = get_px4_dir()
+    print(f'seeding rootfs at {rootfs} from {px4_dir}')
+    copy_tree(px4_dir, rootfs)
+
+
+# This function specifies the processes to be run for our test
+@pytest.mark.launch_test
+def generate_test_description():
+    # This is necessary to get unbuffered output from the process under test
+    proc_env = os.environ.copy()
+    proc_env['PYTHONUNBUFFERED'] = '1'
+
+    world_pkgs = get_package_share_directory('vehicle_gateway_worlds')
+
+    os.environ['GZ_SIM_RESOURCE_PATH'] = ':' + os.path.join(get_px4_dir(), 'models')
+    os.environ['GZ_SIM_RESOURCE_PATH'] += ':' + os.path.join(get_px4_dir(), 'worlds')
+    os.environ['GZ_SIM_RESOURCE_PATH'] += ':' + os.path.join(world_pkgs, 'worlds')
+
+    rootfs = tempfile.TemporaryDirectory()
+    px4_dir = get_px4_dir()
+    rc_script = os.path.join(px4_dir, 'etc/init.d-posix/rcS')
+    print('using rootfs ', rootfs.name)
+    seed_rootfs(rootfs.name)
+
+    run_px4 = ExecuteProcess(
+        cmd=['px4', '%s/ROMFS/px4fmu_common' % rootfs.name,
+             '-s', rc_script,
+             '-i', 'id0',
+             '-d'],
+        cwd=get_px4_dir(),
+        output='screen',
+        shell=True)
+
+    micro_ros_agent = Node(
+        package='micro_ros_agent',
+        executable='micro_ros_agent',
+        arguments=['udp4', '-p', '8888'],
+        output='screen')
+
+    included_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            [os.path.join(get_package_share_directory('ros_gz_sim'),
+                          'launch', 'gz_sim.launch.py')]),
+        launch_arguments=[('gz_args', ['--headless-rendering -s -r -v 1 empty_px4_world.sdf'])]
+    )
+
+    context = {
+        'run_px4': run_px4,
+        'micro_ros_agent': micro_ros_agent,
+        'included_launch': included_launch}
+
+    return launch.LaunchDescription([
+        DeclareLaunchArgument(
+            'vehicle_type',
+            default_value=['x500'],
+            description='Vehicle type',
+        ),
+        SetEnvironmentVariable('PX4_GZ_MODEL', LaunchConfiguration('vehicle_type')),
+        SetEnvironmentVariable('PX4_GZ_WORLD', 'empty_px4_world'),
+        SetEnvironmentVariable('PX4_SIM_MODEL', ['gz_', LaunchConfiguration('vehicle_type')]),
+        SetEnvironmentVariable('PX4_GZ_MODEL_POSE', "0, 0, 0.3, 0, 0, 0"),
+        included_launch,
+        run_px4,
+        micro_ros_agent,
+        launch_testing.util.KeepAliveProc(),
+        # Tell launch to start the test
+        launch_testing.actions.ReadyToTest()
+    ]), context
+
+
+class TestFixture(unittest.TestCase):
+
+    def test_arm(self):
+        # print("test_arm")
+        print('test_arm:', file=sys.stderr)
+
+        vechile_gateway = vehicle_gateway.init(args=sys.argv, plugin_type='px4')
+        while vechile_gateway.get_arming_state() != ArmingState.ARMED:
+            vechile_gateway.arm()
+            time.sleep(0.1)
+
+        while vechile_gateway.get_arming_state() != ArmingState.STANDBY:
+            vechile_gateway.disarm()
+            time.sleep(0.1)
+
+        # shutdown px4
+        p = subprocess.Popen(os.path.join('px4-shutdown'),
+                             shell=True,
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.STDOUT)
+        p.wait()
+        # kill gazebo sim and micro_ros_agent
+        p = subprocess.Popen(os.path.join('killall -9 ruby micro_ros_agent'),
+                             shell=True,
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.STDOUT)
+        p.wait()
+
+
+# These tests are run after the processes in generate_test_description() have shutdown.
+@launch_testing.post_shutdown_test()
+class TestHelloWorldShutdown(unittest.TestCase):
+
+    def test_exit_codes(self, proc_info, run_px4):
+        """Check if the processes exited normally."""
+        launch_testing.asserts.assertExitCodes(proc_info, process=run_px4)
