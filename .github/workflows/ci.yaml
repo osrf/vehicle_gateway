@@ -22,7 +22,7 @@ jobs:
       - run: |
           export DEBIAN_FRONTEND=noninteractive
           apt update -qq
-          apt install -qq -y lsb-release wget curl gnupg2 python3-kconfiglib python3-genmsg
+          apt install -qq -y lsb-release wget curl gnupg2 python3-kconfiglib python3-jinja2 python3-jsonschema ros-humble-gps-msgs gcc-arm-none-eabi libfuse2 python3-pip python3-future rsync
           wget https://packages.osrfoundation.org/gazebo.gpg -O /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg
           echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
           apt-get update && apt-get install -qq -y gz-garden
