@@ -14,14 +14,14 @@
 # limitations under the License.
 
 import os
-import pytest
 import subprocess
 import sys
 import tempfile
 import time
-import unittest
 
 from distutils.dir_util import copy_tree
+import pytest
+import unittest
 
 from ament_index_python.packages import get_package_share_directory
 
