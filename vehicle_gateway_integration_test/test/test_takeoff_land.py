@@ -20,8 +20,9 @@ import tempfile
 import time
 
 from distutils.dir_util import copy_tree
-import pytest
 import unittest
+
+import pytest
 
 from ament_index_python.packages import get_package_share_directory
 
