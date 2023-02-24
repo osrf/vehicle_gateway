@@ -13,16 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from distutils.dir_util import copy_tree
 import os
 import subprocess
 import sys
 import tempfile
 import time
 
-from distutils.dir_util import copy_tree
 import unittest
-
-import pytest
 
 from ament_index_python.packages import get_package_share_directory
 
@@ -30,11 +28,14 @@ import launch
 from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription
 from launch.actions import SetEnvironmentVariable
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch_ros.actions import Node
 from launch.substitutions import LaunchConfiguration
+from launch_ros.actions import Node
 import launch_testing
 from launch_testing.actions import ReadyToTest
 from launch_testing.util import KeepAliveProc
+
+import pytest
+
 import vehicle_gateway
 from vehicle_gateway import ArmingState
 
