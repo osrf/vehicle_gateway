@@ -484,6 +484,23 @@ void VehicleGatewayPX4::set_offboard_control_mode(bool is_trajectory)
   this->vehicle_offboard_control_mode_pub_->publish(msg);
 }
 
+void VehicleGatewayPX4::flight_termination(bool termination)
+{
+  px4_msgs::msg::VehicleCommand msg_vehicle_command;
+
+  msg_vehicle_command.timestamp = this->px4_node_->get_clock()->now().nanoseconds() / 1000;
+  msg_vehicle_command.param1 = static_cast<int>(termination);
+  // command ID
+  msg_vehicle_command.command = px4_msgs::msg::VehicleCommand::VEHICLE_CMD_DO_FLIGHTTERMINATION;
+  // system which should execute the command
+  msg_vehicle_command.target_system = this->target_system_;
+  msg_vehicle_command.target_component = 1;  // component to execute the command, 0 for all
+  msg_vehicle_command.source_system = 255;  // system sending the command
+  msg_vehicle_command.source_component = 1;  // component sending the command
+  msg_vehicle_command.from_external = true;
+  this->vehicle_command_pub_->publish(msg_vehicle_command);
+}
+
 void VehicleGatewayPX4::go_to_waypoint()
 {
 }

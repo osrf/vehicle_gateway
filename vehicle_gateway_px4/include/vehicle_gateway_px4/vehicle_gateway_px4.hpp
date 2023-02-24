@@ -94,6 +94,9 @@ public:
   /// Documentation inherited
   float get_ground_speed() override;
 
+  /// Documentation inherited
+  void flight_termination(bool termination) override;
+
 private:
   // Orchestration
   std::thread spin_thread_;

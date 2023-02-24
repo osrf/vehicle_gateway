@@ -139,6 +139,11 @@ void VehicleGatewayPython::Land()
   this->gateway_->land();
 }
 
+void VehicleGatewayPython::FlightTermination(bool termination)
+{
+  this->gateway_->flight_termination(termination);
+}
+
 VehicleGatewayPython::~VehicleGatewayPython()
 {
   this->Destroy();
@@ -204,6 +209,9 @@ define_vehicle_gateway(py::object module)
   .def(
     "get_failure", &VehicleGatewayPython::GetFailure,
     "Get failure")
+  .def(
+    "flight_termination", &VehicleGatewayPython::FlightTermination,
+    "flight termination")
   .def(
     "land", &VehicleGatewayPython::Land,
     "Land");

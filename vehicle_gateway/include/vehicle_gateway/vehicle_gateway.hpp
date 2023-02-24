@@ -165,6 +165,8 @@ public:
   /// \return Get ground speed
   virtual float get_ground_speed() = 0;
 
+  virtual void flight_termination(bool termination) = 0;
+
 protected:
   VehicleGateway() {}
 };

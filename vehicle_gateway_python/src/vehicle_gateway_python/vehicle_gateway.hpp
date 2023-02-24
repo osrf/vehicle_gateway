@@ -96,6 +96,8 @@ public:
   /// \return Get ground speed
   float GetGroundSpeed();
 
+  void FlightTermination(bool termination);
+
   // Destroy autopilot API
   void Destroy();
 
