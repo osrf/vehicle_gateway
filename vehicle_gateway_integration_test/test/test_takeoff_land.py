@@ -118,23 +118,23 @@ def generate_test_description():
 class TestFixture(unittest.TestCase):
 
     def test_arm(self):
-        vechile_gateway = vehicle_gateway.init(args=sys.argv, plugin_type='px4')
-        while vechile_gateway.get_arming_state() != ArmingState.ARMED:
-            vechile_gateway.arm()
+        vg = vehicle_gateway.init(args=sys.argv, plugin_type='px4')
+        while vg.get_arming_state() != ArmingState.ARMED:
+            vg.arm()
             time.sleep(0.1)
 
-        vechile_gateway.takeoff()
+        vg.takeoff()
 
-        while vechile_gateway.get_altitude() > -2.5:
+        while vg.get_altitude() > -2.5:
             time.sleep(0.1)
 
-        vechile_gateway.land()
+        vg.land()
 
-        while vechile_gateway.get_altitude() < -0.3:
+        while vg.get_altitude() < -0.3:
             time.sleep(0.1)
 
-        while vechile_gateway.get_arming_state() != ArmingState.STANDBY:
-            vechile_gateway.disarm()
+        while vg.get_arming_state() != ArmingState.STANDBY:
+            vg.disarm()
             time.sleep(0.5)
 
         # shutdown px4
@@ -149,7 +149,7 @@ class TestFixture(unittest.TestCase):
                              stdout=subprocess.PIPE,
                              stderr=subprocess.STDOUT)
         p.wait()
-        vehicle_gateway.destroy()
+        vg.destroy()
 
 
 # These tests are run after the processes in generate_test_description() have shutdown.
