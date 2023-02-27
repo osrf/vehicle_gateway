@@ -149,6 +149,7 @@ class TestFixture(unittest.TestCase):
                              stdout=subprocess.PIPE,
                              stderr=subprocess.STDOUT)
         p.wait()
+        vehicle_gateway.destroy()
 
 
 # These tests are run after the processes in generate_test_description() have shutdown.

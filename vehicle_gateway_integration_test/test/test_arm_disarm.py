@@ -118,9 +118,6 @@ def generate_test_description():
 class TestFixture(unittest.TestCase):
 
     def test_arm(self):
-        # print("test_arm")
-        print('test_arm:', file=sys.stderr)
-
         vechile_gateway = vehicle_gateway.init(args=sys.argv, plugin_type='px4')
         while vechile_gateway.get_arming_state() != ArmingState.ARMED:
             vechile_gateway.arm()
@@ -142,6 +139,7 @@ class TestFixture(unittest.TestCase):
                              stdout=subprocess.PIPE,
                              stderr=subprocess.STDOUT)
         p.wait()
+        vehicle_gateway.destroy()
 
 
 # These tests are run after the processes in generate_test_description() have shutdown.
