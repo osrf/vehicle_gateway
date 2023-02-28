@@ -154,10 +154,10 @@ class TestFixture(unittest.TestCase):
                              stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE)
         p.wait()
-        # for proc in psutil.process_iter():
-        #     # check whether the process name matches
-        #     if proc.name() == 'ruby' or proc.name() == 'micro_ros_agent':
-        #         proc.kill()
+        for proc in psutil.process_iter():
+            # check whether the process name matches
+            if proc.name() == 'ruby' or proc.name() == 'micro_ros_agent':
+                proc.kill()
         vg.destroy()
 
 
