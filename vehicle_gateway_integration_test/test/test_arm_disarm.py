@@ -26,8 +26,7 @@ from ament_index_python.packages import get_package_share_directory
 
 import launch
 from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription
-from launch.actions import RegisterEventHandler, SetEnvironmentVariable
-from launch.event_handlers import OnShutdown
+from launch.actions import SetEnvironmentVariable
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
@@ -99,23 +98,6 @@ def generate_test_description():
         'micro_ros_agent': micro_ros_agent,
         'included_launch': included_launch}
 
-    # ros launch does not bring down the ign gazebo process so manually kill it
-    # \todo(anyone) figure out a proper way to terminate the ign gazebo process
-    pid = 'ps aux | grep -v grep | grep "gz sim ' + gz_args + '" | awk "{print $2}"'
-    kill_gazebo = ExecuteProcess(
-        cmd=['kill `' + pid + '`'],
-        output='screen',
-        shell=True
-    )
-
-    kill_proc_handler = RegisterEventHandler(
-        OnShutdown(
-            on_shutdown=[
-               kill_gazebo
-            ]
-        )
-    )
-
     return launch.LaunchDescription([
         DeclareLaunchArgument(
             'vehicle_type',
@@ -129,7 +111,6 @@ def generate_test_description():
         included_launch,
         run_px4,
         micro_ros_agent,
-        kill_proc_handler,
         KeepAliveProc(),
         # Tell launch to start the test
         ReadyToTest()
@@ -156,7 +137,7 @@ class TestFixture(unittest.TestCase):
         p.wait()
         for proc in psutil.process_iter():
             # check whether the process name matches
-            if proc.name() == 'micro_ros_agent':
+            if proc.name() == 'ruby' or proc.name() == 'micro_ros_agent':
                 proc.kill()
         vg.destroy()
 
