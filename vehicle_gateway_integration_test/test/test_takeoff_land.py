@@ -20,7 +20,6 @@ import sys
 import tempfile
 import time
 
-import psutil
 import unittest
 
 from ament_index_python.packages import get_package_share_directory
@@ -35,6 +34,7 @@ import launch_testing
 from launch_testing.actions import ReadyToTest
 from launch_testing.util import KeepAliveProc
 
+import psutil
 import pytest
 
 import vehicle_gateway
