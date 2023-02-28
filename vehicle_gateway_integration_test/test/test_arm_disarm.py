@@ -103,7 +103,7 @@ def generate_test_description():
     # \todo(anyone) figure out a proper way to terminate the ign gazebo process
     pid = 'ps aux | grep -v grep | grep \'gz sim ' + gz_args + '\' | awk \'{print $2}\''
     kill_gazebo = ExecuteProcess(
-        cmd=['kill `' + pid +'`'],
+        cmd=['kill `' + pid + '`'],
         output='screen',
         shell=True
     )
