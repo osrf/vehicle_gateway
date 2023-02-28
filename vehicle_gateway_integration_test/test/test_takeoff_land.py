@@ -15,12 +15,12 @@
 
 from distutils.dir_util import copy_tree
 import os
-import psutil
 import subprocess
 import sys
 import tempfile
 import time
 
+import psutil
 import unittest
 
 from ament_index_python.packages import get_package_share_directory

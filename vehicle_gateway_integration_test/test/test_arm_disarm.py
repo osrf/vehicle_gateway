@@ -15,19 +15,20 @@
 
 from distutils.dir_util import copy_tree
 import os
-import psutil
 import subprocess
 import sys
 import tempfile
 import time
 
+import psutil
 import unittest
 
 from ament_index_python.packages import get_package_share_directory
 
 import launch
 from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription
-from launch.actions import SetEnvironmentVariable
+from launch.actions import RegisterEventHandler, SetEnvironmentVariable
+from launch.event_handlers import OnShutdown
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
@@ -85,17 +86,35 @@ def generate_test_description():
         arguments=['udp4', '-p', '8888'],
         output='screen')
 
+    gz_args = '--headless-rendering -s -r -v 1 empty_px4_world.sdf'
     included_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             [os.path.join(get_package_share_directory('ros_gz_sim'),
                           'launch', 'gz_sim.launch.py')]),
-        launch_arguments=[('gz_args', ['--headless-rendering -s -r -v 1 empty_px4_world.sdf'])]
+        launch_arguments=[('gz_args', [gz_args])]
     )
 
     context = {
         'run_px4': run_px4,
         'micro_ros_agent': micro_ros_agent,
         'included_launch': included_launch}
+
+    # ros launch does not bring down the ign gazebo process so manually kill it
+    # \todo(anyone) figure out a proper way to terminate the ign gazebo process
+    pid = 'ps aux | grep -v grep | grep \'gz sim ' + gz_args + '\' | awk \'{print $2}\''
+    kill_gazebo = ExecuteProcess(
+        cmd=['kill `' + pid +'`'],
+        output='screen',
+        shell=True
+    )
+
+    kill_proc_handler = RegisterEventHandler(
+        OnShutdown(
+            on_shutdown=[
+               kill_gazebo
+            ]
+        )
+    )
 
     return launch.LaunchDescription([
         DeclareLaunchArgument(
@@ -110,6 +129,7 @@ def generate_test_description():
         included_launch,
         run_px4,
         micro_ros_agent,
+        kill_proc_handler,
         KeepAliveProc(),
         # Tell launch to start the test
         ReadyToTest()
@@ -134,10 +154,10 @@ class TestFixture(unittest.TestCase):
                              stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE)
         p.wait()
-        for proc in psutil.process_iter():
-            # check whether the process name matches
-            if proc.name() == 'ruby' or proc.name() == 'micro_ros_agent':
-                proc.kill()
+        # for proc in psutil.process_iter():
+        #     # check whether the process name matches
+        #     if proc.name() == 'ruby' or proc.name() == 'micro_ros_agent':
+        #         proc.kill()
         vg.destroy()
 
 
