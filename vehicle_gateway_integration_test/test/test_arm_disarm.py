@@ -156,7 +156,7 @@ class TestFixture(unittest.TestCase):
         p.wait()
         for proc in psutil.process_iter():
             # check whether the process name matches
-            if proc.name() == 'ruby' or proc.name() == 'micro_ros_agent':
+            if proc.name() == 'micro_ros_agent':
                 proc.kill()
         vg.destroy()
 
