@@ -89,7 +89,7 @@ def generate_test_description():
         PythonLaunchDescriptionSource(
             [os.path.join(get_package_share_directory('ros_gz_sim'),
                           'launch', 'gz_sim.launch.py')]),
-        launch_arguments=[('gz_args', ['--headless-rendering -r -s -v 1 empty_px4_world.sdf'])]
+        launch_arguments=[('gz_args', ['--headless-rendering -r -s -v 4 empty_px4_world.sdf'])]
     )
 
     context = {
