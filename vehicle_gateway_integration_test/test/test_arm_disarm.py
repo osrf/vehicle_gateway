@@ -20,7 +20,6 @@ import sys
 import tempfile
 import time
 
-import psutil
 import unittest
 
 from ament_index_python.packages import get_package_share_directory
@@ -36,6 +35,7 @@ import launch_testing
 from launch_testing.actions import ReadyToTest
 from launch_testing.util import KeepAliveProc
 
+import psutil
 import pytest
 
 import vehicle_gateway
@@ -101,7 +101,7 @@ def generate_test_description():
 
     # ros launch does not bring down the ign gazebo process so manually kill it
     # \todo(anyone) figure out a proper way to terminate the ign gazebo process
-    pid = 'ps aux | grep -v grep | grep \'gz sim ' + gz_args + '\' | awk \'{print $2}\''
+    pid = 'ps aux | grep -v grep | grep "gz sim ' + gz_args + '" | awk "{print $2}"'
     kill_gazebo = ExecuteProcess(
         cmd=['kill `' + pid + '`'],
         output='screen',
