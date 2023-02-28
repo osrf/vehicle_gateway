@@ -15,6 +15,7 @@
 
 from distutils.dir_util import copy_tree
 import os
+import psutil
 import subprocess
 import sys
 import tempfile
@@ -72,7 +73,7 @@ def generate_test_description():
     run_px4 = ExecuteProcess(
         cmd=['px4', '%s/ROMFS/px4fmu_common' % rootfs.name,
              '-s', rc_script,
-             '-i', 'id0',
+             '-i', '0',
              '-d'],
         cwd=get_px4_dir(),
         output='screen',
@@ -138,17 +139,16 @@ class TestFixture(unittest.TestCase):
             time.sleep(0.5)
 
         # shutdown px4
-        p = subprocess.Popen(os.path.join('px4-shutdown'),
+        p = subprocess.Popen('px4-shutdown',
                              shell=True,
                              stdout=subprocess.PIPE,
-                             stderr=subprocess.STDOUT)
+                             stderr=subprocess.PIPE)
         p.wait()
         # kill gazebo sim and micro_ros_agent
-        p = subprocess.Popen(os.path.join('killall -9 ruby micro_ros_agent'),
-                             shell=True,
-                             stdout=subprocess.PIPE,
-                             stderr=subprocess.STDOUT)
-        p.wait()
+        for proc in psutil.process_iter():
+            # check whether the process name matches
+            if proc.name() == 'ruby' or proc.name() == 'micro_ros_agent':
+                proc.kill()
         vg.destroy()
 
 
