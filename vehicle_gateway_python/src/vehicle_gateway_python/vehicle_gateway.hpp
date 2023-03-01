@@ -60,7 +60,7 @@ public:
   /// Transition to fixed wings
   void TransitionToFixedWings();
 
-  void PublishLocalPositionSetpoint(float x, float y, float z);
+  void PublishLocalPositionSetpoint(float x, float y, float z, float yaw);
 
   /// Get flight mode
   /// \return Flight mode
