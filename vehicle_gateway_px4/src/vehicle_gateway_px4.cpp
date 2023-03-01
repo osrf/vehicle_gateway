@@ -441,7 +441,7 @@ void VehicleGatewayPX4::transition_to_mc()
   this->vehicle_command_pub_->publish(msg_vehicle_command);
 }
 
-void VehicleGatewayPX4::set_local_position_setpoint(float x, float y, float z)
+void VehicleGatewayPX4::set_local_position_setpoint(float x, float y, float z, float yaw)
 {
   px4_msgs::msg::TrajectorySetpoint msg;
 
@@ -450,7 +450,7 @@ void VehicleGatewayPX4::set_local_position_setpoint(float x, float y, float z)
   msg.position[0] = x;
   msg.position[1] = y;
   msg.position[2] = z;
-  msg.yaw = -3.14;
+  msg.yaw = yaw;
   this->vehicle_trajectory_setpoint_pub_->publish(msg);
 
   px4_msgs::msg::VehicleCommand msg_vehicle_command;

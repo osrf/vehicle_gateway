@@ -83,7 +83,7 @@ public:
   void transition_to_mc() override;
 
   /// Documentation inherited
-  void set_local_position_setpoint(float x, float y, float z) override;
+  void set_local_position_setpoint(float x, float y, float z, float yaw) override;
 
   /// Documentation inherited
   void set_offboard_control_mode(bool is_trajectory) override;

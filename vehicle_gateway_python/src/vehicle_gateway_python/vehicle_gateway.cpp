@@ -79,9 +79,9 @@ void VehicleGatewayPython::TransitionToFixedWings()
   this->gateway_->transition_to_fw();
 }
 
-void VehicleGatewayPython::PublishLocalPositionSetpoint(float x, float y, float z)
+void VehicleGatewayPython::PublishLocalPositionSetpoint(float x, float y, float z, float yaw)
 {
-  this->gateway_->set_local_position_setpoint(x, y, z);
+  this->gateway_->set_local_position_setpoint(x, y, z, yaw);
 }
 
 void VehicleGatewayPython::SetOffboardControlMode(bool is_trajectory)
