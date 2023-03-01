@@ -11,19 +11,28 @@ find_package(std_msgs REQUIRED)
 find_package(vehicle_gateway_px4 REQUIRED)
 find_package(aruco_opencv_msgs REQUIRED)
 
-add_executable(altitude_control
-  src/altitude_control.cpp
+add_executable(aruco_demo
+  src/aruco_demo.cpp
 )
-target_include_directories(altitude_control PUBLIC
+target_include_directories(aruco_demo PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
-ament_target_dependencies(altitude_control
+ament_target_dependencies(aruco_demo
   control_toolbox
   rclcpp
   std_msgs
 	vehicle_gateway_px4
 	aruco_opencv_msgs
 )
+
+add_executable(circles
+  src/circles.cpp
+)
+ament_target_dependencies(circles
+  rclcpp
+  vehicle_gateway_px4
+)
+
 install(DIRECTORY
   launch
 	config
@@ -32,7 +41,9 @@ install(DIRECTORY
 )
 
 install(
-  TARGETS altitude_control
+  TARGETS
+    aruco_demo
+    circles
   DESTINATION lib/${PROJECT_NAME}
 )
 
