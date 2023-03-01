@@ -448,8 +448,6 @@ void VehicleGatewayPX4::set_local_position_setpoint(float x, float y, float z)
 {
   px4_msgs::msg::TrajectorySetpoint msg;
 
-  msg.timestamp = this->px4_node_->get_clock()->now().nanoseconds() / 1000;
-
   msg.position[0] = x;
   msg.position[1] = y;
   msg.position[2] = z;

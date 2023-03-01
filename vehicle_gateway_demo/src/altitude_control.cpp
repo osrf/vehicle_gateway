@@ -67,19 +67,24 @@ public:
       this->gateway_->set_local_position_setpoint(0, 0, -5);
       if (offboard_setpoint_counter_ == 5)
       {
-        // while ((this->gateway_->get_flight_mode() != vehicle_gateway::FLIGHT_MODE::OFFBOARD
-        //       || this->gateway_->get_arming_state() != vehicle_gateway::ARMING_STATE::ARMED)
-        //       && !this->stopped_)
-        // {
+        while(true)
+        {
+          RCLCPP_INFO(this->get_logger(), "Try to set offboard mode and arm vehicle");
           this->gateway_->set_offboard_mode();
           this->gateway_->arm();
-          // std::this_thread::sleep_for(10ms);
-          // this->gateway_->disarm();
-          // std::this_thread::sleep_for(200ms);
-
-        // }
-        RCLCPP_INFO(this->get_logger(), "Vehicle is in Offboard mode");
-        RCLCPP_INFO(this->get_logger(), "Vehicle is armed");
+          std::this_thread::sleep_for(200ms);
+          if ((this->gateway_->get_flight_mode() == vehicle_gateway::FLIGHT_MODE::OFFBOARD
+               && this->gateway_->get_arming_state() == vehicle_gateway::ARMING_STATE::ARMED)
+               || this->stopped_)
+          {
+             RCLCPP_INFO(this->get_logger(), "Vehicle is in Offboard mode");
+             RCLCPP_INFO(this->get_logger(), "Vehicle is armed");
+             break;
+          }
+          std::this_thread::sleep_for(200ms);
+          this->gateway_->disarm();
+          std::this_thread::sleep_for(200ms);
+        }
       }
     }
 
@@ -108,6 +113,7 @@ public:
       RCLCPP_INFO(this->get_logger(), "x %.2f \t y: %.2f \t %.2f", x, y, z);
       RCLCPP_INFO(this->get_logger(), "->x %.2f \t y: %.2f \t %.2f", this->radius * cos(this->theta), this->radius * sin(this->theta), z);
 
+      this->gateway_->set_offboard_control_mode(true);
       this->gateway_->set_local_position_setpoint(
         this->radius * cos(this->theta),
         this->radius * sin(this->theta),
@@ -201,7 +207,7 @@ private:
 
   float theta = 0.0;
   float radius = 10.0;
-  float omega = 0.1;
+  float omega = 0.5;
 };
 
 int main(int argc, const char * argv[])
