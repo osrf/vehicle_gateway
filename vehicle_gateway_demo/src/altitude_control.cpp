@@ -24,7 +24,7 @@
 #include <vehicle_gateway/vehicle_gateway.hpp>
 #include <vehicle_gateway_px4/vehicle_gateway_px4.hpp>
 
-#include <aruco_opencv_msgs/msg/marker_detection.hpp>
+#include <aruco_opencv_msgs/msg/aruco_detection.hpp>
 
 using std::placeholders::_1;
 using namespace std::chrono_literals;
@@ -41,8 +41,8 @@ public:
   MinimalSubscriber(int argc, const char ** argv)
   : Node("minimal_subscriber"), loader_("vehicle_gateway", "vehicle_gateway::VehicleGateway")
   {
-    this->subscription_marker_ = this->create_subscription<aruco_opencv_msgs::msg::MarkerDetection>(
-      "/marker_detections", 10,
+    this->subscription_marker_ = this->create_subscription<aruco_opencv_msgs::msg::ArucoDetection>(
+      "/aruco_detections", 10,
       std::bind(&MinimalSubscriber::topic_callback, this, _1));
 
     this->gateway_ = this->loader_.createSharedInstance(
@@ -106,38 +106,53 @@ public:
       float x, y, z;
       this->gateway_->get_local_position(x, y, z);
       RCLCPP_INFO(this->get_logger(), "x %.2f \t y: %.2f \t %.2f", x, y, z);
+      RCLCPP_INFO(this->get_logger(), "->x %.2f \t y: %.2f \t %.2f", this->radius * cos(this->theta), this->radius * sin(this->theta), z);
+
+      this->gateway_->set_local_position_setpoint(
+        this->radius * cos(this->theta),
+        this->radius * sin(this->theta),
+        -5);
 
       std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
 
-      {
-        std::lock_guard<std::mutex> lock(mutex_marker);
-        if (this->marker_detected_)
-        {
-          RCLCPP_INFO(this->get_logger(), "x %.2f \t y: %.2f",  this->marker_x_,  this->marker_y_);
-
-          x -= this->marker_x_;
-          y -= this->marker_y_;
-
-          this->marker_x_ = 0;
-          this->marker_y_ = 0;
-          this->marker_detected_ = false;
-          last_update_time = now;
-        }
-      }
-
       auto diff =
         std::chrono::duration_cast<std::chrono::milliseconds>(now - last_update_time);
+      this->theta = this->theta + this->omega * diff.count() / 1000.0;
 
-      if (diff.count() > 1000)
-      {
-        this->gateway_->set_local_position_setpoint(0, 0, -5);
-        RCLCPP_INFO(this->get_logger(), "Marker is not visible");
+      std::cerr << "diff.count() / 1000.0 " << diff.count() / 1000.0 << '\n';
 
-      }
-      else
-      {
-        this->gateway_->set_local_position_setpoint(x, y, -5);
-      }
+      last_update_time = now;
+
+      // std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
+      // {
+      //   std::lock_guard<std::mutex> lock(mutex_marker);
+      //   if (this->marker_detected_)
+      //   {
+      //     RCLCPP_INFO(this->get_logger(), "x %.2f \t y: %.2f",  this->marker_x_,  this->marker_y_);
+      //
+      //     x -= this->marker_x_;
+      //     y -= this->marker_y_;
+      //
+      //     this->marker_x_ = 0;
+      //     this->marker_y_ = 0;
+      //     this->marker_detected_ = false;
+      //     last_update_time = now;
+      //   }
+      // }
+      //
+      // auto diff =
+      //   std::chrono::duration_cast<std::chrono::milliseconds>(now - last_update_time);
+      //
+      // if (diff.count() > 1000)
+      // {
+      //   this->gateway_->set_local_position_setpoint(0, 0, -5);
+      //   RCLCPP_INFO(this->get_logger(), "Marker is not visible");
+      //
+      // }
+      // else
+      // {
+      //   this->gateway_->set_local_position_setpoint(x, y, -5);
+      // }
       std::this_thread::sleep_for(50ms);
     }
     RCLCPP_INFO(this->get_logger(), "Vehicle end");
@@ -152,7 +167,7 @@ public:
   }
 
 private:
-  void topic_callback(const aruco_opencv_msgs::msg::MarkerDetection & msg)
+  void topic_callback(const aruco_opencv_msgs::msg::ArucoDetection & msg)
   {
     std::lock_guard<std::mutex> lock(mutex_marker);
 
@@ -180,9 +195,13 @@ private:
 
   pluginlib::ClassLoader<vehicle_gateway::VehicleGateway> loader_;
   std::shared_ptr<vehicle_gateway::VehicleGateway> gateway_;
-  rclcpp::Subscription<aruco_opencv_msgs::msg::MarkerDetection>::SharedPtr subscription_marker_;
+  rclcpp::Subscription<aruco_opencv_msgs::msg::ArucoDetection>::SharedPtr subscription_marker_;
   std::thread thread_loop_;
   bool stopped_ = false;
+
+  float theta = 0.0;
+  float radius = 10.0;
+  float omega = 0.1;
 };
 
 int main(int argc, const char * argv[])

@@ -1,8 +1,8 @@
-/aruco_markers:
+/**:
   ros__parameters:
     cam_base_topic: /world/aruco_px4_world/model/x500_0/link/camera_link/sensor/camera/image
     output_frame: ''
-
+    use_sim_time: true
     marker_dict: ARUCO_ORIGINAL
 
     image_sub_qos:
@@ -11,7 +11,7 @@
       depth: 1
 
     publish_tf: true
-    marker_size: 1.0
+    marker_size: 4.0
 
     # Dynamically reconfigurable Detector parameters
     # https://docs.opencv.org/4.2.0/d5/dae/tutorial_aruco_detection.html
