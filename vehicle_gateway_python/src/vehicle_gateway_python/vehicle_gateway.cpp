@@ -84,6 +84,11 @@ void VehicleGatewayPython::PublishLocalPositionSetpoint(float x, float y, float 
   this->gateway_->set_local_position_setpoint(x, y, z);
 }
 
+void VehicleGatewayPython::SetSpeed(float speed)
+{
+  this->gateway_->set_speed(speed);
+}
+
 void VehicleGatewayPython::SetOffboardControlMode(bool is_trajectory)
 {
   this->gateway_->set_offboard_control_mode(is_trajectory);
@@ -204,6 +209,9 @@ define_vehicle_gateway(py::object module)
   .def(
     "get_failure", &VehicleGatewayPython::GetFailure,
     "Get failure")
+  .def(
+    "set_speed", &VehicleGatewayPython::SetSpeed,
+    "Set ground speed m/s")
   .def(
     "land", &VehicleGatewayPython::Land,
     "Land");

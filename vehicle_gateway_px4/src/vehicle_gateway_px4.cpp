@@ -452,12 +452,16 @@ void VehicleGatewayPX4::set_local_position_setpoint(float x, float y, float z)
   msg.position[2] = z;
   msg.yaw = -3.14;
   this->vehicle_trajectory_setpoint_pub_->publish(msg);
+}
 
+
+void VehicleGatewayPX4::set_speed(float speed)
+{
   px4_msgs::msg::VehicleCommand msg_vehicle_command;
 
   msg_vehicle_command.timestamp = this->px4_node_->get_clock()->now().nanoseconds() / 1000;
-  msg_vehicle_command.param1 = 0;
-  msg_vehicle_command.param2 = 0.1;
+  msg_vehicle_command.param1 = 1;  // 0=Airspeed, 1=Ground Speed
+  msg_vehicle_command.param2 = speed;
   msg_vehicle_command.param3 = -1;
   // command ID
   msg_vehicle_command.command = px4_msgs::msg::VehicleCommand::VEHICLE_CMD_DO_CHANGE_SPEED;

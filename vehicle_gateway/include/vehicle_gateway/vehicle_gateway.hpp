@@ -155,6 +155,10 @@ public:
   /// \param[in] z Desired z position
   virtual void set_local_position_setpoint(float x, float y, float z) = 0;
 
+  /// Set ground speed in m/s
+  /// \param[in] speed Desired speed in m/s
+  virtual void set_speed(float speed) = 0;
+
   /// Set offboard_control_mode
   virtual void set_offboard_control_mode(bool is_trajectory) = 0;
 

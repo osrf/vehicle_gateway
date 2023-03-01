@@ -86,6 +86,9 @@ public:
   void set_local_position_setpoint(float x, float y, float z) override;
 
   /// Documentation inherited
+  void set_speed(float speed) override;
+
+  /// Documentation inherited
   void set_offboard_control_mode(bool is_trajectory) override;
 
   /// Documentation inherited
