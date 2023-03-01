@@ -84,6 +84,8 @@ void VehicleGatewayPX4::init(int argc, const char ** argv)
           case px4_msgs::msg::VehicleStatus::ARM_DISARM_REASON_SHUTDOWN:
             value = vehicle_gateway::ARM_DISARM_REASON::SHUTDOWN;
             break;
+          default:
+            value = vehicle_gateway::ARM_DISARM_REASON::ARM_DISARM_REASON_NONE;
         }
         return value;
       };
