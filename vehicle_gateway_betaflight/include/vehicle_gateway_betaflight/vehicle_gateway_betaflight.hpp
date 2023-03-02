@@ -83,10 +83,13 @@ public:
   void transition_to_mc() override;
 
   /// Documentation inherited
-  void set_local_position_setpoint(float x, float y, float z) override;
+  void set_local_position_setpoint(float x, float y, float z, float yaw) override;
 
   /// Documentation inherited
-  void set_offboard_control_mode(bool is_trajectory) override;
+  void set_local_velocity_setpoint(float vx, float vy, float vz, float yaw_rate = 0.0f) override;
+
+  /// Documentation inherited
+  void set_offboard_control_mode(vehicle_gateway::CONTROLLER_TYPE type) override;
 
   /// Documentation inherited
   void set_offboard_mode() override;
@@ -116,10 +119,6 @@ private:
   void onStatus(const msp::msg::Status & status);
   void onBoxNames(const msp::msg::BoxNames & box_names);
   void onImu(const msp::msg::RawImu & imu);
-  void onRc(const msp::msg::Rc & rc)
-  {
-    // std::cout << rc;
-  }
   void onAltitude(const msp::msg::Altitude & altitude);
   void onMotor(const msp::msg::Motor & motor);
 
