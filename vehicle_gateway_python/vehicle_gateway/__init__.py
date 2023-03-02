@@ -22,6 +22,7 @@ ArmDisarmReason = _vehicle_gateway.ArmDisarmReason
 FlightMode = _vehicle_gateway.FlightMode
 Failure = _vehicle_gateway.Failure
 VehicleType = _vehicle_gateway.VehicleType
+ControllerType = _vehicle_gateway.ControllerType
 
 
 def init(
