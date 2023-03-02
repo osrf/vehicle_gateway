@@ -441,7 +441,25 @@ void VehicleGatewayPX4::transition_to_mc()
   this->vehicle_command_pub_->publish(msg_vehicle_command);
 }
 
-void VehicleGatewayPX4::set_local_position_setpoint(float x, float y, float z)
+void VehicleGatewayPX4::set_local_velocity_setpoint(float vx, float vy, float vz, float yaw_rate)
+{
+  px4_msgs::msg::TrajectorySetpoint msg;
+
+  msg.timestamp = this->px4_node_->get_clock()->now().nanoseconds() / 1000;
+
+  msg.position[0] = std::numeric_limits<float>::quiet_NaN();
+  msg.position[1] = std::numeric_limits<float>::quiet_NaN();
+  msg.position[2] = std::numeric_limits<float>::quiet_NaN();
+  msg.yaw = std::numeric_limits<float>::quiet_NaN();
+
+  msg.velocity[0] = vx;
+  msg.velocity[1] = vy;
+  msg.velocity[2] = vz;
+  msg.yawspeed = yaw_rate;
+  this->vehicle_trajectory_setpoint_pub_->publish(msg);
+}
+
+void VehicleGatewayPX4::set_local_position_setpoint(float x, float y, float z, float yaw)
 {
   px4_msgs::msg::TrajectorySetpoint msg;
 
@@ -450,36 +468,29 @@ void VehicleGatewayPX4::set_local_position_setpoint(float x, float y, float z)
   msg.position[0] = x;
   msg.position[1] = y;
   msg.position[2] = z;
-  msg.yaw = -3.14;
+  msg.yaw = yaw;
   this->vehicle_trajectory_setpoint_pub_->publish(msg);
-
-  px4_msgs::msg::VehicleCommand msg_vehicle_command;
-
-  msg_vehicle_command.timestamp = this->px4_node_->get_clock()->now().nanoseconds() / 1000;
-  msg_vehicle_command.param1 = 0;
-  msg_vehicle_command.param2 = 0.1;
-  msg_vehicle_command.param3 = -1;
-  // command ID
-  msg_vehicle_command.command = px4_msgs::msg::VehicleCommand::VEHICLE_CMD_DO_CHANGE_SPEED;
-  // system which should execute the command
-  msg_vehicle_command.target_system = this->target_system_;
-  msg_vehicle_command.target_component = 1;  // component to execute the command, 0 for all
-  msg_vehicle_command.source_system = 255;  // system sending the command
-  msg_vehicle_command.source_component = 1;  // component sending the command
-  msg_vehicle_command.from_external = true;
-  this->vehicle_command_pub_->publish(msg_vehicle_command);
 }
 
-void VehicleGatewayPX4::set_offboard_control_mode(bool is_trajectory)
+void VehicleGatewayPX4::set_offboard_control_mode(vehicle_gateway::CONTROLLER_TYPE type)
 {
   px4_msgs::msg::OffboardControlMode msg;
   msg.timestamp = this->px4_node_->get_clock()->now().nanoseconds() / 1000;
 
-  msg.position = is_trajectory;
-  msg.velocity = false;
+  if (type == vehicle_gateway::CONTROLLER_TYPE::POSITION) {
+    msg.position = true;
+    msg.velocity = false;
+  } else if (type == vehicle_gateway::CONTROLLER_TYPE::VELOCITY) {
+    msg.position = false;
+    msg.velocity = true;
+  } else {
+    msg.position = false;
+    msg.velocity = false;
+    RCLCPP_INFO(this->px4_node_->get_logger(), "No controller is defined");
+  }
   msg.acceleration = false;
   msg.attitude = false;
-  msg.body_rate = !is_trajectory;
+  msg.body_rate = false;
 
   this->vehicle_offboard_control_mode_pub_->publish(msg);
 }

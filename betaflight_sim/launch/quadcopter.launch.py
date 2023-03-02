@@ -19,6 +19,7 @@ from launch.actions import RegisterEventHandler
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
+from launch_ros.actions import Node
 from launch.event_handlers.on_process_io import OnProcessIO
 import os
 import time
@@ -57,6 +58,7 @@ def generate_launch_description():
 
     world_sdf = os.path.join(get_betaflight_dir(), "worlds", "empty_betaflight_world.sdf")
 
+
     use_groundcontrol = DeclareLaunchArgument('groundcontrol', default_value='false',
                                               choices=['true', 'false'],
                                               description='Start ground control station.')
@@ -64,6 +66,15 @@ def generate_launch_description():
     run_betaflight_sitl = ExecuteProcess(cmd=['betaflight_SITL.elf', "127.0.0.1"],
                                          cwd=os.path.join(get_betaflight_dir(), "config"),
                                          output='screen')
+
+    # Bridge
+    bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
+        output='screen'
+    )
+
     return LaunchDescription([
         # Launch gazebo environment
         IncludeLaunchDescription(
@@ -76,6 +87,7 @@ def generate_launch_description():
         use_groundcontrol,
         ExecuteProcess(cmd=['betaflight-configurator'],
                        condition=IfCondition(LaunchConfiguration('groundcontrol'))),
+        bridge,
         RegisterEventHandler(
             OnProcessIO(
                 target_action=run_betaflight_sitl,
