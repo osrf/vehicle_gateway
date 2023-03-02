@@ -130,4 +130,4 @@ ssize_t BetaflightSocket::Recv(void * _buf, const size_t _size, uint32_t _timeou
   socklen_t len = sizeof(this->recv);
   return recvfrom(this->fd, _buf, _size, 0, (struct sockaddr *)&this->recv, &len);
 }
-}  // betaflight_gazebo
+}  // namespace betaflight_gazebo
