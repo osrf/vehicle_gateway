@@ -108,7 +108,8 @@ private:
   /// \param[in] target_component Component which should execute the command, 0 for all components
   /// \param[in] source_system System sending the command
   /// \param[in] source_component Component sending the command
-  /// \param[in] confirmation 0: First transmission of this command. 1-255: Confirmation transmissions
+  /// \param[in] confirmation 0: First transmission of this command
+  /// 1-255: Confirmation transmissions
   /// \param[in] param1 Parameter 1, as defined by MAVLink uint16 VEHICLE_CMD enum.
   /// \param[in] param2 Parameter 2, as defined by MAVLink uint16 VEHICLE_CMD enum.
   /// \param[in] param3 Parameter 3, as defined by MAVLink uint16 VEHICLE_CMD enum.
