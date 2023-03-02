@@ -97,7 +97,6 @@ void VehicleGatewayBetaflight::init(int argc, const char ** argv)
   this->fcu_.subscribe(&VehicleGatewayBetaflight::onStatus, this, 1);
   this->fcu_.subscribe(&VehicleGatewayBetaflight::onBoxNames, this, 1);
   this->fcu_.subscribe(&VehicleGatewayBetaflight::onImu, this, 1);
-  this->fcu_.subscribe(&VehicleGatewayBetaflight::onRc, this, 1);
   this->fcu_.subscribe(&VehicleGatewayBetaflight::onAltitude, this, 1);
   this->fcu_.subscribe(&VehicleGatewayBetaflight::onMotor, this, 1);
 }
@@ -227,9 +226,15 @@ bool VehicleGatewayBetaflight::ctbr(float roll, float pitch, float yaw, float th
   return this->fcu_.setRc(cmds);
 }
 
-vehicle_gateway::FLIGHT_MODE VehicleGatewayBetaflight::get_flight_mode() {}
+vehicle_gateway::FLIGHT_MODE VehicleGatewayBetaflight::get_flight_mode()
+{
+  return vehicle_gateway::FLIGHT_MODE::MANUAL;
+}
 
-vehicle_gateway::VEHICLE_TYPE VehicleGatewayBetaflight::get_vehicle_type() {}
+vehicle_gateway::VEHICLE_TYPE VehicleGatewayBetaflight::get_vehicle_type()
+{
+  return vehicle_gateway::VEHICLE_TYPE::ROTARY_WING;
+}
 
 vehicle_gateway::ARM_DISARM_REASON VehicleGatewayBetaflight::get_arm_reason() {}
 
@@ -247,9 +252,15 @@ void VehicleGatewayBetaflight::transition_to_fw() {}
 
 void VehicleGatewayBetaflight::transition_to_mc() {}
 
-void VehicleGatewayBetaflight::set_local_position_setpoint(float x, float y, float z) {}
+void VehicleGatewayBetaflight::set_local_position_setpoint(
+  float /*x*/, float /*y*/, float /*z*/, float /*yaw*/) {}
 
-void VehicleGatewayBetaflight::set_offboard_control_mode(bool is_trajectory) {}
+/// Documentation inherited
+void VehicleGatewayBetaflight::set_local_velocity_setpoint(
+  float /*vx*/, float /*vy*/, float /*vz*/, float /*yaw_rate*/) {}
+
+void VehicleGatewayBetaflight::set_offboard_control_mode(
+  vehicle_gateway::CONTROLLER_TYPE /*type*/) {}
 
 void VehicleGatewayBetaflight::set_offboard_mode() {}
 
