@@ -79,9 +79,9 @@ void VehicleGatewayPython::TransitionToFixedWings()
   this->gateway_->transition_to_fw();
 }
 
-void VehicleGatewayPython::PublishLocalPositionSetpoint(float x, float y, float z)
+void VehicleGatewayPython::PublishLocalPositionSetpoint(float x, float y, float z, float yaw)
 {
-  this->gateway_->set_local_position_setpoint(x, y, z);
+  this->gateway_->set_local_position_setpoint(x, y, z, yaw);
 }
 
 void VehicleGatewayPython::SetSpeed(float speed)
@@ -89,9 +89,15 @@ void VehicleGatewayPython::SetSpeed(float speed)
   this->gateway_->set_speed(speed);
 }
 
-void VehicleGatewayPython::SetOffboardControlMode(bool is_trajectory)
+void VehicleGatewayPython::PublishLocalVelocitySetpoint(
+  float vx, float vy, float vz, float yaw_rate)
 {
-  this->gateway_->set_offboard_control_mode(is_trajectory);
+  this->gateway_->set_local_velocity_setpoint(vx, vy, vz, yaw_rate);
+}
+
+void VehicleGatewayPython::SetOffboardControlMode(vehicle_gateway::CONTROLLER_TYPE type)
+{
+  this->gateway_->set_offboard_control_mode(type);
 }
 
 void VehicleGatewayPython::SetOffboardMode()
@@ -182,6 +188,9 @@ define_vehicle_gateway(py::object module)
   .def(
     "set_local_position_setpoint", &VehicleGatewayPython::PublishLocalPositionSetpoint,
     "PublishLocalPositionSetpoint")
+  .def(
+    "set_local_velocity_setpoint", &VehicleGatewayPython::PublishLocalVelocitySetpoint,
+    "PublishLocalVelocitySetpoint")
   .def(
     "set_offboard_mode", &VehicleGatewayPython::SetOffboardMode,
     "SetOffboardMode")
@@ -281,6 +290,12 @@ define_vehicle_gateway(py::object module)
   .value("ORBIT", vehicle_gateway::FLIGHT_MODE::ORBIT)
   .value("AUTO_VTOL_TAKEOFF", vehicle_gateway::FLIGHT_MODE::AUTO_VTOL_TAKEOFF)
   .value("UNKNOWN_MODE", vehicle_gateway::FLIGHT_MODE::UNKNOWN_MODE)
+  .export_values();
+
+  pybind11::enum_<vehicle_gateway::CONTROLLER_TYPE>(module, "ControllerType")
+  .value("NO_CONTROLLER", vehicle_gateway::CONTROLLER_TYPE::NO_CONTROLLER)
+  .value("POSITION", vehicle_gateway::CONTROLLER_TYPE::POSITION)
+  .value("VELOCITY", vehicle_gateway::CONTROLLER_TYPE::VELOCITY)
   .export_values();
 }
 }  // namespace vehicle_gateway_python
