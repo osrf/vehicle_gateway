@@ -404,7 +404,7 @@ void VehicleGatewayPX4::takeoff()
     0.1f,
     0,
     0,
-    1.57, //orientation
+    1.57,  // orientation
     this->lat_ * 1e-7,
     this->lon_ * 1e-7,
     this->alt_ + 5.0f);
@@ -423,7 +423,7 @@ void VehicleGatewayPX4::land()
     0.1f,
     0,
     0,
-    1.57, //orientation
+    1.57,  // orientation
     this->lat_ * 1e-7,
     this->lon_ * 1e-7);
 }
