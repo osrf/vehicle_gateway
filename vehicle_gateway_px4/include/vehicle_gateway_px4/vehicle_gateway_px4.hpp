@@ -102,6 +102,20 @@ public:
   float get_ground_speed() override;
 
 private:
+  /// Send command to PX4
+  /// \param[in] command Command ID
+  /// \param[in] target_system System which should execute the command
+  /// \param[in] target_component Component which should execute the command, 0 for all components
+  /// \param[in] source_system System sending the command
+  /// \param[in] source_component Component sending the command
+  /// \param[in] confirmation 0: First transmission of this command. 1-255: Confirmation transmissions
+  /// \param[in] param1 Parameter 1, as defined by MAVLink uint16 VEHICLE_CMD enum.
+  /// \param[in] param2 Parameter 2, as defined by MAVLink uint16 VEHICLE_CMD enum.
+  /// \param[in] param3 Parameter 3, as defined by MAVLink uint16 VEHICLE_CMD enum.
+  /// \param[in] param4 Parameter 4, as defined by MAVLink uint16 VEHICLE_CMD enum.
+  /// \param[in] param5 Parameter 5, as defined by MAVLink uint16 VEHICLE_CMD enum.
+  /// \param[in] param6 Parameter 6, as defined by MAVLink uint16 VEHICLE_CMD enum.
+  /// \param[in] param7 Parameter 7, as defined by MAVLink uint16 VEHICLE_CMD enum.
   void send_command(
     uint32_t command, uint8_t target_system, uint8_t target_component, uint8_t source_system,
     uint8_t source_component, uint8_t confirmation, bool from_external,
