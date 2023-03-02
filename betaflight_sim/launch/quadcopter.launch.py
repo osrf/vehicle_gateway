@@ -79,7 +79,16 @@ def generate_launch_description():
     joy_node = Node(
         package='joy',
         executable='joy_node',
+        parameters=[{'use_sim_time': use_sim_time}],
         output='screen')
+
+    # Bridge
+    bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
+        output='screen'
+    )
 
     return LaunchDescription([
         # Launch gazebo environment
@@ -90,6 +99,7 @@ def generate_launch_description():
             launch_arguments=[('gz_args', [' -r -v 4 ' + world_sdf])]),
         joy_node,
         use_sim_time_arg,
+        bridge,
         RegisterEventHandler(
             OnProcessIO(
                 target_action=joy_node,

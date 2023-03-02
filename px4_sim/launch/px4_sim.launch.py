@@ -217,6 +217,7 @@ def generate_launch_description():
         package='micro_ros_agent',
         executable='micro_ros_agent',
         arguments=['udp4', '-p', '8888'],
+        parameters=[{'use_sim_time': use_sim_time}],
         output='screen')
 
     spawn_entity = Node(
@@ -235,6 +236,13 @@ def generate_launch_description():
     )
 
     os.environ['PX4_GZ_WORLD'] = ""
+    # Bridge
+    bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
+        output='screen'
+    )
     return LaunchDescription([
         # Launch gazebo environment
         use_sim_time_arg,
@@ -245,6 +253,7 @@ def generate_launch_description():
         spawn_entity,
         run_px4,
         SetEnvironmentVariable('PX4_GZ_MODEL_NAME', [LaunchConfiguration('drone_type')]),
+        bridge,
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 [os.path.join(get_package_share_directory('ros_gz_sim'),

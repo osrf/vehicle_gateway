@@ -13,9 +13,9 @@ externalproject_add(betaflight-firmware
   PREFIX
       ${PROJECT_BINARY_DIR}/betaflight_sim
   GIT_REPOSITORY
-    https://github.com/nikhil-sethi/betaflight
+    https://github.com/betaflight/betaflight
   GIT_TAG
-    airsim-sitl
+    master
   INSTALL_COMMAND
     mkdir -p ${CMAKE_INSTALL_PREFIX}/share/betaflight_sim/bin/ &&
     cp ./obj/main/betaflight_SITL.elf ${CMAKE_INSTALL_PREFIX}/share/betaflight_sim/bin/
@@ -32,13 +32,6 @@ ament_environment_hooks(cmake/99_betaflight_setup.sh.in)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
-  # the following line skips the linter which checks for copyrights
-  # comment the line when a copyright and license is added to all source files
-  # set(ament_cmake_copyright_FOUND TRUE)
-  # the following line skips cpplint (only works in a git repo)
-  # comment the line when this package is in a git repo and when
-  # a copyright and license is added to all source files
-  # set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
 
