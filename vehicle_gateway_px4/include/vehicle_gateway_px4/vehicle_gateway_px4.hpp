@@ -18,6 +18,7 @@
 #include "vehicle_gateway/vehicle_gateway.hpp"
 
 #include <chrono>
+#include <cstdint>
 #include <memory>
 #include <thread>
 
@@ -37,6 +38,9 @@ namespace vehicle_gateway_px4
 class VehicleGatewayPX4 : public vehicle_gateway::VehicleGateway
 {
 public:
+  // Destructor
+  ~VehicleGatewayPX4();
+
   /// Documentation inherited
   void init(int argc, const char ** argv) override;
 
@@ -98,6 +102,13 @@ public:
   float get_ground_speed() override;
 
 private:
+  void send_command(
+    uint32_t command, uint8_t target_system, uint8_t target_component, uint8_t source_system,
+    uint8_t source_component, uint8_t confirmation, bool from_external,
+    float param1 = 0.0f, float param2 = 0.0f, float param3 = 0.0f,
+    float param4 = 0.0f, float param5 = 0.0f, float param6 = 0.0f,
+    float param7 = 0.0f);
+
   // Orchestration
   std::thread spin_thread_;
   std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> exec_;
