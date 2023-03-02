@@ -86,5 +86,5 @@ sudo apt-get install python3-rocker
 Run the container with rocker to visualize the GUI
 
 ```bash
-rocker --x11 vehicle_gateway ros2 launch px4_sim px4_sim.launch.py drone_type:='x500' world_name:=null_island model_pose:="-9.7948, -8.31, 2"
+rocker --x11 vehicle_gateway ros2 launch px4_sim px4_sim.launch.py drone_type:='x500' world_name:=null_island model_pose:="-9.7948, -8.31, 2, 0, 0, 0"
 ```
