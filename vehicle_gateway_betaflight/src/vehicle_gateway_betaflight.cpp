@@ -259,7 +259,8 @@ void VehicleGatewayBetaflight::set_local_position_setpoint(
 void VehicleGatewayBetaflight::set_local_velocity_setpoint(
   float /*vx*/, float /*vy*/, float /*vz*/, float /*yaw_rate*/) {}
 
-void VehicleGatewayBetaflight::set_offboard_control_mode(vehicle_gateway::CONTROLLER_TYPE /*type*/) {}
+void VehicleGatewayBetaflight::set_offboard_control_mode(
+  vehicle_gateway::CONTROLLER_TYPE /*type*/) {}
 
 void VehicleGatewayBetaflight::set_offboard_mode() {}
 

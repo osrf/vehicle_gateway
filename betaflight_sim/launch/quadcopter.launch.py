@@ -29,7 +29,8 @@ def get_betaflight_dir():
     return get_package_share_directory('betaflight_sim')
 
 
-run_virtual_tty = ExecuteProcess(cmd=["socat", "-dd", "pty,link=/tmp/ttyS0,raw,echo=0", "tcp:127.0.0.1:5761"]),
+run_virtual_tty = ExecuteProcess(cmd=["socat", "-dd", "pty,link=/tmp/ttyS0,raw,echo=0",
+                                      "tcp:127.0.0.1:5761"])
 
 
 def _run_virtual_tty_check(event):
@@ -57,7 +58,6 @@ def generate_launch_description():
     os.environ["GZ_SIM_RESOURCE_PATH"] += ":" + os.path.join(get_betaflight_dir(), "worlds")
 
     world_sdf = os.path.join(get_betaflight_dir(), "worlds", "empty_betaflight_world.sdf")
-
 
     use_groundcontrol = DeclareLaunchArgument('groundcontrol', default_value='false',
                                               choices=['true', 'false'],
