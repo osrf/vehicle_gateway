@@ -44,8 +44,8 @@ while 1:
                 print('Arming')
                 time.sleep(0.01)
 
-        px4_gateway.set_offboard_control_mode(ControllerType.POSITION)
-        px4_gateway.set_local_position_setpoint(0, -5, -5, 0)
+        px4_gateway.set_offboard_control_mode(ControllerType.VELOCITY)
+        px4_gateway.set_local_velocity_setpoint(0, 0, -5, 5)
 
         _start_time = current_time
     time.sleep(0.1)
