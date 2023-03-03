@@ -26,6 +26,10 @@
       name="gz::sim::systems::Imu">
     </plugin>
     <plugin
+      filename="gz-sim-air-pressure-system"
+      name="gz::sim::systems::AirPressure">
+    </plugin>
+    <plugin
       filename="gz-sim-air-speed-system"
       name="gz::sim::systems::AirSpeed">
     </plugin>
@@ -75,23 +79,6 @@
         <include>
           <uri>model://iris_with_standoffs</uri>
         </include>
-
-        <include>
-          <uri>model://gimbal_small_2d</uri>
-          <pose>0 -0.01 0.070 1.57 0 1.57</pose>
-        </include>
-
-        <joint name="gimbal_joint" type="revolute">
-          <parent>iris_with_standoffs::base_link</parent>
-          <child>gimbal_small_2d::base_link</child>
-          <axis>
-            <limit>
-              <lower>0</lower>
-              <upper>0</upper>
-            </limit>
-            <xyz>0 0 1</xyz>
-          </axis>
-        </joint>
 
         <!-- plugins -->
         <plugin filename="gz-sim-joint-state-publisher-system"
