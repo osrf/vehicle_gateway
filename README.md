@@ -32,7 +32,7 @@ sudo apt remove ros-humble-ros-gz-bridge
 ```
 
 ### Build the Vehicle Gateway
-We can now build the Vehicle Gateway itself. To keep paths short, we will make a colcon workspace named `vg` for "Vehicle Gateway", in your home directory. The Vehicle Gateway build will also download and build the PX4 firmware, to allow software-in-the-loop (SITL) simulation.
+We can now build the Vehicle Gateway itself. To keep paths short, we will make a colcon workspace named `vg` for "Vehicle Gateway", in your home directory. The Vehicle Gateway build will also download and build the PX4 firmware and Betaflight firmware, to allow software-in-the-loop (SITL) simulation of multiple autopilot software stacks.
 
 At time of writing, the `rosdep` command has to include a lot of `--skip-key` because currently Gazebo Garden is not yet in `rosdep`.
 
