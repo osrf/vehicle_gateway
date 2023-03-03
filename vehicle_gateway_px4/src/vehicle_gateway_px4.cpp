@@ -475,7 +475,7 @@ void VehicleGatewayPX4::set_local_position_setpoint(float x, float y, float z, f
   this->vehicle_trajectory_setpoint_pub_->publish(msg);
 }
 
-void VehicleGatewayPX4::set_speed(float speed)
+void VehicleGatewayPX4::set_ground_speed(float speed)
 {
   px4_msgs::msg::VehicleCommand msg_vehicle_command;
 

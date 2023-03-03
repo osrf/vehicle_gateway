@@ -100,7 +100,7 @@ public:
 
   /// Set ground speed speed m/s
   /// \param[in] Desired speed in m/s
-  void SetSpeed(float speed);
+  void SetGroundSpeed(float speed);
 
   // Destroy autopilot API
   void Destroy();

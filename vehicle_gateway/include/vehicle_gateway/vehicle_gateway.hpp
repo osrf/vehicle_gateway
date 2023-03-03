@@ -168,7 +168,7 @@ public:
 
   /// Set ground speed in m/s
   /// \param[in] speed Desired speed in m/s
-  virtual void set_speed(float speed) = 0;
+  virtual void set_ground_speed(float speed) = 0;
 
   /// Set local velocity
   /// \param[in] vx Desired x velocity
