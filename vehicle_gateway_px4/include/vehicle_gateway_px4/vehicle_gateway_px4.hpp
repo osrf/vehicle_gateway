@@ -31,6 +31,7 @@
 #include <px4_msgs/msg/offboard_control_mode.hpp>
 #include <px4_msgs/msg/timesync_status.hpp>
 #include <px4_msgs/msg/vehicle_odometry.hpp>
+#include <px4_msgs/msg/vehicle_rates_setpoint.hpp>
 
 namespace vehicle_gateway_px4
 {
@@ -119,6 +120,8 @@ private:
   rclcpp::Publisher<px4_msgs::msg::TrajectorySetpoint>::SharedPtr vehicle_trajectory_setpoint_pub_;
   rclcpp::Publisher<px4_msgs::msg::OffboardControlMode>::SharedPtr
     vehicle_offboard_control_mode_pub_;
+  rclcpp::Publisher<px4_msgs::msg::VehicleRatesSetpoint>::SharedPtr
+    vehicle_rates_setpoint_pub_;
 
   // Service clients
   rclcpp::Node::SharedPtr px4_node_;
