@@ -118,7 +118,10 @@ def generate_test_description():
 
 class TestFixture(unittest.TestCase):
 
-    def test_arm(self):
+    def test_arm(self, launch_service, proc_info, proc_output, run_px4):
+        proc_output.assertWaitFor('Ready for takeoff!', process=run_px4,
+                                  timeout=100, stream='stdout')
+
         vg = vehicle_gateway.init(args=sys.argv, plugin_type='px4')
         while vg.get_arming_state() != ArmingState.ARMED:
             vg.arm()
@@ -126,7 +129,7 @@ class TestFixture(unittest.TestCase):
 
         vg.takeoff()
 
-        while vg.get_altitude() > -2.5:
+        while vg.get_altitude() > -2.0:
             time.sleep(0.1)
 
         vg.land()
