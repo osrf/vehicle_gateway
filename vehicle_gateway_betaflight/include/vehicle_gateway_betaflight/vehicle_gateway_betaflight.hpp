@@ -95,6 +95,9 @@ public:
   void set_offboard_mode() override;
 
   /// Documentation inherited
+  float get_altitude() override;
+
+  /// Documentation inherited
   float get_ground_speed() override;
 
   /// Documentation inherited
@@ -129,6 +132,7 @@ private:
   float yaw_{0};
   float throttle_{0};
   uint16_t arm_{0};
+  float altitude{0};
 
   int index_box_arm_{-1};
 };

@@ -145,6 +145,11 @@ void VehicleGatewayPython::Land()
   this->gateway_->land();
 }
 
+float VehicleGatewayPython::GetAltitude()
+{
+  return this->gateway_->get_altitude();
+}
+
 VehicleGatewayPython::~VehicleGatewayPython()
 {
   this->Destroy();
@@ -215,7 +220,10 @@ define_vehicle_gateway(py::object module)
     "Get failure")
   .def(
     "land", &VehicleGatewayPython::Land,
-    "Land");
+    "Land")
+  .def(
+    "get_altitude", &VehicleGatewayPython::GetAltitude,
+    "Get altitude in meter");
 
   pybind11::enum_<vehicle_gateway::ARMING_STATE>(module, "ArmingState")
   .value("INIT", vehicle_gateway::ARMING_STATE::INIT)

@@ -70,6 +70,16 @@ source install/setup.bash
 ros2 launch px4_sim px4_sim.launch.py drone_type:='x500' position_name:=pad_1 world_name:=null_island
 ```
 
+# Running tests
+
+You can run an integration test suite which will test several flight capabilities. Gazebo will run headless simulation and report ability of the Vehicle Gateway plugin and a software-in-the-loop autopilot to perform various capabilities.
+
+```bash
+cd ~/vg
+colcon test --packages-select vehicle_gateway_integration_test
+colcon test-result --verbose --all
+```
+
 # Dockerfile
 
 ```bash
