@@ -16,9 +16,7 @@
 from distutils.dir_util import copy_tree
 import os
 import subprocess
-import sys
 import tempfile
-import time
 
 import unittest
 
@@ -36,9 +34,6 @@ from launch_testing.util import KeepAliveProc
 
 import psutil
 import pytest
-
-import vehicle_gateway
-from vehicle_gateway import ArmingState
 
 
 def get_px4_dir():
@@ -85,11 +80,12 @@ def generate_test_description():
         arguments=['udp4', '-p', '8888'],
         output='screen')
 
+    gz_args = '--headless-rendering -s -r -v 4 empty_px4_world.sdf'
     included_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             [os.path.join(get_package_share_directory('ros_gz_sim'),
                           'launch', 'gz_sim.launch.py')]),
-        launch_arguments=[('gz_args', ['--headless-rendering -r -s -v 4 empty_px4_world.sdf'])]
+        launch_arguments=[('gz_args', [gz_args])]
     )
 
     context = {
@@ -102,6 +98,11 @@ def generate_test_description():
             'vehicle_type',
             default_value=['x500'],
             description='Vehicle type',
+        ),
+        DeclareLaunchArgument(
+            'script_test',
+            default_value=[''],
+            description='Script to test',
         ),
         SetEnvironmentVariable('PX4_GZ_MODEL', LaunchConfiguration('vehicle_type')),
         SetEnvironmentVariable('PX4_GZ_WORLD', 'empty_px4_world'),
@@ -122,24 +123,15 @@ class TestFixture(unittest.TestCase):
         proc_output.assertWaitFor('Ready for takeoff!', process=run_px4,
                                   timeout=100, stream='stdout')
 
-        vg = vehicle_gateway.init(args=sys.argv, plugin_type='px4')
-        while vg.get_arming_state() != ArmingState.ARMED:
-            vg.arm()
-            time.sleep(0.1)
-
-        vg.takeoff()
-
-        while vg.get_altitude() > -2.0:
-            time.sleep(0.1)
-
-        vg.land()
-
-        while vg.get_altitude() < -0.3:
-            time.sleep(0.1)
-
-        while vg.get_arming_state() != ArmingState.STANDBY:
-            vg.disarm()
-            time.sleep(0.5)
+        proc_action = Node(
+            package='vehicle_gateway_integration_test',
+            executable=LaunchConfiguration('script_test'),
+            output='screen'
+        )
+        with launch_testing.tools.launch_process(
+            launch_service, proc_action, proc_info, proc_output
+        ):
+            proc_info.assertWaitForShutdown(process=proc_action, timeout=300)
 
         # shutdown px4
         p = subprocess.Popen('px4-shutdown',
@@ -147,12 +139,10 @@ class TestFixture(unittest.TestCase):
                              stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE)
         p.wait()
-        # kill gazebo sim and micro_ros_agent
         for proc in psutil.process_iter():
             # check whether the process name matches
             if proc.name() == 'ruby' or proc.name() == 'micro_ros_agent':
                 proc.kill()
-        vg.destroy()
 
 
 # These tests are run after the processes in generate_test_description() have shutdown.
