@@ -107,7 +107,6 @@ public:
   /// Documentation inherited
   bool set_motors(std::vector<uint16_t> motor_values) override;
 
-
 private:
   // Orchestration
   std::thread spin_thread_;
