@@ -19,17 +19,17 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
 
-add_executable(main
+add_executable(betaflight_joy_controller
   src/main.cpp
   src/SocketBetaflight.cpp
 )
-ament_target_dependencies(main
+ament_target_dependencies(betaflight_joy_controller
   rclcpp
   sensor_msgs
 )
 
 install(TARGETS
-  main
+  betaflight_joy_controller
   DESTINATION lib/${PROJECT_NAME}
 )
 

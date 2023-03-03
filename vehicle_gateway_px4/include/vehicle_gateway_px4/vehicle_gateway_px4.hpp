@@ -21,6 +21,7 @@
 #include <cstdint>
 #include <memory>
 #include <thread>
+#include <vector>
 
 #include <rclcpp/rclcpp.hpp>
 
@@ -100,6 +101,12 @@ public:
 
   /// Documentation inherited
   float get_ground_speed() override;
+
+  /// Documentation inherited
+  bool ctbr(float roll, float pitch, float yaw, float throttle) override;
+
+  /// Documentation inherited
+  bool set_motors(std::vector<uint16_t> motor_values) override;
 
 private:
   /// Send command to PX4

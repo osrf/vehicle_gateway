@@ -16,6 +16,7 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription
 from launch.actions import RegisterEventHandler
+from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
@@ -28,30 +29,11 @@ def get_betaflight_dir():
     return get_package_share_directory('betaflight_sim')
 
 
-run_betaflight_controller = Node(
-    package='betaflight_controller',
-    executable='main',
-    output='screen')
-
-run_betaflight_sitl = ExecuteProcess(
-    cmd=['betaflight_SITL.elf', "127.0.0.1"],
-    cwd=os.path.join(get_betaflight_dir(), "config"),
-    output='screen')
+run_virtual_tty = ExecuteProcess(cmd=["socat", "-dd", "pty,link=/tmp/ttyS0,raw,echo=0",
+                                      "tcp:127.0.0.1:5761"])
 
 
-def _run_betaflight_sitl_check(event):
-    """
-    Consider betaflight_controller ready when 'Opened joystick...' string is printed.
-
-    Launches betaflight_controller node if ready.
-    """
-    target_str = 'Opened joystick'
-    if target_str in event.text.decode():
-        time.sleep(5)
-        return run_betaflight_sitl
-
-
-def _run_betaflight_controller_check(event):
+def _run_virtual_tty_check(event):
     """
     Consider betaflight_controller ready when 'bind port 5761 for UART1...' string is printed.
 
@@ -60,7 +42,7 @@ def _run_betaflight_controller_check(event):
     target_str = 'bind port 5761 for UART1'
     if target_str in event.text.decode():
         time.sleep(2)
-        return run_betaflight_controller
+        return run_virtual_tty
 
 
 def generate_launch_description():
@@ -73,14 +55,17 @@ def generate_launch_description():
         description='If true, use simulated clock')
 
     os.environ["GZ_SIM_RESOURCE_PATH"] = os.path.join(get_betaflight_dir(), "models")
+    os.environ["GZ_SIM_RESOURCE_PATH"] += ":" + os.path.join(get_betaflight_dir(), "worlds")
 
     world_sdf = os.path.join(get_betaflight_dir(), "worlds", "empty_betaflight_world.sdf")
 
-    joy_node = Node(
-        package='joy',
-        executable='joy_node',
-        parameters=[{'use_sim_time': use_sim_time}],
-        output='screen')
+    use_groundcontrol = DeclareLaunchArgument('groundcontrol', default_value='false',
+                                              choices=['true', 'false'],
+                                              description='Start ground control station.')
+
+    run_betaflight_sitl = ExecuteProcess(cmd=['betaflight_SITL.elf', "127.0.0.1"],
+                                         cwd=os.path.join(get_betaflight_dir(), "config"),
+                                         output='screen')
 
     # Bridge
     bridge = Node(
@@ -97,22 +82,17 @@ def generate_launch_description():
                 [os.path.join(get_package_share_directory('ros_gz_sim'),
                               'launch', 'gz_sim.launch.py')]),
             launch_arguments=[('gz_args', [' -r -v 4 ' + world_sdf])]),
-        joy_node,
         use_sim_time_arg,
+        run_betaflight_sitl,
+        use_groundcontrol,
+        ExecuteProcess(cmd=['betaflight-configurator'],
+                       condition=IfCondition(LaunchConfiguration('groundcontrol'))),
         bridge,
         RegisterEventHandler(
             OnProcessIO(
-                target_action=joy_node,
-                on_stdout=_run_betaflight_sitl_check,
-                on_stderr=_run_betaflight_sitl_check
-            )
-        ),
-        RegisterEventHandler(
-            OnProcessIO(
                 target_action=run_betaflight_sitl,
-                on_stdout=_run_betaflight_controller_check,
-                on_stderr=_run_betaflight_controller_check
+                on_stdout=_run_virtual_tty_check,
+                on_stderr=_run_virtual_tty_check
             )
         ),
-        ExecuteProcess(cmd=['betaflight-configurator']),
     ])

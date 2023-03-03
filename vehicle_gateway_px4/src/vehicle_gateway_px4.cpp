@@ -510,6 +510,14 @@ void VehicleGatewayPX4::set_offboard_control_mode(vehicle_gateway::CONTROLLER_TY
   this->vehicle_offboard_control_mode_pub_->publish(msg);
 }
 
+bool VehicleGatewayPX4::ctbr(float roll, float pitch, float yaw, float throttle)
+{
+}
+
+bool VehicleGatewayPX4::set_motors(std::vector<uint16_t> motor_values)
+{
+}
+
 void VehicleGatewayPX4::go_to_waypoint()
 {
 }

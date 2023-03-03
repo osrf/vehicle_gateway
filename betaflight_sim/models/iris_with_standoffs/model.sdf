@@ -66,10 +66,6 @@
           </cylinder>
         </geometry>
         <material>
-          <!--script>
-            <name>Gazebo/FlatBlack</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script-->
           <ambient>0.1 0.1 0.1</ambient>
           <diffuse>0.1 0.1 0.1</diffuse>
           <specular>0.01 0.01 0.01 1.0</specular>
@@ -84,10 +80,6 @@
           </cylinder>
         </geometry>
         <material>
-          <!--script>
-            <name>Gazebo/FlatBlack</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script-->
           <ambient>0.1 0.1 0.1</ambient>
           <diffuse>0.1 0.1 0.1</diffuse>
           <specular>0.01 0.01 0.01 1.0</specular>
@@ -102,10 +94,6 @@
           </cylinder>
         </geometry>
         <material>
-          <!--script>
-            <name>Gazebo/FlatBlack</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script-->
           <ambient>0.1 0.1 0.1</ambient>
           <diffuse>0.1 0.1 0.1</diffuse>
           <specular>0.01 0.01 0.01 1.0</specular>
@@ -120,10 +108,6 @@
           </cylinder>
         </geometry>
         <material>
-          <!--script>
-            <name>Gazebo/FlatBlack</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script-->
           <ambient>0.1 0.1 0.1</ambient>
           <diffuse>0.1 0.1 0.1</diffuse>
           <specular>0.01 0.01 0.01 1.0</specular>
@@ -147,6 +131,13 @@
         <pose>0 0 0 3.141593 0 0</pose>
         <always_on>1</always_on>
         <update_rate>1000.0</update_rate>
+      </sensor>
+      <sensor name="air_pressure_sensor" type="air_pressure">
+        <always_on>1</always_on>
+        <update_rate>30</update_rate>
+        <air_pressure>
+          <reference_altitude>0</reference_altitude>
+        </air_pressure>
       </sensor>
     </link>
     <joint name='imu_joint' type='revolute'>
@@ -205,10 +196,6 @@
           </mesh>
         </geometry>
         <material>
-          <!--script>
-            <name>Gazebo/Blue</name>
-            <uri>__default__</uri>
-          </script-->
           <ambient>0 0 1</ambient>
           <diffuse>0 0 1</diffuse>
           <specular>0.1 0.1 0.1 1</specular>
@@ -278,10 +265,6 @@
           </mesh>
         </geometry>
         <material>
-          <!--script>
-            <name>Gazebo/White</name>
-            <uri>__default__</uri>
-          </script-->
           <ambient>1 1 1 1</ambient>
           <diffuse>1 1 1 1</diffuse>
           <specular>.1 .1 .1 1</specular>
@@ -351,10 +334,6 @@
           </mesh>
         </geometry>
         <material>
-          <!--script>
-            <name>Gazebo/Blue</name>
-            <uri>__default__</uri>
-          </script-->
           <ambient>0 0 1</ambient>
           <diffuse>0 0 1</diffuse>
           <specular>0.1 0.1 0.1 1</specular>
@@ -424,10 +403,6 @@
           </mesh>
         </geometry>
         <material>
-          <!--script>
-            <name>Gazebo/White</name>
-            <uri>__default__</uri>
-          </script-->
           <ambient>1 1 1 1</ambient>
           <diffuse>1 1 1 1</diffuse>
           <specular>.1 .1 .1 1</specular>

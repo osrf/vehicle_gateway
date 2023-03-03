@@ -1,0 +1,5 @@
+<library path="vehicle_gateway_betaflight">
+  <class type="vehicle_gateway_betaflight::VehicleGatewayBetaflight" base_class_type="vehicle_gateway::VehicleGateway">
+    <description>Vehicle Gateway implementation for Betaflight</description>
+  </class>
+</library>
