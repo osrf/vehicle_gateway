@@ -8,6 +8,8 @@
 
   <license>Apache 2.0</license>
 
+  <depend>socat</depend>
+
   <exec_depend>ament_index_python</exec_depend>
   <exec_depend>betaflight_configurator</exec_depend>
   <exec_depend>betaflight_controller</exec_depend>
