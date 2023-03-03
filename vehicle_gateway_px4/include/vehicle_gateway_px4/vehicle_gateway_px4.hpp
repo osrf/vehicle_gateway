@@ -161,6 +161,12 @@ private:
   float current_vel_z_;
   float ground_speed_;
 
+  uint8_t target_component_{1};
+  uint8_t source_system_{255};
+  uint8_t source_component_{0};
+  uint8_t confirmation_{1};
+  bool from_external_{true};
+
   std::chrono::time_point<std::chrono::high_resolution_clock> timestamp_;
 };
 

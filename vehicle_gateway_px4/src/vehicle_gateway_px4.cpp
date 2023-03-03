@@ -351,11 +351,11 @@ void VehicleGatewayPX4::arm()
   this->send_command(
     px4_msgs::msg::VehicleCommand::VEHICLE_CMD_COMPONENT_ARM_DISARM,
     this->target_system_,
-    1,
-    255,
-    0,
-    1,
-    true,
+    this->target_component_,
+    this->source_system_,
+    this->source_component_,
+    this->confirmation_,
+    this->from_external_,
     1.0f);
 }
 
@@ -364,11 +364,11 @@ void VehicleGatewayPX4::disarm()
   this->send_command(
     px4_msgs::msg::VehicleCommand::VEHICLE_CMD_COMPONENT_ARM_DISARM,
     this->target_system_,
-    1,
-    255,
-    0,
-    1,
-    true,
+    this->target_component_,
+    this->source_system_,
+    this->source_component_,
+    this->confirmation_,
+    this->from_external_,
     0.0f);
 }
 
@@ -377,11 +377,11 @@ void VehicleGatewayPX4::set_offboard_mode()
   this->send_command(
     px4_msgs::msg::VehicleCommand::VEHICLE_CMD_DO_SET_MODE,
     this->target_system_,
-    1,
-    255,
-    1,
-    1,
-    true,
+    this->target_component_,
+    this->source_system_,
+    this->source_component_,
+    this->confirmation_,
+    this->from_external_,
     1.0f,
     6.0f);
 }
@@ -396,11 +396,11 @@ void VehicleGatewayPX4::takeoff()
   this->send_command(
     px4_msgs::msg::VehicleCommand::VEHICLE_CMD_NAV_TAKEOFF,
     this->target_system_,
-    1,
-    255,
-    1,
-    1,
-    true,
+    this->target_component_,
+    this->source_system_,
+    this->source_component_,
+    this->confirmation_,
+    this->from_external_,
     0.1f,
     0,
     0,
@@ -415,11 +415,11 @@ void VehicleGatewayPX4::land()
   this->send_command(
     px4_msgs::msg::VehicleCommand::VEHICLE_CMD_NAV_LAND,
     this->target_system_,
-    1,
-    255,
-    1,
-    1,
-    true,
+    this->target_component_,
+    this->source_system_,
+    this->source_component_,
+    this->confirmation_,
+    this->from_external_,
     0.1f,
     0,
     0,
@@ -433,11 +433,11 @@ void VehicleGatewayPX4::transition_to_fw()
   this->send_command(
     px4_msgs::msg::VehicleCommand::VEHICLE_CMD_DO_VTOL_TRANSITION,
     this->target_system_,
-    1,
-    255,
-    1,
-    1,
-    true,
+    this->target_component_,
+    this->source_system_,
+    this->source_component_,
+    this->confirmation_,
+    this->from_external_,
     4.0f,
     1.0f);
 }
@@ -447,11 +447,11 @@ void VehicleGatewayPX4::transition_to_mc()
   this->send_command(
     px4_msgs::msg::VehicleCommand::VEHICLE_CMD_DO_VTOL_TRANSITION,
     this->target_system_,
-    1,
-    255,
-    1,
-    1,
-    true,
+    this->target_component_,
+    this->source_system_,
+    this->source_component_,
+    this->confirmation_,
+    this->from_external_,
     3.0f,
     1.0f);
 }
