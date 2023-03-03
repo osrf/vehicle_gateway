@@ -32,6 +32,7 @@ jobs:
           package-name: |
             betaflight_configurator
             betaflight_controller
+            betaflight_demo
             betaflight_gazebo
             gz_aerial_plugins
             vehicle_gateway
