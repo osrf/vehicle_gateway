@@ -263,6 +263,9 @@ void VehicleGatewayPX4::init(int argc, const char ** argv)
       current_vel_z_ = msg->velocity[2];
     });
 
+  this->vehicle_rates_setpoint_pub_ =
+    this->px4_node_->create_publisher<px4_msgs::msg::VehicleRatesSetpoint>(
+    "/fmu/in/vehicle_rates_setpoint", qos_profile);
   this->vehicle_command_pub_ = this->px4_node_->create_publisher<px4_msgs::msg::VehicleCommand>(
     "/fmu/in/vehicle_command", qos_profile);
   this->vehicle_trajectory_setpoint_pub_ =
@@ -497,6 +500,25 @@ void VehicleGatewayPX4::set_offboard_control_mode(vehicle_gateway::CONTROLLER_TY
 
 bool VehicleGatewayPX4::ctbr(float roll, float pitch, float yaw, float throttle)
 {
+  px4_msgs::msg::VehicleRatesSetpoint msg;
+
+  msg.timestamp = this->px4_node_->get_clock()->now().nanoseconds() / 1000;
+  msg.roll = roll;
+  msg.pitch = pitch;
+  msg.yaw = yaw;
+
+  // multicopter
+  if (this->vehicle_type_ == vehicle_gateway::VEHICLE_TYPE::ROTARY_WING) {
+    msg.thrust_body[2] = throttle;
+  } else if (this->vehicle_type_ == vehicle_gateway::VEHICLE_TYPE::FIXED_WING) {
+    // Fixed wing plane
+    msg.thrust_body[0] = throttle;
+  }
+
+  msg.reset_integral = false;
+
+  this->vehicle_rates_setpoint_pub_->publish(msg);
+  return true;
 }
 
 bool VehicleGatewayPX4::set_motors(std::vector<uint16_t> motor_values)
