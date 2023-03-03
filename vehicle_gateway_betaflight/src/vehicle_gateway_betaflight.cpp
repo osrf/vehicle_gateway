@@ -115,7 +115,13 @@ void VehicleGatewayBetaflight::onAltitude(const msp::msg::Altitude & altitude)
   // altitude in meter
   std_msgs::msg::Float64 alt;
   alt.data = altitude.altitude;
+  this->altitude = altitude.altitude;
   this->pub_altitude_->publish(alt);
+}
+
+float VehicleGatewayBetaflight::get_altitude()
+{
+  return this->altitude;
 }
 
 void VehicleGatewayBetaflight::onMotor(const msp::msg::Motor & motor)

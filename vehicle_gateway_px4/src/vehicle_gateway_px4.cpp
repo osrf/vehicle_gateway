@@ -550,6 +550,11 @@ void VehicleGatewayPX4::go_to_waypoint()
 {
 }
 
+float VehicleGatewayPX4::get_altitude()
+{
+  return this->current_pos_z_;
+}
+
 }  // namespace vehicle_gateway_px4
 #include <pluginlib/class_list_macros.hpp>
 

@@ -103,6 +103,9 @@ public:
   float get_ground_speed() override;
 
   /// Documentation inherited
+  float get_altitude() override;
+
+  /// Documentation inherited
   bool ctbr(float roll, float pitch, float yaw, float throttle) override;
 
   /// Documentation inherited
