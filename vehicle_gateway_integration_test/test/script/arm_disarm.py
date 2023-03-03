@@ -13,8 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import time
 import sys
+import time
 
 import vehicle_gateway
 from vehicle_gateway import ArmingState
