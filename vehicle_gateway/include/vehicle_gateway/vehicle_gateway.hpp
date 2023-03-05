@@ -104,8 +104,6 @@ enum CONTROLLER_TYPE
 class VehicleGateway
 {
 public:
-  // TODO(anyone): add classes for all the fun cool vehicle things
-
   virtual ~VehicleGateway() {}
 
   /// Initialize the autopilot
@@ -191,6 +189,8 @@ public:
   /// Get altitude
   /// \return Get altitude
   virtual float get_altitude() = 0;
+
+  virtual void get_local_position(float &x, float &y, float &z) = 0;
 
   virtual bool ctbr(float roll, float pitch, float yaw, float throttle) = 0;
 

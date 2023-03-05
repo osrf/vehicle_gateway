@@ -23,7 +23,10 @@ namespace vehicle_gateway_px4
 {
 void VehicleGatewayPX4::init(int argc, const char ** argv)
 {
-  rclcpp::init(argc, argv);
+  if (argc != 0 && argv != nullptr)
+  {
+    rclcpp::init(argc, argv);
+  }
   this->exec_ = std::make_shared<rclcpp::executors::MultiThreadedExecutor>();
   this->px4_node_ = std::make_shared<rclcpp::Node>("VehicleGatewayPX4");
   this->exec_->add_node(px4_node_);
@@ -257,12 +260,12 @@ void VehicleGatewayPX4::init(int argc, const char ** argv)
           msg->velocity[1],
           2));
 
-      current_pos_x_ = msg->position[0];
-      current_pos_y_ = msg->position[1];
-      current_pos_z_ = msg->position[2];
-      current_vel_x_ = msg->velocity[0];
-      current_vel_y_ = msg->velocity[1];
-      current_vel_z_ = msg->velocity[2];
+      this->current_pos_x_ = msg->position[0];
+      this->current_pos_y_ = msg->position[1];
+      this->current_pos_z_ = msg->position[2];
+      this->current_vel_x_ = msg->velocity[0];
+      this->current_vel_y_ = msg->velocity[1];
+      this->current_vel_z_ = msg->velocity[2];
     });
 
   this->vehicle_rates_setpoint_pub_ =
@@ -483,8 +486,6 @@ void VehicleGatewayPX4::set_local_position_setpoint(float x, float y, float z, f
 {
   px4_msgs::msg::TrajectorySetpoint msg;
 
-  msg.timestamp = this->px4_node_->get_clock()->now().nanoseconds() / 1000;
-
   msg.position[0] = x;
   msg.position[1] = y;
   msg.position[2] = z;
@@ -567,6 +568,14 @@ void VehicleGatewayPX4::go_to_waypoint()
 {
 }
 
+void VehicleGatewayPX4::get_local_position(float &x, float &y, float &z)
+{
+  x = this->current_pos_x_;
+  y = this->current_pos_y_;
+  z = this->current_pos_z_;
+}
+
+/// Documentation inherited
 float VehicleGatewayPX4::get_altitude()
 {
   return this->current_pos_z_;
