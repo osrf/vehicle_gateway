@@ -18,8 +18,10 @@
 #include "vehicle_gateway/vehicle_gateway.hpp"
 
 #include <chrono>
+#include <cstdint>
 #include <memory>
 #include <thread>
+#include <vector>
 
 #include <rclcpp/rclcpp.hpp>
 
@@ -30,6 +32,7 @@
 #include <px4_msgs/msg/offboard_control_mode.hpp>
 #include <px4_msgs/msg/timesync_status.hpp>
 #include <px4_msgs/msg/vehicle_odometry.hpp>
+#include <px4_msgs/msg/vehicle_rates_setpoint.hpp>
 
 namespace vehicle_gateway_px4
 {
@@ -37,6 +40,9 @@ namespace vehicle_gateway_px4
 class VehicleGatewayPX4 : public vehicle_gateway::VehicleGateway
 {
 public:
+  // Destructor
+  ~VehicleGatewayPX4();
+
   /// Documentation inherited
   void init(int argc, const char ** argv) override;
 
@@ -86,6 +92,9 @@ public:
   void set_local_position_setpoint(float x, float y, float z, float yaw) override;
 
   /// Documentation inherited
+  void set_ground_speed(float speed) override;
+
+  /// Documentation inherited
   void set_offboard_control_mode(vehicle_gateway::CONTROLLER_TYPE type) override;
 
   /// Documentation inherited
@@ -97,7 +106,40 @@ public:
   /// Documentation inherited
   float get_ground_speed() override;
 
+  /// Documentation inherited
+  float get_altitude() override;
+
+  void get_local_position(float &x, float &y, float &z) override;
+
+  /// Documentation inherited
+  bool ctbr(float roll, float pitch, float yaw, float throttle) override;
+
+  /// Documentation inherited
+  bool set_motors(std::vector<uint16_t> motor_values) override;
+
 private:
+  /// Send command to PX4
+  /// \param[in] command Command ID
+  /// \param[in] target_system System which should execute the command
+  /// \param[in] target_component Component which should execute the command, 0 for all components
+  /// \param[in] source_system System sending the command
+  /// \param[in] source_component Component sending the command
+  /// \param[in] confirmation 0: First transmission of this command
+  /// 1-255: Confirmation transmissions
+  /// \param[in] param1 Parameter 1, as defined by MAVLink uint16 VEHICLE_CMD enum.
+  /// \param[in] param2 Parameter 2, as defined by MAVLink uint16 VEHICLE_CMD enum.
+  /// \param[in] param3 Parameter 3, as defined by MAVLink uint16 VEHICLE_CMD enum.
+  /// \param[in] param4 Parameter 4, as defined by MAVLink uint16 VEHICLE_CMD enum.
+  /// \param[in] param5 Parameter 5, as defined by MAVLink uint16 VEHICLE_CMD enum.
+  /// \param[in] param6 Parameter 6, as defined by MAVLink uint16 VEHICLE_CMD enum.
+  /// \param[in] param7 Parameter 7, as defined by MAVLink uint16 VEHICLE_CMD enum.
+  void send_command(
+    uint32_t command, uint8_t target_system, uint8_t target_component, uint8_t source_system,
+    uint8_t source_component, uint8_t confirmation, bool from_external,
+    float param1 = 0.0f, float param2 = 0.0f, float param3 = 0.0f,
+    float param4 = 0.0f, float param5 = 0.0f, float param6 = 0.0f,
+    float param7 = 0.0f);
+
   // Orchestration
   std::thread spin_thread_;
   std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> exec_;
@@ -109,6 +151,8 @@ private:
   rclcpp::Publisher<px4_msgs::msg::TrajectorySetpoint>::SharedPtr vehicle_trajectory_setpoint_pub_;
   rclcpp::Publisher<px4_msgs::msg::OffboardControlMode>::SharedPtr
     vehicle_offboard_control_mode_pub_;
+  rclcpp::Publisher<px4_msgs::msg::VehicleRatesSetpoint>::SharedPtr
+    vehicle_rates_setpoint_pub_;
 
   // Service clients
   rclcpp::Node::SharedPtr px4_node_;
@@ -134,6 +178,12 @@ private:
   float current_vel_y_;
   float current_vel_z_;
   float ground_speed_;
+
+  uint8_t target_component_{1};
+  uint8_t source_system_{255};
+  uint8_t source_component_{0};
+  uint8_t confirmation_{1};
+  bool from_external_{true};
 
   std::chrono::time_point<std::chrono::high_resolution_clock> timestamp_;
 };

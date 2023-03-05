@@ -15,6 +15,9 @@
 #ifndef VEHICLE_GATEWAY__VEHICLE_GATEWAY_HPP_
 #define VEHICLE_GATEWAY__VEHICLE_GATEWAY_HPP_
 
+#include <cstdint>
+#include <vector>
+
 namespace vehicle_gateway
 {
 
@@ -43,7 +46,8 @@ enum ARM_DISARM_REASON
   KILL_SWITCH = 9,
   LOCKDOWN = 10,
   FAILURE_DETECTOR = 11,
-  SHUTDOWN = 12
+  SHUTDOWN = 12,
+  ARM_DISARM_REASON_NONE = 13
 };
 
 enum FAILURE
@@ -100,8 +104,6 @@ enum CONTROLLER_TYPE
 class VehicleGateway
 {
 public:
-  // TODO(anyone): add classes for all the fun cool vehicle things
-
   virtual ~VehicleGateway() {}
 
   /// Initialize the autopilot
@@ -160,7 +162,12 @@ public:
   /// \param[in] x Desired x position
   /// \param[in] y Desired y position
   /// \param[in] z Desired z position
+  /// \param[in] yaw Desired yaw position
   virtual void set_local_position_setpoint(float x, float y, float z, float yaw) = 0;
+
+  /// Set ground speed in m/s
+  /// \param[in] speed Desired speed in m/s
+  virtual void set_ground_speed(float speed) = 0;
 
   /// Set local velocity
   /// \param[in] vx Desired x velocity
@@ -178,6 +185,16 @@ public:
   /// Get ground speed
   /// \return Get ground speed
   virtual float get_ground_speed() = 0;
+
+  /// Get altitude
+  /// \return Get altitude
+  virtual float get_altitude() = 0;
+
+  virtual void get_local_position(float &x, float &y, float &z) = 0;
+
+  virtual bool ctbr(float roll, float pitch, float yaw, float throttle) = 0;
+
+  virtual bool set_motors(std::vector<uint16_t> motor_values) = 0;
 
 protected:
   VehicleGateway() {}

@@ -1,9 +1,7 @@
 # Betaflight
 
-## Context
-
-There is an effort to integrate Gazebo-classic 8 in Betaflight. It's using the ArduPilot plugin but a really old version ([available in this repo](https://github.com/khancyr/ardupilot_gazebo)).
-
+The Gazebo support for Betaflight was added in this [PR](https://github.com/betaflight/betaflight/pull/12346).
+It's already available in `master` branch.
 
 ## Packages available
 
@@ -12,7 +10,6 @@ There is an effort to integrate Gazebo-classic 8 in Betaflight. It's using the A
 
   - Modes: Configure arm in AUX1 (value 1500 - 2000)
   - Motors: Select PWM and 3D
-
 
  - **betaflight_controller**: When the drone is connected to SITL this requires an RC, otherwise
  the flight controller will generate a failsafe (RX_FAILSAFE). This program will open a
@@ -27,7 +24,6 @@ There is an effort to integrate Gazebo-classic 8 in Betaflight. It's using the A
   - Receiving PWM from SITL at UDP server: 127.0.0.1:9003
 
  - **betaflight_sim**: Download and install the betaflight flight controller.
-
 
 ## Run the simulation
 

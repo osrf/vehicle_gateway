@@ -212,7 +212,7 @@ def generate_launch_description():
         cwd=get_px4_dir(),
         output='screen',
     )
-
+    wait_spawn = ExecuteProcess(cmd=["sleep", "5"])
     micro_ros_agent = Node(
         package='micro_ros_agent',
         executable='micro_ros_agent',
@@ -251,8 +251,8 @@ def generate_launch_description():
         model_pose_arg,
         frame_name_args,
         spawn_entity,
-        run_px4,
-        SetEnvironmentVariable('PX4_GZ_MODEL_NAME', [LaunchConfiguration('drone_type')]),
+        # run_px4,
+        SetEnvironmentVariable('PX4_GZ_MODEL_NAME', [LaunchConfiguration('drone_type'), "_0"]),
         bridge,
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
@@ -260,14 +260,20 @@ def generate_launch_description():
                               'launch', 'gz_sim.launch.py')]),
             launch_arguments=[('gz_args', [' -r -v 4 ', LaunchConfiguration('world_name'), '.sdf'])]
         ),
-        # RegisterEventHandler(
-        #     event_handler=OnProcessExit(
-        #         target_action=spawn_entity,
-        #         on_exit=[run_px4],
-        #     )
-        # ),
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=spawn_entity,
+                on_exit=[wait_spawn],
+            )
+        ),
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=wait_spawn,
+                on_exit=[run_px4],
+            )
+        ),
         use_groundcontrol,
         ExecuteProcess(cmd=['QGroundControl.AppImage'],
                        condition=IfCondition(LaunchConfiguration('groundcontrol'))),
-        # micro_ros_agent
+        micro_ros_agent
     ])

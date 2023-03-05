@@ -2,7 +2,7 @@
 <sdf version="1.10">
   <model name="camera">
     <pose>0 0 0.1 0 1.57 0</pose>
-    <link name="camera_link">
+    <link name="link">
       <inertial>
         <pose>0.01 0.025 0.025 0 0 0</pose>
         <mass>0.01</mass>
