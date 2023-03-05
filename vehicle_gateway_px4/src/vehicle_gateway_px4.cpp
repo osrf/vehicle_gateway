@@ -278,6 +278,11 @@ void VehicleGatewayPX4::init(int argc, const char ** argv)
     "/fmu/in/offboard_control_mode", qos_profile);
 }
 
+VehicleGatewayPX4::~VehicleGatewayPX4()
+{
+  this->destroy();
+}
+
 vehicle_gateway::VEHICLE_TYPE VehicleGatewayPX4::get_vehicle_type()
 {
   return this->vehicle_type_;
@@ -292,6 +297,7 @@ void VehicleGatewayPX4::destroy()
 {
   if (this->exec_) {
     this->exec_->cancel();
+    this->exec_ = nullptr;
     rclcpp::shutdown();
     this->spin_thread_.join();
   }
@@ -317,52 +323,72 @@ vehicle_gateway::ARMING_STATE VehicleGatewayPX4::get_arming_state()
   return this->arming_state_;
 }
 
-void VehicleGatewayPX4::arm()
+void VehicleGatewayPX4::send_command(
+  uint32_t command, uint8_t target_system, uint8_t target_component, uint8_t source_system,
+  uint8_t source_component, uint8_t confirmation, bool from_external,
+  float param1, float param2, float param3,
+  float param4, float param5, float param6,
+  float param7)
 {
   px4_msgs::msg::VehicleCommand msg_vehicle_command;
-
   msg_vehicle_command.timestamp = this->px4_node_->get_clock()->now().nanoseconds() / 1000.0;
-  msg_vehicle_command.command = px4_msgs::msg::VehicleCommand::VEHICLE_CMD_COMPONENT_ARM_DISARM;
-  msg_vehicle_command.param1 = 1;
-  msg_vehicle_command.confirmation = 1;
-  msg_vehicle_command.source_system = 255;
-  msg_vehicle_command.target_system = this->target_system_;
-  msg_vehicle_command.target_component = 1;
-  msg_vehicle_command.from_external = true;
+  msg_vehicle_command.command = command;
+
+  msg_vehicle_command.param1 = param1;
+  msg_vehicle_command.param2 = param2;
+  msg_vehicle_command.param3 = param3;
+  msg_vehicle_command.param4 = param4;
+  msg_vehicle_command.param5 = param5;
+  msg_vehicle_command.param6 = param6;
+  msg_vehicle_command.param7 = param7;
+  msg_vehicle_command.confirmation = confirmation;
+  msg_vehicle_command.source_system = source_system;
+  msg_vehicle_command.target_system = target_system;
+  msg_vehicle_command.target_component = target_component;
+  msg_vehicle_command.from_external = from_external;
+  msg_vehicle_command.source_component = source_component;
+
   this->vehicle_command_pub_->publish(msg_vehicle_command);
+}
+
+void VehicleGatewayPX4::arm()
+{
+  this->send_command(
+    px4_msgs::msg::VehicleCommand::VEHICLE_CMD_COMPONENT_ARM_DISARM,
+    this->target_system_,
+    this->target_component_,
+    this->source_system_,
+    this->source_component_,
+    this->confirmation_,
+    this->from_external_,
+    1.0f);
 }
 
 void VehicleGatewayPX4::disarm()
 {
-  px4_msgs::msg::VehicleCommand msg_vehicle_command;
-
-  msg_vehicle_command.timestamp = this->px4_node_->get_clock()->now().nanoseconds() / 1000.0;
-  msg_vehicle_command.command = px4_msgs::msg::VehicleCommand::VEHICLE_CMD_COMPONENT_ARM_DISARM;
-  msg_vehicle_command.param1 = 0;
-  msg_vehicle_command.confirmation = 1;
-  msg_vehicle_command.source_system = 255;
-  msg_vehicle_command.target_system = this->target_system_;
-  msg_vehicle_command.target_component = 1;
-  msg_vehicle_command.from_external = true;
-  this->vehicle_command_pub_->publish(msg_vehicle_command);
+  this->send_command(
+    px4_msgs::msg::VehicleCommand::VEHICLE_CMD_COMPONENT_ARM_DISARM,
+    this->target_system_,
+    this->target_component_,
+    this->source_system_,
+    this->source_component_,
+    this->confirmation_,
+    this->from_external_,
+    0.0f);
 }
 
 void VehicleGatewayPX4::set_offboard_mode()
 {
-  px4_msgs::msg::VehicleCommand msg_vehicle_command;
-
-  msg_vehicle_command.timestamp = this->px4_node_->get_clock()->now().nanoseconds() / 1000;
-  msg_vehicle_command.param1 = 1;
-  msg_vehicle_command.param2 = 6;
-  // command ID
-  msg_vehicle_command.command = px4_msgs::msg::VehicleCommand::VEHICLE_CMD_DO_SET_MODE;
-  // system which should execute the command
-  msg_vehicle_command.target_system = this->target_system_;
-  msg_vehicle_command.target_component = 1;  // component to execute the command, 0 for all
-  msg_vehicle_command.source_system = 255;  // system sending the command
-  msg_vehicle_command.source_component = 1;  // component sending the command
-  msg_vehicle_command.from_external = true;
-  this->vehicle_command_pub_->publish(msg_vehicle_command);
+  this->send_command(
+    px4_msgs::msg::VehicleCommand::VEHICLE_CMD_DO_SET_MODE,
+    this->target_system_,
+    this->target_component_,
+    this->source_system_,
+    this->source_component_,
+    this->confirmation_,
+    this->from_external_,
+    1.0f,
+    6.0f);
 }
 
 float VehicleGatewayPX4::get_ground_speed()
@@ -372,78 +398,67 @@ float VehicleGatewayPX4::get_ground_speed()
 
 void VehicleGatewayPX4::takeoff()
 {
-  px4_msgs::msg::VehicleCommand msg_vehicle_command;
-
-  // take off
-  msg_vehicle_command.timestamp = this->px4_node_->get_clock()->now().nanoseconds() / 1000;
-  msg_vehicle_command.command = px4_msgs::msg::VehicleCommand::VEHICLE_CMD_NAV_TAKEOFF;
-  msg_vehicle_command.param1 = 0.1;
-  msg_vehicle_command.param2 = 0;
-  msg_vehicle_command.param3 = 0;
-  msg_vehicle_command.param4 = 1.57;  // orientation
-  msg_vehicle_command.param5 = this->lat_ * 1e-7;
-  msg_vehicle_command.param6 = this->lon_ * 1e-7;
-  msg_vehicle_command.param7 = 5.0;
-  msg_vehicle_command.confirmation = 1;
-  msg_vehicle_command.source_system = 255;
-  msg_vehicle_command.target_system = this->target_system_;
-  msg_vehicle_command.target_component = 1;
-  msg_vehicle_command.from_external = true;
-  this->vehicle_command_pub_->publish(msg_vehicle_command);
+  this->send_command(
+    px4_msgs::msg::VehicleCommand::VEHICLE_CMD_NAV_TAKEOFF,
+    this->target_system_,
+    this->target_component_,
+    this->source_system_,
+    this->source_component_,
+    this->confirmation_,
+    this->from_external_,
+    0.1f,
+    0,
+    0,
+    1.57,  // orientation
+    this->lat_ * 1e-7,
+    this->lon_ * 1e-7,
+    this->alt_ + 5.0f);
 }
 
 void VehicleGatewayPX4::land()
 {
-  px4_msgs::msg::VehicleCommand msg_vehicle_command;
-
-  msg_vehicle_command.timestamp = this->px4_node_->get_clock()->now().nanoseconds() / 1000;
-  msg_vehicle_command.command = px4_msgs::msg::VehicleCommand::VEHICLE_CMD_NAV_LAND;
-  msg_vehicle_command.param1 = 0.1;
-  msg_vehicle_command.param4 = 1.57;
-  msg_vehicle_command.param5 = this->lat_ * 1e-7;
-  msg_vehicle_command.param6 = this->lon_ * 1e-7;
-  msg_vehicle_command.confirmation = 1;
-  msg_vehicle_command.source_system = 255;
-  msg_vehicle_command.target_system = this->target_system_;
-  msg_vehicle_command.target_component = 1;
-  msg_vehicle_command.from_external = true;
-  this->vehicle_command_pub_->publish(msg_vehicle_command);
+  this->send_command(
+    px4_msgs::msg::VehicleCommand::VEHICLE_CMD_NAV_LAND,
+    this->target_system_,
+    this->target_component_,
+    this->source_system_,
+    this->source_component_,
+    this->confirmation_,
+    this->from_external_,
+    0.1f,
+    0,
+    0,
+    1.57,  // orientation
+    this->lat_ * 1e-7,
+    this->lon_ * 1e-7);
 }
 
 void VehicleGatewayPX4::transition_to_fw()
 {
-  px4_msgs::msg::VehicleCommand msg_vehicle_command;
-
-  msg_vehicle_command.timestamp = this->px4_node_->get_clock()->now().nanoseconds() / 1000;
-  msg_vehicle_command.param1 = 4.0;
-  msg_vehicle_command.param2 = 1.0;
-  // command ID
-  msg_vehicle_command.command = px4_msgs::msg::VehicleCommand::VEHICLE_CMD_DO_VTOL_TRANSITION;
-  // system which should execute the command
-  msg_vehicle_command.target_system = this->target_system_;
-  msg_vehicle_command.target_component = 1;  // component to execute the command, 0 for all
-  msg_vehicle_command.source_system = 255;  // system sending the command
-  msg_vehicle_command.source_component = 1;  // component sending the command
-  msg_vehicle_command.from_external = true;
-  this->vehicle_command_pub_->publish(msg_vehicle_command);
+  this->send_command(
+    px4_msgs::msg::VehicleCommand::VEHICLE_CMD_DO_VTOL_TRANSITION,
+    this->target_system_,
+    this->target_component_,
+    this->source_system_,
+    this->source_component_,
+    this->confirmation_,
+    this->from_external_,
+    4.0f,
+    1.0f);
 }
 
 void VehicleGatewayPX4::transition_to_mc()
 {
-  px4_msgs::msg::VehicleCommand msg_vehicle_command;
-
-  msg_vehicle_command.timestamp = this->px4_node_->get_clock()->now().nanoseconds() / 1000;
-  msg_vehicle_command.param1 = 3.0;
-  msg_vehicle_command.param2 = 1.0;
-  // command ID
-  msg_vehicle_command.command = px4_msgs::msg::VehicleCommand::VEHICLE_CMD_DO_VTOL_TRANSITION;
-  // system which should execute the command
-  msg_vehicle_command.target_system = this->target_system_;
-  msg_vehicle_command.target_component = 1;  // component to execute the command, 0 for all
-  msg_vehicle_command.source_system = 255;  // system sending the command
-  msg_vehicle_command.source_component = 1;  // component sending the command
-  msg_vehicle_command.from_external = true;
-  this->vehicle_command_pub_->publish(msg_vehicle_command);
+  this->send_command(
+    px4_msgs::msg::VehicleCommand::VEHICLE_CMD_DO_VTOL_TRANSITION,
+    this->target_system_,
+    this->target_component_,
+    this->source_system_,
+    this->source_component_,
+    this->confirmation_,
+    this->from_external_,
+    3.0f,
+    1.0f);
 }
 
 void VehicleGatewayPX4::set_local_velocity_setpoint(float vx, float vy, float vz, float yaw_rate)
