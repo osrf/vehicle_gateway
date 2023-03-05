@@ -2,6 +2,20 @@
 
 The goal of this project is to create a pluginlib-based C++ library that can interface with several vehicle SDK's.
 
+ - betaflight_controller: This package download and install [Betaflight Configurator](https://github.com/betaflight/betaflight-configurator) which is a crossplatform configuration tool for the Betaflight flight control system.
+ - betaflight_controller: This ROS 2 package sends RC values to Betaflight through a UDP connection
+ - betaflight_gazebo: This Gazebo plugin sends the state data to the Betaflight SITL and it receives the data from the motors.
+ - betaflight_sim: Download and install the betaflight SITL flight controller.
+ - gz_aerial_plugins: Drone attitude and compass GUI Plugins.
+ - px4_sim: This package downloads the PX4 repository and compile the required targets to simulate quadcopters, VTOLs and fixed wings planes in Gazebo.
+ - qgroundcontrol: This package download and install [QGroundControl](https://github.com/mavlink/qgroundcontrol) which is an intuitive and powerful ground control station (GCS) for UAVs.
+ - vehicle_gateway: A pluginlib-based system for interfacing to vehicle SDK's.
+ - vehicle_gateway_px4: PX4 plugin for the Vehicle Gateway.
+ - vehicle_gateway_python: Vehicle gateway python wrapper.
+ - vehicle_gateway_worlds: Some demo worlds for the Vehicle Gateway.
+
+You can find more details about Betaflight [here](./BETAFLIGHT_README.md) or PX4 [here](./px4_sim/README.md).
+
 # Installation
 
 This package is developed and on Ubuntu 22.04 LTS with ROS 2 Humble, and uses Gazebo Garden for simulation. To save lots of compile time, we recommend installing ROS 2 Humble and Gazebo Garden from binary packages.
@@ -32,7 +46,7 @@ sudo apt remove ros-humble-ros-gz-bridge
 ```
 
 ### Build the Vehicle Gateway
-We can now build the Vehicle Gateway itself. To keep paths short, we will make a colcon workspace named `vg` for "Vehicle Gateway", in your home directory. The Vehicle Gateway build will also download and build the PX4 firmware, to allow software-in-the-loop (SITL) simulation.
+We can now build the Vehicle Gateway itself. To keep paths short, we will make a colcon workspace named `vg` for "Vehicle Gateway", in your home directory. The Vehicle Gateway build will also download and build the PX4 firmware and Betaflight firmware, to allow software-in-the-loop (SITL) simulation of multiple autopilot software stacks.
 
 At time of writing, the `rosdep` command has to include a lot of `--skip-key` because currently Gazebo Garden is not yet in `rosdep`.
 
@@ -70,6 +84,16 @@ source install/setup.bash
 ros2 launch px4_sim px4_sim.launch.py drone_type:='x500' position_name:=pad_1 world_name:=null_island
 ```
 
+# Running tests
+
+You can run an integration test suite which will test several flight capabilities. Gazebo will run headless simulation and report ability of the Vehicle Gateway plugin and a software-in-the-loop autopilot to perform various capabilities.
+
+```bash
+cd ~/vg
+colcon test --packages-select vehicle_gateway_integration_test
+colcon test-result --verbose --all
+```
+
 # Dockerfile
 
 ```bash
@@ -86,5 +110,5 @@ sudo apt-get install python3-rocker
 Run the container with rocker to visualize the GUI
 
 ```bash
-rocker --x11 vehicle_gateway ros2 launch px4_sim px4_sim.launch.py drone_type:='x500' world_name:=null_island model_pose:="-9.7948, -8.31, 2"
+rocker --x11 vehicle_gateway ros2 launch px4_sim px4_sim.launch.py drone_type:='x500' world_name:=null_island model_pose:="-9.7948, -8.31, 2, 0, 0, 0"
 ```

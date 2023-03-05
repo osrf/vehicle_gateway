@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.22)
 project(px4_sim)
 
 find_package(ament_cmake REQUIRED)
@@ -13,7 +13,7 @@ externalproject_add(px4-firmware
   GIT_REPOSITORY
     https://github.com/PX4/PX4-Autopilot
   GIT_TAG
-    pr-gz-vtol
+    main
   INSTALL_COMMAND
     mkdir -p ${CMAKE_INSTALL_PREFIX}/share/px4_sim &&
     rsync -avL --exclude .git --exclude build

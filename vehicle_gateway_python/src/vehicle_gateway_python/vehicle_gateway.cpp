@@ -84,6 +84,11 @@ void VehicleGatewayPython::PublishLocalPositionSetpoint(float x, float y, float 
   this->gateway_->set_local_position_setpoint(x, y, z, yaw);
 }
 
+void VehicleGatewayPython::SetGroundSpeed(float speed)
+{
+  this->gateway_->set_ground_speed(speed);
+}
+
 void VehicleGatewayPython::PublishLocalVelocitySetpoint(
   float vx, float vy, float vz, float yaw_rate)
 {
@@ -143,6 +148,11 @@ void VehicleGatewayPython::Takeoff()
 void VehicleGatewayPython::Land()
 {
   this->gateway_->land();
+}
+
+float VehicleGatewayPython::GetAltitude()
+{
+  return this->gateway_->get_altitude();
 }
 
 VehicleGatewayPython::~VehicleGatewayPython()
@@ -214,8 +224,14 @@ define_vehicle_gateway(py::object module)
     "get_failure", &VehicleGatewayPython::GetFailure,
     "Get failure")
   .def(
+    "set_speed", &VehicleGatewayPython::SetGroundSpeed,
+    "Set ground speed m/s")
+  .def(
     "land", &VehicleGatewayPython::Land,
-    "Land");
+    "Land")
+  .def(
+    "get_altitude", &VehicleGatewayPython::GetAltitude,
+    "Get altitude in meter");
 
   pybind11::enum_<vehicle_gateway::ARMING_STATE>(module, "ArmingState")
   .value("INIT", vehicle_gateway::ARMING_STATE::INIT)
@@ -241,6 +257,7 @@ define_vehicle_gateway(py::object module)
   .value("LOCKDOWN", vehicle_gateway::ARM_DISARM_REASON::LOCKDOWN)
   .value("FAILURE_DETECTOR", vehicle_gateway::ARM_DISARM_REASON::FAILURE_DETECTOR)
   .value("SHUTDOWN", vehicle_gateway::ARM_DISARM_REASON::SHUTDOWN)
+  .value("ARM_DISARM_REASON_NONE", vehicle_gateway::ARM_DISARM_REASON::ARM_DISARM_REASON_NONE)
   .export_values();
 
   pybind11::enum_<vehicle_gateway::FAILURE>(module, "Failure")
