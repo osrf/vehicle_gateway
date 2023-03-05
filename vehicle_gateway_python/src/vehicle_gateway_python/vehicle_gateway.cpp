@@ -257,6 +257,7 @@ define_vehicle_gateway(py::object module)
   .value("LOCKDOWN", vehicle_gateway::ARM_DISARM_REASON::LOCKDOWN)
   .value("FAILURE_DETECTOR", vehicle_gateway::ARM_DISARM_REASON::FAILURE_DETECTOR)
   .value("SHUTDOWN", vehicle_gateway::ARM_DISARM_REASON::SHUTDOWN)
+  .value("ARM_DISARM_REASON_NONE", vehicle_gateway::ARM_DISARM_REASON::ARM_DISARM_REASON_NONE)
   .export_values();
 
   pybind11::enum_<vehicle_gateway::FAILURE>(module, "Failure")
