@@ -166,6 +166,10 @@ public:
   /// \param[in] yaw Desired yaw position
   virtual void set_local_position_setpoint(float x, float y, float z, float yaw) = 0;
 
+  /// Set ground speed in m/s
+  /// \param[in] speed Desired speed in m/s
+  virtual void set_ground_speed(float speed) = 0;
+
   /// Set local velocity
   /// \param[in] vx Desired x velocity
   /// \param[in] vy Desired y velocity

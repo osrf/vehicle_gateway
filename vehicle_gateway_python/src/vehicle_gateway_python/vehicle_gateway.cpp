@@ -84,6 +84,11 @@ void VehicleGatewayPython::PublishLocalPositionSetpoint(float x, float y, float 
   this->gateway_->set_local_position_setpoint(x, y, z, yaw);
 }
 
+void VehicleGatewayPython::SetGroundSpeed(float speed)
+{
+  this->gateway_->set_ground_speed(speed);
+}
+
 void VehicleGatewayPython::PublishLocalVelocitySetpoint(
   float vx, float vy, float vz, float yaw_rate)
 {
@@ -218,6 +223,9 @@ define_vehicle_gateway(py::object module)
   .def(
     "get_failure", &VehicleGatewayPython::GetFailure,
     "Get failure")
+  .def(
+    "set_speed", &VehicleGatewayPython::SetGroundSpeed,
+    "Set ground speed m/s")
   .def(
     "land", &VehicleGatewayPython::Land,
     "Land")

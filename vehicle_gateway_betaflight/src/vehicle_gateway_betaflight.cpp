@@ -270,6 +270,8 @@ void VehicleGatewayBetaflight::set_offboard_control_mode(
 
 void VehicleGatewayBetaflight::set_offboard_mode() {}
 
+void VehicleGatewayBetaflight::set_ground_speed(float /*speed*/) {}
+
 float VehicleGatewayBetaflight::get_ground_speed() {}
 }  // namespace vehicle_gateway_betaflight
 #include <pluginlib/class_list_macros.hpp>

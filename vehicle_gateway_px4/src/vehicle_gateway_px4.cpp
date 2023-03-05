@@ -475,6 +475,27 @@ void VehicleGatewayPX4::set_local_position_setpoint(float x, float y, float z, f
   this->vehicle_trajectory_setpoint_pub_->publish(msg);
 }
 
+void VehicleGatewayPX4::set_ground_speed(float speed)
+{
+  px4_msgs::msg::VehicleCommand msg_vehicle_command;
+
+  msg_vehicle_command.timestamp = this->px4_node_->get_clock()->now().nanoseconds() / 1000;
+  msg_vehicle_command.param1 = 0;
+  msg_vehicle_command.param2 = 0.1;
+  msg_vehicle_command.param1 = 1;  // 0=Airspeed, 1=Ground Speed
+  msg_vehicle_command.param2 = speed;
+  msg_vehicle_command.param3 = -1;
+  // command ID
+  msg_vehicle_command.command = px4_msgs::msg::VehicleCommand::VEHICLE_CMD_DO_CHANGE_SPEED;
+  // system which should execute the command
+  msg_vehicle_command.target_system = this->target_system_;
+  msg_vehicle_command.target_component = 1;  // component to execute the command, 0 for all
+  msg_vehicle_command.source_system = 255;  // system sending the command
+  msg_vehicle_command.source_component = 1;  // component sending the command
+  msg_vehicle_command.from_external = true;
+  this->vehicle_command_pub_->publish(msg_vehicle_command);
+}
+
 void VehicleGatewayPX4::set_offboard_control_mode(vehicle_gateway::CONTROLLER_TYPE type)
 {
   px4_msgs::msg::OffboardControlMode msg;

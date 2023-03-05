@@ -95,6 +95,9 @@ public:
   void set_offboard_mode() override;
 
   /// Documentation inherited
+  void set_ground_speed(float speed) override;
+
+  /// Documentation inherited
   float get_altitude() override;
 
   /// Documentation inherited
