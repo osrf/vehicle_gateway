@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sdf version="1.9">
+  <model name="matrice_100">
+    <pose>0 0 0.062 0 0 0</pose>
+    <link name="M300/base_link">
+      <pose>0 0 0 0 0 0</pose>
+      <visual name="M300/base_link_visual">
+          <geometry>
+              <mesh>
+                  <uri>model://matrice_300/meshes/DJI_M300.glb</uri>
+                  <scale>0.001 0.001 0.001</scale>
+              </mesh>
+          </geometry>
+      </visual>
+      <collision name="M300/base_link_collision">
+          <geometry>
+            <box>
+                <size>0.405 0.375 0.125</size>
+            </box>
+          </geometry>
+      </collision>
+      <inertial>
+        <pose frame="">0 0 0 0 -0 0</pose>
+        <mass>0.5</mass>
+        <inertia>
+            <ixx>0.0347563</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.07</iyy>
+            <iyz>0</iyz>
+            <izz>0.0977</izz>
+        </inertia>
+    </inertial>
+    </link>
+    <link name="M300/rotor_0">
+      <pose>0.08949 -0.08957 0.006186 0 0 0</pose>
+      <visual name="M300/robot_0_visual">
+          <geometry>
+              <mesh>
+                  <uri>model://matrice_300/meshes/propeller.glb</uri>
+                  <scale>0.1 0.1 0.1</scale>
+              </mesh>
+          </geometry>
+      </visual>
+      <collision name="M300/robot_0_collision">
+          <geometry>
+            <cylinder>
+                <length>0.005</length>
+                <radius>0.1</radius>
+            </cylinder>
+          </geometry>
+      </collision>
+      <inertial>
+        <pose>0.00049191638840683828 0.00081433819094126048 -0.0036489142826166294 -1.6180142047944368 -1.5703008323144028 2.7352454567488156</pose>
+        <mass>0.69227993666597625</mass>
+        <inertia>
+          <ixx>0.0016232769077328535</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.0016169599251112186</iyy>
+          <iyz>0</iyz>
+          <izz>0.0000067524615056079387</izz>
+        </inertia>
+      </inertial>
+    </link>
+    <joint name="M300/rotor_0_joint" type="revolute">
+      <child>M300/rotor_0</child>
+      <parent>M300/base_link</parent>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+    </joint>
+
+    <link name="M300/rotor_1">
+      <pose>-.1002 0.077 0.006186 0 0 0</pose>
+      <visual name="M300/rotor_1_visual">
+          <geometry>
+              <mesh>
+                  <uri>model://matrice_300/meshes/propeller.glb</uri>
+                  <scale>0.1 0.1 0.1</scale>
+              </mesh>
+          </geometry>
+      </visual>
+      <collision name="M300/rotor_1_collision">
+          <geometry>
+            <cylinder>
+                <length>0.005</length>
+                <radius>0.1</radius>
+            </cylinder>
+          </geometry>
+      </collision>
+      <inertial>
+        <pose>0.00049191638840683828 0.00081433819094126048 -0.0036489142826166294 -1.6180142047944368 -1.5703008323144028 2.7352454567488156</pose>
+        <mass>0.69227993666597625</mass>
+        <inertia>
+          <ixx>0.0016232769077328535</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.0016169599251112186</iyy>
+          <iyz>0</iyz>
+          <izz>0.0000067524615056079387</izz>
+        </inertia>
+      </inertial>
+    </link>
+    <joint name="M300/rotor_1_joint" type="revolute">
+      <child>M300/rotor_1</child>
+      <parent>M300/base_link</parent>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+    </joint>
+
+    <link name="M300/rotor_2">
+      <pose>0.1002 0.077 0.006186 0 0 0</pose>
+      <visual name="visual">
+          <geometry>
+              <mesh>
+                  <uri>model://matrice_300/meshes/propeller.glb</uri>
+                  <scale>0.1 0.1 0.1</scale>
+              </mesh>
+          </geometry>
+      </visual>
+      <collision name="collision">
+          <geometry>
+            <cylinder>
+                <length>0.005</length>
+                <radius>0.1</radius>
+            </cylinder>
+          </geometry>
+      </collision>
+      <inertial>
+        <pose>0.00049191638840683828 0.00081433819094126048 -0.0036489142826166294 -1.6180142047944368 -1.5703008323144028 2.7352454567488156</pose>
+        <mass>0.69227993666597625</mass>
+        <inertia>
+          <ixx>0.0016232769077328535</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.0016169599251112186</iyy>
+          <iyz>0</iyz>
+          <izz>0.0000067524615056079387</izz>
+        </inertia>
+      </inertial>
+    </link>
+    <joint name="M300/rotor_2_joint" type="revolute">
+      <child>M300/rotor_2</child>
+      <parent>M300/base_link</parent>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+    </joint>
+
+    <link name="M300/rotor_3">
+      <pose>-0.08949 -0.08957 0.006186 0 0 0</pose>
+      <visual name="visual">
+          <geometry>
+              <mesh>
+                  <uri>model://matrice_300/meshes/propeller.glb</uri>
+                  <scale>0.1 0.1 0.1</scale>
+              </mesh>
+          </geometry>
+      </visual>
+      <collision name="collision">
+          <geometry>
+            <cylinder>
+                <length>0.005</length>
+                <radius>0.1</radius>
+            </cylinder>
+          </geometry>
+      </collision>
+      <inertial>
+        <pose>0.00049191638840683828 0.00081433819094126048 -0.0036489142826166294 -1.6180142047944368 -1.5703008323144028 2.7352454567488156</pose>
+        <mass>0.69227993666597625</mass>
+        <inertia>
+          <ixx>0.0016232769077328535</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.0016169599251112186</iyy>
+          <iyz>0</iyz>
+          <izz>0.0000067524615056079387</izz>
+        </inertia>
+      </inertial>
+    </link>
+    <joint name="M300/rotor_3_joint" type="revolute">
+      <child>M300/rotor_3</child>
+      <parent>M300/base_link</parent>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+    </joint>
+    <plugin
+      filename="gz-sim-multicopter-motor-model-system"
+      name="gz::sim::systems::MulticopterMotorModel">
+      <robotNamespace>M300</robotNamespace>
+      <jointName>M300/rotor_0_joint</jointName>
+      <linkName>M300/rotor_0</linkName>
+      <turningDirection>ccw</turningDirection>
+      <timeConstantUp>0.0125</timeConstantUp>
+      <timeConstantDown>0.025</timeConstantDown>
+      <maxRotVelocity>800.0</maxRotVelocity>
+      <motorConstant>8.54858e-06</motorConstant>
+      <momentConstant>0.016</momentConstant>
+      <commandSubTopic>gazebo/command/motor_speed</commandSubTopic>
+      <motorNumber>0</motorNumber>
+      <rotorDragCoefficient>8.06428e-05</rotorDragCoefficient>
+      <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
+      <motorSpeedPubTopic>motor_speed/0</motorSpeedPubTopic>
+      <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
+      <motorType>velocity</motorType>
+    </plugin>
+    <plugin
+      filename="gz-sim-multicopter-motor-model-system"
+      name="gz::sim::systems::MulticopterMotorModel">
+      <robotNamespace>M300</robotNamespace>
+      <jointName>M300/rotor_1_joint</jointName>
+      <linkName>M300/rotor_1</linkName>
+      <turningDirection>ccw</turningDirection>
+      <timeConstantUp>0.0125</timeConstantUp>
+      <timeConstantDown>0.025</timeConstantDown>
+      <maxRotVelocity>800.0</maxRotVelocity>
+      <motorConstant>8.54858e-06</motorConstant>
+      <momentConstant>0.016</momentConstant>
+      <commandSubTopic>gazebo/command/motor_speed</commandSubTopic>
+      <motorNumber>1</motorNumber>
+      <rotorDragCoefficient>8.06428e-05</rotorDragCoefficient>
+      <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
+      <motorSpeedPubTopic>motor_speed/1</motorSpeedPubTopic>
+      <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
+      <motorType>velocity</motorType>
+    </plugin>
+    <plugin
+      filename="gz-sim-multicopter-motor-model-system"
+      name="gz::sim::systems::MulticopterMotorModel">
+      <robotNamespace>M300</robotNamespace>
+      <jointName>M300/rotor_2_joint</jointName>
+      <linkName>M300/rotor_2</linkName>
+      <turningDirection>cw</turningDirection>
+      <timeConstantUp>0.0125</timeConstantUp>
+      <timeConstantDown>0.025</timeConstantDown>
+      <maxRotVelocity>800.0</maxRotVelocity>
+      <motorConstant>8.54858e-06</motorConstant>
+      <momentConstant>0.016</momentConstant>
+      <commandSubTopic>gazebo/command/motor_speed</commandSubTopic>
+      <motorNumber>2</motorNumber>
+      <rotorDragCoefficient>8.06428e-05</rotorDragCoefficient>
+      <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
+      <motorSpeedPubTopic>motor_speed/2</motorSpeedPubTopic>
+      <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
+      <motorType>velocity</motorType>
+    </plugin>
+    <plugin
+      filename="gz-sim-multicopter-motor-model-system"
+      name="gz::sim::systems::MulticopterMotorModel">
+      <robotNamespace>M300</robotNamespace>
+      <jointName>M300/rotor_3_joint</jointName>
+      <linkName>M300/rotor_3</linkName>
+      <turningDirection>cw</turningDirection>
+      <timeConstantUp>0.0125</timeConstantUp>
+      <timeConstantDown>0.025</timeConstantDown>
+      <maxRotVelocity>800.0</maxRotVelocity>
+      <motorConstant>8.54858e-06</motorConstant>
+      <momentConstant>0.016</momentConstant>
+      <commandSubTopic>gazebo/command/motor_speed</commandSubTopic>
+      <motorNumber>3</motorNumber>
+      <rotorDragCoefficient>8.06428e-05</rotorDragCoefficient>
+      <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
+      <motorSpeedPubTopic>motor_speed/3</motorSpeedPubTopic>
+      <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
+      <motorType>velocity</motorType>
+    </plugin>
+  </model>
+</sdf>
