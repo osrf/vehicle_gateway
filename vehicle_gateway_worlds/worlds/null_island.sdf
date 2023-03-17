@@ -26,6 +26,10 @@
       filename="gz-sim-air-speed-system"
       name="gz::sim::systems::AirSpeed">
     </plugin>
+    <plugin
+      name='gz::sim::systems::AirPressure'
+      filename='gz-sim-air-pressure-system'>
+    </plugin>
 
     <scene>
       <clouds/>
@@ -140,7 +144,6 @@
           <property type="bool" key="showTitleBar">false</property>
           <property type="bool" key="resizable">false</property>
           <property type="double" key="height">72</property>
-          <property type="double" key="width">121</property>
           <property type="double" key="z">1</property>
 
           <property type="string" key="state">floating</property>
@@ -267,6 +270,22 @@
           <property key="height" type="double">5</property>
           <property key="state" type="string">floating</property>
           <property key="showTitleBar" type="bool">false</property>
+        </gz-gui>
+      </plugin>
+
+      <!-- Inspector -->
+      <plugin filename="ComponentInspector" name="Component inspector">
+        <gz-gui>
+          <property type="bool" key="showTitleBar">false</property>
+          <property type="string" key="state">docked</property>
+        </gz-gui>
+      </plugin>
+
+      <!-- Entity tree -->
+      <plugin filename="EntityTree" name="Entity tree">
+        <gz-gui>
+          <property type="bool" key="showTitleBar">false</property>
+          <property type="string" key="state">docked</property>
         </gz-gui>
       </plugin>
     </gui>
