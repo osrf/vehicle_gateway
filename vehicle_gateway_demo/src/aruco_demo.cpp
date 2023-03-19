@@ -105,11 +105,13 @@ public:
         std::lock_guard<std::mutex> lock(mutex_marker);
         if (this->marker_detected_)
         {
+          /*
           x -= this->marker_x_;
           y -= this->marker_y_;
 
           this->marker_x_ = 0;
           this->marker_y_ = 0;
+          */
           this->marker_detected_ = false;
           last_update_time = now;
         }
@@ -127,7 +129,8 @@ public:
       }
       else
       {
-        this->gateway_->set_local_position_setpoint(x, y, target_z, 0);
+        //this->gateway_->set_local_position_setpoint(x, y, target_z, 0);
+        this->gateway_->set_local_position_setpoint(this->marker_x_, this->marker_y_, target_z, 0);
       }
 
       std::this_thread::sleep_for(50ms);
@@ -151,7 +154,7 @@ private:
     if (msg.markers.size() > 0)
     {
       auto marker = msg.markers[0];
-      // todo: use TF to transform this camera-frame detection into world frame
+      // this assumes the transform to the world frame has already been done!
       this->marker_x_ = marker.pose.position.x;
       this->marker_y_ = marker.pose.position.y;
       this->marker_z_ = marker.pose.position.z;

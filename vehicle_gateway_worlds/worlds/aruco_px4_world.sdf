@@ -68,8 +68,8 @@
             </plane>
           </geometry>
           <material>
-            <ambient>0.8 0.8 0.8 1</ambient>
-            <diffuse>0.8 0.8 0.8 1</diffuse>
+            <ambient>0.2 0.2 0.2 1</ambient>
+            <diffuse>0.2 0.4 0.2 1</diffuse>
             <specular>0.8 0.8 0.8 1</specular>
           </material>
         </visual>

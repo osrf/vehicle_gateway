@@ -1,9 +1,10 @@
 /**:
   ros__parameters:
     cam_base_topic: /world/aruco_px4_world/model/x500_0/link/camera_link/sensor/camera/image
-    output_frame: ''
+    output_frame: 'aruco_px4_world'
+    #output_frame: 'x500_0/camera_link/camera'
     use_sim_time: true
-    marker_dict: ARUCO_ORIGINAL
+    marker_dict: 4X4_50
 
     image_sub_qos:
       reliability: 2 # 0 - system default, 1 - reliable, 2 - best effort
@@ -22,7 +23,7 @@
       adaptiveThreshConstant: 7.0
       minMarkerPerimeterRate: 0.03
       maxMarkerPerimeterRate: 4.0
-      polygonalApproxAccuracyRate: 0.03
+      polygonalApproxAccuracyRate: 0.05
       minCornerDistanceRate: 0.05
       minDistanceToBorder: 3
       minMarkerDistanceRate: 0.05
