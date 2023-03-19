@@ -46,8 +46,8 @@ public:
     {
       offboard_setpoint_counter_++;
       std::this_thread::sleep_for(100ms);
-      this->gateway_->set_offboard_control_mode(true);
-      this->gateway_->set_local_position_setpoint(0, 0, -5);
+      this->gateway_->set_offboard_control_mode(vehicle_gateway::POSITION);
+      this->gateway_->set_local_position_setpoint(0, 0, -5, 0);
       if (offboard_setpoint_counter_ == 5)
       {
         while(true)
@@ -73,8 +73,8 @@ public:
 
     while (this->gateway_->get_altitude() > -4.5 && !this->stopped_) {
       std::this_thread::sleep_for(50ms);
-      this->gateway_->set_offboard_control_mode(true);
-      this->gateway_->set_local_position_setpoint(0, 0, -5);
+      this->gateway_->set_offboard_control_mode(vehicle_gateway::POSITION);
+      this->gateway_->set_local_position_setpoint(0, 0, -5, 0);
       RCLCPP_INFO(this->get_logger(), "altitude %.2f", this->gateway_->get_altitude());
     }
 
@@ -83,11 +83,12 @@ public:
 
     while(!this->stopped_)
     {
-      this->gateway_->set_offboard_control_mode(true);
+      this->gateway_->set_offboard_control_mode(vehicle_gateway::POSITION);
       this->gateway_->set_local_position_setpoint(
         this->radius * cos(this->theta),
         this->radius * sin(this->theta),
-        -5);
+        -5,
+        0);
 
       std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
 
