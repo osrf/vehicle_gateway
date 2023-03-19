@@ -108,7 +108,7 @@ class WorldPoseFromSdfFrame(Substitution):
             pose_node = frame_node.find('pose')
             pose_str = pose_node.text
             # SDFormat stores poses space-separated, but we need them comma-separated
-            return self.parseCoords(coords, self.__coord_name, " ")
+            return self.parseCoords(pose_str, self.__coord_name, " ")
 
         # default a bit above the origin; vehicle will drop to the ground plane
         return self.parseCoords("0, 0, 0.3, 0, 0, 0", self.__coord_name, ", ")
@@ -253,6 +253,7 @@ def generate_launch_description():
         spawn_entity,
         # run_px4,
         SetEnvironmentVariable('PX4_GZ_MODEL_NAME', [LaunchConfiguration('drone_type'), "_0"]),
+        SetEnvironmentVariable('PX4_SYS_AUTOSTART', '4001'),
         bridge,
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(

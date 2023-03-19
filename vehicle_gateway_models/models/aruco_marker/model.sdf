@@ -11,6 +11,7 @@
         </box>
       </geometry>
       <material>
+        <ambient>1.0 1.0 1.0</ambient>
         <diffuse>1.0 1.0 1.0</diffuse>
         <specular>1.0 1.0 1.0</specular>
         <pbr>

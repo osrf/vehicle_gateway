@@ -108,7 +108,7 @@ class WorldPoseFromSdfFrame(Substitution):
             pose_node = frame_node.find('pose')
             pose_str = pose_node.text
             # SDFormat stores poses space-separated, but we need them comma-separated
-            return self.parseCoords(coords, self.__coord_name, " ")
+            return self.parseCoords(pose_str, self.__coord_name, " ")
 
         # default a bit above the origin; vehicle will drop to the ground plane
         return self.parseCoords("0, 0, 0.3, 0, 0, 0", self.__coord_name, ", ")
@@ -233,7 +233,7 @@ def generate_launch_description():
         package='aruco_opencv',
         executable='aruco_tracker_autostart',
         name="aruco_markers",
-        parameters=[os.path.join(get_package_share_directory('vehicle_gateway_demo'), 'config', 'single_marker_tracker.yaml')],
+        parameters=[os.path.join(get_package_share_directory('vehicle_gateway_demo'), 'config', 'single_marker_tracker.yaml'), '--ros-args', '--log-level', 'aruco_tracker:=debug'],
         output='screen')
 
     node_static_transform_publisher = Node(
@@ -291,6 +291,7 @@ def generate_launch_description():
         bridge_pose,
         aruco_opencv,
         SetEnvironmentVariable('PX4_GZ_MODEL_NAME', [LaunchConfiguration('drone_type'), "_0"]),
+        SetEnvironmentVariable('PX4_SYS_AUTOSTART', '4001'),
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 [os.path.join(get_package_share_directory('ros_gz_sim'),

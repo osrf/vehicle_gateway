@@ -61,7 +61,7 @@ public:
       offboard_setpoint_counter_++;
       std::this_thread::sleep_for(100ms);
       this->gateway_->set_offboard_control_mode(vehicle_gateway::POSITION);
-      this->gateway_->set_local_position_setpoint(0, 0, -15, 0);
+      this->gateway_->set_local_position_setpoint(0, 0, target_z, 0);
       if (offboard_setpoint_counter_ == 5)
       {
         while(true)
@@ -85,10 +85,10 @@ public:
       }
     }
 
-    while (this->gateway_->get_altitude() > -14.5 && !this->stopped_) {
+    while (this->gateway_->get_altitude() > target_z + 0.5 && !this->stopped_) {
       std::this_thread::sleep_for(50ms);
       this->gateway_->set_offboard_control_mode(vehicle_gateway::POSITION);
-      this->gateway_->set_local_position_setpoint(0, 0, -15, 0);
+      this->gateway_->set_local_position_setpoint(0, 0, target_z, 0);
       RCLCPP_INFO(this->get_logger(), "altitude %.2f", this->gateway_->get_altitude());
     }
 
@@ -122,12 +122,12 @@ public:
       this->gateway_->set_offboard_control_mode(vehicle_gateway::POSITION);
       if (diff.count() > 1000)
       {
-        this->gateway_->set_local_position_setpoint(0, 0, -15, 0);
+        this->gateway_->set_local_position_setpoint(0, 0, target_z, 0);
         RCLCPP_INFO(this->get_logger(), "Marker is not visible");
       }
       else
       {
-        this->gateway_->set_local_position_setpoint(x, y, -15, 0);
+        this->gateway_->set_local_position_setpoint(x, y, target_z, 0);
       }
 
       std::this_thread::sleep_for(50ms);
@@ -151,6 +151,7 @@ private:
     if (msg.markers.size() > 0)
     {
       auto marker = msg.markers[0];
+      // todo: use TF to transform this camera-frame detection into world frame
       this->marker_x_ = marker.pose.position.x;
       this->marker_y_ = marker.pose.position.y;
       this->marker_z_ = marker.pose.position.z;
@@ -173,6 +174,7 @@ private:
   float theta = 0.0;
   float radius = 10.0;
   float omega = 0.5;
+  float target_z = -15;
 };
 
 int main(int argc, const char * argv[])

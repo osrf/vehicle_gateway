@@ -116,8 +116,8 @@ private:
   bool stopped_ = false;
 
   float theta = 0.0;
-  float radius = 10.0;
-  float omega = 0.5;
+  float radius = 8.0;
+  float omega = 0.25;
 };
 
 int main(int argc, const char * argv[])
