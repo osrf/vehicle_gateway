@@ -108,7 +108,7 @@ class WorldPoseFromSdfFrame(Substitution):
             pose_node = frame_node.find('pose')
             pose_str = pose_node.text
             # SDFormat stores poses space-separated, but we need them comma-separated
-            return self.parseCoords(pose_str, self.__coord_name, " ")
+            return self.parseCoords(coords, self.__coord_name, " ")
 
         # default a bit above the origin; vehicle will drop to the ground plane
         return self.parseCoords("0, 0, 0.3, 0, 0, 0", self.__coord_name, ", ")
@@ -212,12 +212,11 @@ def generate_launch_description():
         cwd=get_px4_dir(),
         output='screen',
     )
-    wait_spawn = ExecuteProcess(cmd=["sleep", "5"])
+
     micro_ros_agent = Node(
         package='micro_ros_agent',
         executable='micro_ros_agent',
         arguments=['udp4', '-p', '8888'],
-        parameters=[{'use_sim_time': use_sim_time}],
         output='screen')
 
     spawn_entity = Node(
@@ -236,13 +235,6 @@ def generate_launch_description():
     )
 
     os.environ['PX4_GZ_WORLD'] = ""
-    # Bridge
-    bridge = Node(
-        package='ros_gz_bridge',
-        executable='parameter_bridge',
-        arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
-        output='screen'
-    )
     return LaunchDescription([
         # Launch gazebo environment
         use_sim_time_arg,
@@ -251,10 +243,7 @@ def generate_launch_description():
         model_pose_arg,
         frame_name_args,
         spawn_entity,
-        # run_px4,
-        SetEnvironmentVariable('PX4_GZ_MODEL_NAME', [LaunchConfiguration('drone_type'), "_0"]),
-        SetEnvironmentVariable('PX4_SYS_AUTOSTART', '4001'),
-        bridge,
+        SetEnvironmentVariable('PX4_GZ_MODEL_NAME', [LaunchConfiguration('drone_type')]),
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 [os.path.join(get_package_share_directory('ros_gz_sim'),
@@ -264,12 +253,6 @@ def generate_launch_description():
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=spawn_entity,
-                on_exit=[wait_spawn],
-            )
-        ),
-        RegisterEventHandler(
-            event_handler=OnProcessExit(
-                target_action=wait_spawn,
                 on_exit=[run_px4],
             )
         ),

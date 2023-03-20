@@ -29,6 +29,10 @@
       filename="gz-sim-air-speed-system"
       name="gz::sim::systems::AirSpeed">
     </plugin>
+    <plugin
+      name='gz::sim::systems::AirPressure'
+      filename='gz-sim-air-pressure-system'>
+    </plugin>
 
     <light type="directional" name="sun">
       <cast_shadows>true</cast_shadows>
