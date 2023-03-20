@@ -332,5 +332,10 @@
     <frame name="pad_5">
       <pose>-24.3324 -35.4081 2 0.0 0.0 -0.785398</pose>
     </frame>
+
+    <include>
+      <pose>-4 -8.31 0.6 0 0 0</pose>
+      <uri>model://aruco_marker</uri>
+    </include>
   </world>
 </sdf>

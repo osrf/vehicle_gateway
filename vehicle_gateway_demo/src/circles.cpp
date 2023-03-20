@@ -47,7 +47,7 @@ public:
       offboard_setpoint_counter_++;
       std::this_thread::sleep_for(100ms);
       this->gateway_->set_offboard_control_mode(vehicle_gateway::POSITION);
-      this->gateway_->set_local_position_setpoint(0, 0, -5, 0);
+      this->gateway_->set_local_position_setpoint(0, 0, -3, 0);
       if (offboard_setpoint_counter_ == 5)
       {
         while(true)
@@ -71,7 +71,7 @@ public:
       }
     }
 
-    while (this->gateway_->get_altitude() > -4.5 && !this->stopped_) {
+    while (this->gateway_->get_altitude() > -2.5 && !this->stopped_) {
       std::this_thread::sleep_for(50ms);
       this->gateway_->set_offboard_control_mode(vehicle_gateway::POSITION);
       this->gateway_->set_local_position_setpoint(0, 0, -5, 0);
@@ -87,7 +87,7 @@ public:
       this->gateway_->set_local_position_setpoint(
         this->radius * cos(this->theta),
         this->radius * sin(this->theta),
-        -5,
+        -3,
         0);
 
       std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
@@ -116,8 +116,8 @@ private:
   bool stopped_ = false;
 
   float theta = 0.0;
-  float radius = 8.0;
-  float omega = 0.25;
+  float radius = 4.0;
+  float omega = 0.5;
 };
 
 int main(int argc, const char * argv[])
