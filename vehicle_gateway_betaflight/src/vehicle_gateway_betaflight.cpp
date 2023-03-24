@@ -242,11 +242,20 @@ vehicle_gateway::VEHICLE_TYPE VehicleGatewayBetaflight::get_vehicle_type()
   return vehicle_gateway::VEHICLE_TYPE::ROTARY_WING;
 }
 
-vehicle_gateway::ARM_DISARM_REASON VehicleGatewayBetaflight::get_arm_reason() {}
+vehicle_gateway::ARM_DISARM_REASON VehicleGatewayBetaflight::get_arm_reason()
+{
+  return vehicle_gateway::ARM_DISARM_REASON_NONE;
+}
 
-vehicle_gateway::ARM_DISARM_REASON VehicleGatewayBetaflight::get_disarm_reason() {}
+vehicle_gateway::ARM_DISARM_REASON VehicleGatewayBetaflight::get_disarm_reason()
+{
+  return vehicle_gateway::ARM_DISARM_REASON_NONE;
+}
 
-vehicle_gateway::FAILURE VehicleGatewayBetaflight::get_failure() {}
+vehicle_gateway::FAILURE VehicleGatewayBetaflight::get_failure()
+{
+  return vehicle_gateway::NONE;
+}
 
 void VehicleGatewayBetaflight::takeoff() {}
 
@@ -272,7 +281,11 @@ void VehicleGatewayBetaflight::set_offboard_mode() {}
 
 void VehicleGatewayBetaflight::set_ground_speed(float /*speed*/) {}
 
-float VehicleGatewayBetaflight::get_ground_speed() {}
+float VehicleGatewayBetaflight::get_ground_speed()
+{
+  return 0.0;
+}
+
 }  // namespace vehicle_gateway_betaflight
 #include <pluginlib/class_list_macros.hpp>
 
