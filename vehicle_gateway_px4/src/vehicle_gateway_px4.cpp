@@ -23,8 +23,7 @@ namespace vehicle_gateway_px4
 {
 void VehicleGatewayPX4::init(int argc, const char ** argv)
 {
-  if (argc != 0 && argv != nullptr)
-  {
+  if (argc != 0 && argv != nullptr) {
     rclcpp::init(argc, argv);
   }
   this->exec_ = std::make_shared<rclcpp::executors::MultiThreadedExecutor>();

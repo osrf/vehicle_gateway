@@ -62,7 +62,7 @@ public:
       this->gateway_->set_offboard_control_mode(vehicle_gateway::POSITION);
       this->gateway_->set_local_position_setpoint(0, 0, target_z, 0);
       if (offboard_setpoint_counter_ == 5) {
-        while(true) {
+        while (true) {
           RCLCPP_INFO(this->get_logger(), "Try to set offboard mode and arm vehicle");
           this->gateway_->set_offboard_mode();
           this->gateway_->arm();
@@ -92,7 +92,7 @@ public:
     std::chrono::time_point<std::chrono::system_clock> last_update_time =
       std::chrono::system_clock::now();
 
-    while(!this->stopped_) {
+    while (!this->stopped_) {
       float x, y, z;
       this->gateway_->get_local_position(x, y, z);
       std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
