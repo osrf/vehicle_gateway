@@ -103,7 +103,7 @@ public:
   /// Documentation inherited
   float get_ground_speed() override;
 
-  void get_local_position(float &x, float &y, float &z) override;
+  void get_local_position(float & x, float & y, float & z) override;
 
   /// Documentation inherited
   bool ctbr(float roll, float pitch, float yaw, float throttle) override;

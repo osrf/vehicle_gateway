@@ -42,23 +42,20 @@ public:
   {
     int offboard_setpoint_counter_ = 0;
 
-    while (offboard_setpoint_counter_ < 6)
-    {
+    while (offboard_setpoint_counter_ < 6) {
       offboard_setpoint_counter_++;
       std::this_thread::sleep_for(100ms);
       this->gateway_->set_offboard_control_mode(vehicle_gateway::POSITION);
       this->gateway_->set_local_position_setpoint(0, 0, -3, 0);
-      if (offboard_setpoint_counter_ == 5)
-      {
-        while(true)
-        {
+      if (offboard_setpoint_counter_ == 5) {
+        while(true) {
           RCLCPP_INFO(this->get_logger(), "Try to set offboard mode and arm vehicle");
           this->gateway_->set_offboard_mode();
           this->gateway_->arm();
           std::this_thread::sleep_for(200ms);
-          if ((this->gateway_->get_flight_mode() == vehicle_gateway::FLIGHT_MODE::OFFBOARD
-               && this->gateway_->get_arming_state() == vehicle_gateway::ARMING_STATE::ARMED)
-               || this->stopped_)
+          if ((this->gateway_->get_flight_mode() == vehicle_gateway::FLIGHT_MODE::OFFBOARD &&
+            this->gateway_->get_arming_state() == vehicle_gateway::ARMING_STATE::ARMED) ||
+            this->stopped_)
           {
              RCLCPP_INFO(this->get_logger(), "Vehicle is in Offboard mode");
              RCLCPP_INFO(this->get_logger(), "Vehicle is armed");
@@ -81,8 +78,7 @@ public:
     std::chrono::time_point<std::chrono::system_clock> last_update_time =
       std::chrono::system_clock::now();
 
-    while(!this->stopped_)
-    {
+    while(!this->stopped_) {
       this->gateway_->set_offboard_control_mode(vehicle_gateway::POSITION);
       this->gateway_->set_local_position_setpoint(
         this->radius * cos(this->theta),

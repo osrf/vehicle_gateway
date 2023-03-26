@@ -568,7 +568,7 @@ void VehicleGatewayPX4::go_to_waypoint()
 {
 }
 
-void VehicleGatewayPX4::get_local_position(float &x, float &y, float &z)
+void VehicleGatewayPX4::get_local_position(float & x, float & y, float & z)
 {
   x = this->current_pos_x_;
   y = this->current_pos_y_;
