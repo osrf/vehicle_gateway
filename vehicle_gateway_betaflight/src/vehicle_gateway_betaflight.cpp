@@ -244,16 +244,19 @@ vehicle_gateway::VEHICLE_TYPE VehicleGatewayBetaflight::get_vehicle_type()
 
 vehicle_gateway::ARM_DISARM_REASON VehicleGatewayBetaflight::get_arm_reason()
 {
+  // TODO(anyone): update with correct reason
   return vehicle_gateway::ARM_DISARM_REASON_NONE;
 }
 
 vehicle_gateway::ARM_DISARM_REASON VehicleGatewayBetaflight::get_disarm_reason()
 {
+  // TODO(anyone): update with correct reason
   return vehicle_gateway::ARM_DISARM_REASON_NONE;
 }
 
 vehicle_gateway::FAILURE VehicleGatewayBetaflight::get_failure()
 {
+  // TODO(anyone): update with correct reason
   return vehicle_gateway::NONE;
 }
 
