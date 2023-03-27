@@ -20,6 +20,10 @@ import vehicle_gateway
 from vehicle_gateway import ArmingState
 
 vg = vehicle_gateway.init(args=sys.argv, plugin_type='px4')
+while vg.get_arming_state() != ArmingState.STANDBY:
+    vg.disarm()
+    time.sleep(0.1)
+
 while vg.get_arming_state() != ArmingState.ARMED:
     vg.arm()
     time.sleep(0.1)
