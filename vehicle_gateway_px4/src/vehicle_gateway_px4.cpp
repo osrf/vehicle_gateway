@@ -23,8 +23,7 @@ namespace vehicle_gateway_px4
 {
 void VehicleGatewayPX4::init(int argc, const char ** argv)
 {
-  if (argc != 0 && argv != nullptr)
-  {
+  if (argc != 0 && argv != nullptr) {
     rclcpp::init(argc, argv);
   }
   this->exec_ = std::make_shared<rclcpp::executors::MultiThreadedExecutor>();
@@ -568,7 +567,7 @@ void VehicleGatewayPX4::go_to_waypoint()
 {
 }
 
-void VehicleGatewayPX4::get_local_position(float &x, float &y, float &z)
+void VehicleGatewayPX4::get_local_position(float & x, float & y, float & z)
 {
   x = this->current_pos_x_;
   y = this->current_pos_y_;

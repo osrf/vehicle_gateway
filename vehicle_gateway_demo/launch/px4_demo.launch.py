@@ -82,7 +82,6 @@ class WorldPoseFromSdfFrame(Substitution):
             return str(yaw)
         return "0.0"
 
-
     def perform(self, context: LaunchContext) -> str:
         from launch.utilities import perform_substitutions
         frame_name_str = perform_substitutions(context, self.frame_name)
@@ -225,7 +224,7 @@ def generate_launch_description():
     rviz2 = Node(
         package='rviz2',
         executable='rviz2',
-        arguments=['-d', os.path.join(get_package_share_directory('vehicle_gateway_demo'), 'config','config.rviz')],
+        arguments=['-d', os.path.join(get_package_share_directory('vehicle_gateway_demo'), 'config', 'config.rviz')],
         parameters=[{'use_sim_time': use_sim_time}],
         output='screen')
 
@@ -240,7 +239,7 @@ def generate_launch_description():
         package='tf2_ros',
         executable='static_transform_publisher',
         output='screen',
-        arguments=["--x", "0", "--y", "0", "--z", "0.1", "--roll", "0", "--pitch", "1.57", "--yaw", "0.0" , "--frame-id", "x500_0/camera_link", "--child-frame-id", "x500_0/camera_link/camera"],
+        arguments=["--x", "0", "--y", "0", "--z", "0.1", "--roll", "0", "--pitch", "1.57", "--yaw", "0.0", "--frame-id", "x500_0/camera_link", "--child-frame-id", "x500_0/camera_link/camera"],
         parameters=[{'use_sim_time': use_sim_time}]
     )
 

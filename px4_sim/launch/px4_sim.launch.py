@@ -82,7 +82,6 @@ class WorldPoseFromSdfFrame(Substitution):
             return str(yaw)
         return "0.0"
 
-
     def perform(self, context: LaunchContext) -> str:
         from launch.utilities import perform_substitutions
         frame_name_str = perform_substitutions(context, self.frame_name)

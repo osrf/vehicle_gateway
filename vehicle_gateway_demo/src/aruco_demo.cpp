@@ -56,27 +56,24 @@ public:
   {
     int offboard_setpoint_counter_ = 0;
 
-    while (offboard_setpoint_counter_ < 6)
-    {
+    while (offboard_setpoint_counter_ < 6) {
       offboard_setpoint_counter_++;
       std::this_thread::sleep_for(100ms);
       this->gateway_->set_offboard_control_mode(vehicle_gateway::POSITION);
       this->gateway_->set_local_position_setpoint(0, 0, target_z, 0);
-      if (offboard_setpoint_counter_ == 5)
-      {
-        while(true)
-        {
+      if (offboard_setpoint_counter_ == 5) {
+        while (true) {
           RCLCPP_INFO(this->get_logger(), "Try to set offboard mode and arm vehicle");
           this->gateway_->set_offboard_mode();
           this->gateway_->arm();
           std::this_thread::sleep_for(200ms);
-          if ((this->gateway_->get_flight_mode() == vehicle_gateway::FLIGHT_MODE::OFFBOARD
-               && this->gateway_->get_arming_state() == vehicle_gateway::ARMING_STATE::ARMED)
-               || this->stopped_)
+          if ((this->gateway_->get_flight_mode() == vehicle_gateway::FLIGHT_MODE::OFFBOARD &&
+            this->gateway_->get_arming_state() == vehicle_gateway::ARMING_STATE::ARMED) ||
+            this->stopped_)
           {
-             RCLCPP_INFO(this->get_logger(), "Vehicle is in Offboard mode");
-             RCLCPP_INFO(this->get_logger(), "Vehicle is armed");
-             break;
+            RCLCPP_INFO(this->get_logger(), "Vehicle is in Offboard mode");
+            RCLCPP_INFO(this->get_logger(), "Vehicle is armed");
+            break;
           }
           std::this_thread::sleep_for(200ms);
           this->gateway_->disarm();
@@ -95,16 +92,14 @@ public:
     std::chrono::time_point<std::chrono::system_clock> last_update_time =
       std::chrono::system_clock::now();
 
-    while(!this->stopped_)
-    {
+    while (!this->stopped_) {
       float x, y, z;
       this->gateway_->get_local_position(x, y, z);
       std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
 
       {
         std::lock_guard<std::mutex> lock(mutex_marker);
-        if (this->marker_detected_)
-        {
+        if (this->marker_detected_) {
           /*
           x -= this->marker_x_;
           y -= this->marker_y_;
@@ -122,13 +117,10 @@ public:
         std::chrono::duration_cast<std::chrono::milliseconds>(now - last_update_time);
 
       this->gateway_->set_offboard_control_mode(vehicle_gateway::POSITION);
-      if (diff.count() > 1000)
-      {
+      if (diff.count() > 1000) {
         this->gateway_->set_local_position_setpoint(0, 0, target_z, 0);
         RCLCPP_INFO(this->get_logger(), "Marker is not visible");
-      }
-      else
-      {
+      } else {
         //this->gateway_->set_local_position_setpoint(x, y, target_z, 0);
         this->gateway_->set_local_position_setpoint(this->marker_x_, this->marker_y_, target_z, 0);
       }
@@ -151,8 +143,7 @@ private:
   {
     std::lock_guard<std::mutex> lock(mutex_marker);
 
-    if (msg.markers.size() > 0)
-    {
+    if (msg.markers.size() > 0) {
       auto marker = msg.markers[0];
       // this assumes the transform to the world frame has already been done!
       this->marker_x_ = marker.pose.position.x;
