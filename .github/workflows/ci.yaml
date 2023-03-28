@@ -13,13 +13,14 @@ jobs:
     container:
       image: rostooling/setup-ros-docker:ubuntu-jammy-latest
     steps:
-      - name: deps
+      - name: setup ROS 2
         uses: ros-tooling/setup-ros@v0.3
         with:
           required-ros-distributions: humble
-      - name: checkout
+      - name: checkout repository
         uses: actions/checkout@v3
-      - run: |
+      - name: install gazebo
+        run: |
           export DEBIAN_FRONTEND=noninteractive
           apt update -qq
           apt install -qq -y lsb-release wget curl gnupg2 python3-kconfiglib python3-jinja2 python3-jsonschema ros-humble-gps-msgs gcc-arm-none-eabi libfuse2 python3-pip python3-future rsync python3-genmsg
