@@ -13,13 +13,13 @@ jobs:
     container:
       image: rostooling/setup-ros-docker:ubuntu-jammy-latest
     steps:
-      - name: setup ROS 2
+      - name: Setup ROS 2
         uses: ros-tooling/setup-ros@v0.3
         with:
           required-ros-distributions: humble
-      - name: checkout repository
+      - name: Checkout repository
         uses: actions/checkout@v3
-      - name: install gazebo
+      - name: Install gazebo
         run: |
           export DEBIAN_FRONTEND=noninteractive
           apt update -qq
@@ -27,7 +27,7 @@ jobs:
           wget https://packages.osrfoundation.org/gazebo.gpg -O /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg
           echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
           apt-get update && apt-get install -qq -y gz-garden
-      - name: build and test
+      - name: Build and test
         uses: ros-tooling/action-ros-ci@v0.2
         with:
           package-name: |
