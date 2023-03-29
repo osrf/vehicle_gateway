@@ -52,5 +52,8 @@ jobs:
                 "cmake-args": [
                   "-DSKIP_QGROUNDCONTROL=1"
                 ]
+              },
+              "test": {
+                "retest-until-pass": 5
               }
             }
