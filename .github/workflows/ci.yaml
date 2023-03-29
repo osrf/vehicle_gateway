@@ -28,33 +28,29 @@ jobs:
           echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
           apt-get update && apt-get install -qq -y gz-garden
       - name: Build and test
-        uses: Wandalen/wretry.action@master
+        uses: ros-tooling/action-ros-ci@v0.2
         with:
-          action: ros-tooling/action-ros-ci@v0.2
-          attempt_limit: 3
-          attempt_delay: 2000
-          with: |
-            package-name: |
-              betaflight_configurator
-              betaflight_controller
-              betaflight_demo
-              betaflight_gazebo
-              gz_aerial_plugins
-              vehicle_gateway
-              vehicle_gateway_betaflight
-              vehicle_gateway_px4
-              vehicle_gateway_python
-              vehicle_gateway_worlds
-              vehicle_gateway_integration_test
-              px4_sim
-            vcs-repo-file-url: |
-              $GITHUB_WORKSPACE/dependencies.repos
-            target-ros2-distro: humble
-            colcon-defaults: |
-              {
-                "build": {
-                  "cmake-args": [
-                    "tt-DSKIP_QGROUNDCONTROL=1"
-                  ]
-                }
+          package-name: |
+            betaflight_configurator
+            betaflight_controller
+            betaflight_demo
+            betaflight_gazebo
+            gz_aerial_plugins
+            vehicle_gateway
+            vehicle_gateway_betaflight
+            vehicle_gateway_px4
+            vehicle_gateway_python
+            vehicle_gateway_worlds
+            vehicle_gateway_integration_test
+            px4_sim
+          vcs-repo-file-url: |
+            $GITHUB_WORKSPACE/dependencies.repos
+          target-ros2-distro: humble
+          colcon-defaults: |
+            {
+              "build": {
+                "cmake-args": [
+                  "-DSKIP_QGROUNDCONTROL=1"
+                ]
               }
+            }
