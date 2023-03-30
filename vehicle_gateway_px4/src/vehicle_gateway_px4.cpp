@@ -342,8 +342,16 @@ void VehicleGatewayPX4::send_command(
   float param7)
 {
   px4_msgs::msg::VehicleCommand msg_vehicle_command;
+
   msg_vehicle_command.timestamp = this->px4_node_->get_clock()->now().nanoseconds() / 1000.0;
+
   msg_vehicle_command.command = command;
+  msg_vehicle_command.target_system = target_system;
+  msg_vehicle_command.target_component = target_component;
+  msg_vehicle_command.source_system = source_system;
+  msg_vehicle_command.source_component = source_component;
+  msg_vehicle_command.confirmation = confirmation;
+  msg_vehicle_command.from_external = from_external;
 
   msg_vehicle_command.param1 = param1;
   msg_vehicle_command.param2 = param2;
@@ -352,12 +360,6 @@ void VehicleGatewayPX4::send_command(
   msg_vehicle_command.param5 = param5;
   msg_vehicle_command.param6 = param6;
   msg_vehicle_command.param7 = param7;
-  msg_vehicle_command.confirmation = confirmation;
-  msg_vehicle_command.source_system = source_system;
-  msg_vehicle_command.target_system = target_system;
-  msg_vehicle_command.target_component = target_component;
-  msg_vehicle_command.from_external = from_external;
-  msg_vehicle_command.source_component = source_component;
 
   this->vehicle_command_pub_->publish(msg_vehicle_command);
 }
