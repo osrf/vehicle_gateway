@@ -39,7 +39,7 @@ while vg.get_altitude() < -1.0:
     sys.stdout.flush()
     time.sleep(0.25)
 
-print("landed. Disarming...")
+print('Landed. Disarming...')
 sys.stdout.flush()
 
 while vg.get_arming_state() != ArmingState.STANDBY:
