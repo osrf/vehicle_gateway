@@ -24,7 +24,7 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 import tempfile
 import os
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, PythonExpression
 from typing import List
 import xml.etree.ElementTree as ET
 
@@ -209,9 +209,10 @@ def generate_launch_description():
              '-i', '0',
              '-d'],
         cwd=get_px4_dir(),
-        output='screen',
-    )
+        output='screen')
+
     wait_spawn = ExecuteProcess(cmd=["sleep", "5"])
+
     micro_ros_agent = Node(
         package='micro_ros_agent',
         executable='micro_ros_agent',
@@ -219,20 +220,39 @@ def generate_launch_description():
         parameters=[{'use_sim_time': use_sim_time}],
         output='screen')
 
+    model_sdf_filename = [
+        get_package_share_directory('vehicle_gateway_models'),
+        '/models/',
+        LaunchConfiguration('drone_type'),
+        '_camera',
+        '/model.sdf']
+
     spawn_entity = Node(
         package='ros_gz_sim',
         executable='create',
         output='screen',
-        arguments=['-file', [get_package_share_directory('vehicle_gateway_models'), '/models/', "x500_camera", '/', 'model.sdf'],
-                   '-name', "x500_0",
+        arguments=['-file', model_sdf_filename,
+                   '-name', [LaunchConfiguration('drone_type'), '_0'],
                    '-allow_renaming', 'true',
                    '-x', model_pose_x,
                    '-y', model_pose_y,
                    '-z', model_pose_z,
                    '-R', model_pose_roll,
                    '-P', model_pose_pitch,
-                   '-Y', model_pose_yaw],
-    )
+                   '-Y', model_pose_yaw])
+
+    model_name_env_var = SetEnvironmentVariable(
+        'PX4_GZ_MODEL_NAME',
+        [LaunchConfiguration('drone_type'), "_0"])
+
+    autostart_magic_number = PythonExpression([
+        '{"x500": 4001, "standard_vtol": 4004}["',
+        LaunchConfiguration('drone_type'),
+        '"]'])
+
+    autostart_env_var = SetEnvironmentVariable(
+        'PX4_SYS_AUTOSTART',
+        autostart_magic_number)
 
     os.environ['PX4_GZ_WORLD'] = ""
     # Bridge
@@ -250,9 +270,8 @@ def generate_launch_description():
         model_pose_arg,
         frame_name_args,
         spawn_entity,
-        # run_px4,
-        SetEnvironmentVariable('PX4_GZ_MODEL_NAME', [LaunchConfiguration('drone_type'), "_0"]),
-        SetEnvironmentVariable('PX4_SYS_AUTOSTART', '4001'),
+        model_name_env_var,
+        autostart_env_var,
         bridge,
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
