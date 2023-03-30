@@ -23,17 +23,24 @@ from vehicle_gateway import ArmingState
 vg = vehicle_gateway.init(args=sys.argv, plugin_type='px4')
 while vg.get_arming_state() != ArmingState.ARMED:
     vg.arm()
-    time.sleep(0.1)
+    time.sleep(0.5)
 
 vg.takeoff()
 
-while vg.get_altitude() > -2.0:
-    time.sleep(0.1)
+while vg.get_altitude() > -3.0:
+    print(f'altitude: {vg.get_altitude()}')
+    sys.stdout.flush()
+    time.sleep(0.25)
 
 vg.land()
 
-while vg.get_altitude() < -0.3:
-    time.sleep(0.1)
+while vg.get_altitude() < -1.0:
+    print(f'altitude: {vg.get_altitude()}')
+    sys.stdout.flush()
+    time.sleep(0.25)
+
+print('Landed. Disarming...')
+sys.stdout.flush()
 
 while vg.get_arming_state() != ArmingState.STANDBY:
     vg.disarm()

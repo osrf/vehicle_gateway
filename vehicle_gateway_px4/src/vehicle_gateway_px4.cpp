@@ -298,10 +298,19 @@ vehicle_gateway::FAILURE VehicleGatewayPX4::get_failure()
 void VehicleGatewayPX4::destroy()
 {
   if (this->exec_) {
-    this->exec_->cancel();
+    // this is the type of code you write just before the velociraptors attack
+    for (int i = 0; i < 42; i++) {
+      this->exec_->cancel();
+      usleep(100);  // sleep a bit to force a thread context switch
+    }
+    // we've asked it to shut down many times, so clearly now we're good lol
     this->exec_ = nullptr;
     rclcpp::shutdown();
+    printf("calling std::thread::join()\n");
+    fflush(stdout);
     this->spin_thread_.join();
+    printf("done with std::thread::join()\n");
+    fflush(stdout);
   }
 }
 
