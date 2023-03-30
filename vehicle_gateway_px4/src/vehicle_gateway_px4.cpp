@@ -574,10 +574,12 @@ bool VehicleGatewayPX4::ctbr(float roll, float pitch, float yaw, float throttle)
 
 bool VehicleGatewayPX4::set_motors(std::vector<uint16_t> motor_values)
 {
+  RCLCPP_WARN(this->px4_node_->get_logger(), "VehicleGatewayPX4::set_motors not implemented");
 }
 
 void VehicleGatewayPX4::go_to_waypoint()
 {
+  RCLCPP_WARN(this->px4_node_->get_logger(), "VehicleGatewayPX4::go_to_waypoint not implemented");
 }
 
 void VehicleGatewayPX4::get_local_position(float & x, float & y, float & z)
