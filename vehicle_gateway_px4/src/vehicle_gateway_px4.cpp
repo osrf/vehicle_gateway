@@ -372,7 +372,7 @@ void VehicleGatewayPX4::arm()
     this->source_component_,
     this->confirmation_,
     this->from_external_,
-    1.0f);
+    1.0f); // 1.0 for arm; 0.0 for disarm
 }
 
 void VehicleGatewayPX4::disarm()
@@ -385,7 +385,7 @@ void VehicleGatewayPX4::disarm()
     this->source_component_,
     this->confirmation_,
     this->from_external_,
-    0.0f);
+    0.0f); // 1.0 for arm; 0.0 for disarm
 }
 
 void VehicleGatewayPX4::set_offboard_mode()
@@ -398,8 +398,8 @@ void VehicleGatewayPX4::set_offboard_mode()
     this->source_component_,
     this->confirmation_,
     this->from_external_,
-    1.0f,
-    6.0f);
+    1.0f, // As defined by MAV_MODE: https://mavlink.io/en/messages/common.html#MAV_MODE
+    6.0f); // TODO(audrow): This seems to be an unused parameter - try removing
 }
 
 float VehicleGatewayPX4::get_ground_speed()
@@ -417,13 +417,13 @@ void VehicleGatewayPX4::takeoff()
     this->source_component_,
     this->confirmation_,
     this->from_external_,
-    0.1f,
-    0,
-    0,
-    1.57,  // orientation
-    this->lat_ * 1e-7,
-    this->lon_ * 1e-7,
-    this->alt_ + 5.0f);
+    0.1f,               // Minimum pitch (if airspeed sensor present), desired pitch without sensor
+    0,                  // Empty
+    0,                  // Empty
+    1.57,               // Yaw angle (if magnetometer present), ignored without magnetometer
+    this->lat_ * 1e-7,  // Latitude
+    this->lon_ * 1e-7,  // Longitude
+    this->alt_ + 5.0f); // Altitude
 }
 
 void VehicleGatewayPX4::land()
@@ -436,12 +436,13 @@ void VehicleGatewayPX4::land()
     this->source_component_,
     this->confirmation_,
     this->from_external_,
-    0.1f,
-    0,
-    0,
-    1.57,  // orientation
-    this->lat_ * 1e-7,
-    this->lon_ * 1e-7);
+    0.1f,              // Empty
+    0,                 // Empty
+    0,                 // Empty
+    1.57,              // Desired yaw angle.
+    this->lat_ * 1e-7, // Latitude
+    this->lon_ * 1e-7, // Longitude
+  );                   // Altitude TODO(audrow): This is missing
 }
 
 void VehicleGatewayPX4::transition_to_fw()
@@ -454,8 +455,8 @@ void VehicleGatewayPX4::transition_to_fw()
     this->source_component_,
     this->confirmation_,
     this->from_external_,
-    4.0f,
-    1.0f);
+    4.0f,  // TODO(audrow): This seems to be an unused parameter - try removing
+    1.0f); // TODO(audrow): This seems to be an unused parameter - try removing
 }
 
 void VehicleGatewayPX4::transition_to_mc()
@@ -468,8 +469,8 @@ void VehicleGatewayPX4::transition_to_mc()
     this->source_component_,
     this->confirmation_,
     this->from_external_,
-    3.0f,
-    1.0f);
+    3.0f,  // TODO(audrow): This seems to be an unused parameter - try removing
+    1.0f); // TODO(audrow): This seems to be an unused parameter - try removing
 }
 
 void VehicleGatewayPX4::set_local_velocity_setpoint(float vx, float vy, float vz, float yaw_rate)
@@ -505,20 +506,23 @@ void VehicleGatewayPX4::set_ground_speed(float speed)
 {
   px4_msgs::msg::VehicleCommand msg_vehicle_command;
 
-  msg_vehicle_command.timestamp = this->px4_node_->get_clock()->now().nanoseconds() / 1000;
-  msg_vehicle_command.param1 = 0;
-  msg_vehicle_command.param2 = 0.1;
-  msg_vehicle_command.param1 = 1;  // 0=Airspeed, 1=Ground Speed
-  msg_vehicle_command.param2 = speed;
-  msg_vehicle_command.param3 = -1;
-  // command ID
   msg_vehicle_command.command = px4_msgs::msg::VehicleCommand::VEHICLE_CMD_DO_CHANGE_SPEED;
-  // system which should execute the command
-  msg_vehicle_command.target_system = this->target_system_;
+
+  msg_vehicle_command.timestamp = this->px4_node_->get_clock()->now().nanoseconds() / 1000;
+
+  msg_vehicle_command.param1 = 0;     // TODO(audrow): Remove redundant assignment
+  msg_vehicle_command.param2 = 0.1;   // TODO(audrow): Remove redundant assignment
+  msg_vehicle_command.param1 = 1;     // Speed type (0=Airspeed, 1=Ground Speed)
+  msg_vehicle_command.param2 = speed; // Speed  (m/s, -1 indicates no change)
+  msg_vehicle_command.param3 = -1;    // Throttle  ( Percent, -1 indicates no change)
+
+  // TODO(audrow): Is there any reason not to use send_command() here?
+  msg_vehicle_command.target_system = this->target_system_; // system which should execute the command
   msg_vehicle_command.target_component = 1;  // component to execute the command, 0 for all
-  msg_vehicle_command.source_system = 255;  // system sending the command
+  msg_vehicle_command.source_system = 255;   // system sending the command
   msg_vehicle_command.source_component = 1;  // component sending the command
   msg_vehicle_command.from_external = true;
+
   this->vehicle_command_pub_->publish(msg_vehicle_command);
 }
 
