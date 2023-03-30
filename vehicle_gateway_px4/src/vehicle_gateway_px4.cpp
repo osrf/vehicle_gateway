@@ -443,7 +443,7 @@ void VehicleGatewayPX4::land()
     0,                 // Empty
     1.57,              // Desired yaw angle.
     this->lat_ * 1e-7, // Latitude
-    this->lon_ * 1e-7, // Longitude
+    this->lon_ * 1e-7 // Longitude
   );                   // Altitude TODO(audrow): This is missing
 }
 
