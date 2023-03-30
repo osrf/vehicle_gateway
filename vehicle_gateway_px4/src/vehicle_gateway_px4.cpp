@@ -306,7 +306,11 @@ void VehicleGatewayPX4::destroy()
     // we've asked it to shut down many times, so clearly now we're good lol
     this->exec_ = nullptr;
     rclcpp::shutdown();
+    printf("calling std::thread::join()\n");
+    fflush(stdout);
     this->spin_thread_.join();
+    printf("done with std::thread::join()\n");
+    fflush(stdout);
   }
 }
 
