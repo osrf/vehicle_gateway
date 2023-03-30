@@ -119,6 +119,13 @@ public:
 
 private:
   /// Send command to PX4
+  ///
+  /// Commands and their arguments are documented here:
+  /// https://github.com/PX4/px4_msgs/blob/main/msg/VehicleCommand.msg
+  ///
+  /// MAVLink constants are documented here:
+  /// https://mavlink.io/en/messages/common.html
+  ///
   /// \param[in] command Command ID
   /// \param[in] target_system System which should execute the command
   /// \param[in] target_component Component which should execute the command, 0 for all components
