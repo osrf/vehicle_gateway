@@ -407,6 +407,12 @@ float VehicleGatewayPX4::get_ground_speed()
   return this->ground_speed_;
 }
 
+float VehicleGatewayPX4::get_air_speed()
+{
+  // TODO
+  return 0.0f;
+}
+
 void VehicleGatewayPX4::takeoff()
 {
   this->send_command(
@@ -446,6 +452,7 @@ void VehicleGatewayPX4::land()
 
 void VehicleGatewayPX4::transition_to_fw()
 {
+  printf("sending VTOL_TRANSITION request\n");
   this->send_command(
     px4_msgs::msg::VehicleCommand::VEHICLE_CMD_DO_VTOL_TRANSITION,
     this->target_system_,
@@ -454,8 +461,8 @@ void VehicleGatewayPX4::transition_to_fw()
     this->source_component_,
     this->confirmation_,
     this->from_external_,
-    4.0f,
-    1.0f);
+    4.0f,  // 4 = fixed-wing state, 3 = multicopter state
+    0.0f);  // 0 = normal transition, 1 = force immediate
 }
 
 void VehicleGatewayPX4::transition_to_mc()
@@ -509,6 +516,27 @@ void VehicleGatewayPX4::set_ground_speed(float speed)
   msg_vehicle_command.param1 = 0;
   msg_vehicle_command.param2 = 0.1;
   msg_vehicle_command.param1 = 1;  // 0=Airspeed, 1=Ground Speed
+  msg_vehicle_command.param2 = speed;
+  msg_vehicle_command.param3 = -1;
+  // command ID
+  msg_vehicle_command.command = px4_msgs::msg::VehicleCommand::VEHICLE_CMD_DO_CHANGE_SPEED;
+  // system which should execute the command
+  msg_vehicle_command.target_system = this->target_system_;
+  msg_vehicle_command.target_component = 1;  // component to execute the command, 0 for all
+  msg_vehicle_command.source_system = 255;  // system sending the command
+  msg_vehicle_command.source_component = 1;  // component sending the command
+  msg_vehicle_command.from_external = true;
+  this->vehicle_command_pub_->publish(msg_vehicle_command);
+}
+
+void VehicleGatewayPX4::set_air_speed(float speed)
+{
+  px4_msgs::msg::VehicleCommand msg_vehicle_command;
+
+  msg_vehicle_command.timestamp = this->px4_node_->get_clock()->now().nanoseconds() / 1000;
+  msg_vehicle_command.param1 = 0;
+  msg_vehicle_command.param2 = 0.1;
+  msg_vehicle_command.param1 = 0;  // 0=Airspeed, 1=Ground Speed
   msg_vehicle_command.param2 = speed;
   msg_vehicle_command.param3 = -1;
   // command ID

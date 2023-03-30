@@ -169,6 +169,10 @@ public:
   /// \param[in] speed Desired speed in m/s
   virtual void set_ground_speed(float speed) = 0;
 
+  /// Set air speed in m/s
+  /// \param[in] speed Desired speed in m/s
+  virtual void set_air_speed(float speed) = 0;
+
   /// Set local velocity
   /// \param[in] vx Desired x velocity
   /// \param[in] vy Desired y velocity
@@ -185,6 +189,10 @@ public:
   /// Get ground speed
   /// \return Get ground speed
   virtual float get_ground_speed() = 0;
+
+  /// Get ground speed
+  /// \return Get ground speed
+  virtual float get_air_speed() = 0;
 
   /// Get altitude
   /// \return Get altitude

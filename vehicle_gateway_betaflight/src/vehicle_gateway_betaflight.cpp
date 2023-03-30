@@ -284,7 +284,14 @@ void VehicleGatewayBetaflight::set_offboard_mode() {}
 
 void VehicleGatewayBetaflight::set_ground_speed(float /*speed*/) {}
 
+void VehicleGatewayBetaflight::set_air_speed(float /*speed*/) {}
+
 float VehicleGatewayBetaflight::get_ground_speed()
+{
+  return 0.0;
+}
+
+float VehicleGatewayBetaflight::get_air_speed()
 {
   return 0.0;
 }

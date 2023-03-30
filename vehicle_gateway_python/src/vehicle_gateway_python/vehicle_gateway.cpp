@@ -89,6 +89,11 @@ void VehicleGatewayPython::SetGroundSpeed(float speed)
   this->gateway_->set_ground_speed(speed);
 }
 
+void VehicleGatewayPython::SetAirSpeed(float speed)
+{
+  this->gateway_->set_air_speed(speed);
+}
+
 void VehicleGatewayPython::PublishLocalVelocitySetpoint(
   float vx, float vy, float vz, float yaw_rate)
 {
@@ -108,6 +113,11 @@ void VehicleGatewayPython::SetOffboardMode()
 float VehicleGatewayPython::GetGroundSpeed()
 {
   return this->gateway_->get_ground_speed();
+}
+
+float VehicleGatewayPython::GetAirSpeed()
+{
+  return this->gateway_->get_air_speed();
 }
 
 vehicle_gateway::FLIGHT_MODE VehicleGatewayPython::GetFlightMode()
@@ -224,8 +234,14 @@ define_vehicle_gateway(py::object module)
     "get_failure", &VehicleGatewayPython::GetFailure,
     "Get failure")
   .def(
-    "set_speed", &VehicleGatewayPython::SetGroundSpeed,
+    "set_ground_speed", &VehicleGatewayPython::SetGroundSpeed,
     "Set ground speed m/s")
+  .def(
+    "set_air_speed", &VehicleGatewayPython::SetAirSpeed,
+    "Set air speed m/s")
+  .def(
+    "get_air_speed", &VehicleGatewayPython::GetAirSpeed,
+    "Get air speed m/s")
   .def(
     "land", &VehicleGatewayPython::Land,
     "Land")

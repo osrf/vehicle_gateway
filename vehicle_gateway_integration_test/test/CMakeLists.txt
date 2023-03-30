@@ -22,9 +22,16 @@ add_launch_test(test_px4.py
   TIMEOUT 120
 )
 
+add_launch_test(test_px4.py
+  TARGET test_mc_fw_mc
+  ARGS "vehicle_type:=standard_vtol" "script_test:=mc_fw_mc.py"
+  TIMEOUT 120
+)
+
 install(
   PROGRAMS
     script/arm_disarm.py
     script/takeoff_land.py
+    script/mc_fw_mc.py
   DESTINATION lib/${PROJECT_NAME}
 )

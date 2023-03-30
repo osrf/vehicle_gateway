@@ -102,6 +102,15 @@ public:
   /// \param[in] Desired speed in m/s
   void SetGroundSpeed(float speed);
 
+  /// Get air speed
+  /// \return Get air speed
+  float GetAirSpeed();
+
+  /// Set air speed speed m/s
+  /// \param[in] Desired air in m/s
+  void SetAirSpeed(float speed);
+
+
   // Destroy autopilot API
   void Destroy();
 
