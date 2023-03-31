@@ -145,7 +145,7 @@ def generate_launch_description():
 
     sensor_config = LaunchConfiguration('sensor_config', default='stock')
     sensor_config_args = DeclareLaunchArgument('sensor_config', default_value=sensor_config,
-                                            description='Sensor configuration from configs_px4 directory')
+                                               description='Sensor configuration from configs_px4 directory')
 
     world_name = LaunchConfiguration('world_name', default='empty_px4_world')
     world_name_arg = DeclareLaunchArgument('world_name',
