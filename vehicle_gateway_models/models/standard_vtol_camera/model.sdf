@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sdf version='1.9'>
+  <model name='standard_vtol_camera'>
+
+    <plugin filename="gz-sim-pose-publisher-system" name="gz::sim::systems::PosePublisher">
+      <publish_link_pose>true</publish_link_pose>
+      <publish_nested_model_pose>true</publish_nested_model_pose>
+      <use_pose_vector_msg>true</use_pose_vector_msg>
+      <update_frequency>30</update_frequency>
+    </plugin>
+
+    <include merge="true">
+      <uri>model://standard_vtol</uri>
+    </include>
+
+    <include merge="true">
+      <uri>model://camera</uri>
+    </include>
+
+    <joint name="camera_joint" type="fixed">
+      <parent>base_link</parent>
+      <child>camera_link</child>
+    </joint>
+
+  </model>
+</sdf>
