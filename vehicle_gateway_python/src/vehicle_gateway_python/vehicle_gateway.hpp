@@ -116,6 +116,8 @@ public:
 
   float GetAltitude();
 
+  float GetX();
+
 private:
   std::shared_ptr<vehicle_gateway::VehicleGateway> gateway_;
   std::shared_ptr<pluginlib::ClassLoader<vehicle_gateway::VehicleGateway>> loader_;

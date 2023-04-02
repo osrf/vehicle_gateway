@@ -56,6 +56,7 @@ while vg.get_altitude() > -9.5:
 
 print('spinning...')
 for spin_count in range(0, 10):
+    vg.set_offboard_control_mode(ControllerType.POSITION)
     vg.set_local_position_setpoint(0, 0, -11, 0)
     time.sleep(0.25)
 
@@ -66,20 +67,37 @@ for spin_count in range(0, 10):
 
 print('transitioning to fixed-wing')
 for vel_count in range(0, 10):
-    vg.set_offboard_control_mode(ControllerType.VELOCITY)
-    vg.set_local_velocity_setpoint(10.0, 0.0, 0.0, 0.0)
+    vg.set_offboard_control_mode(ControllerType.POSITION)
+    vg.set_local_position_setpoint(0, 0, -11, 0)
     time.sleep(0.1)
 # while True:
 #     #vg.set_air_speed(1.0)
 vg.transition_to_fw()
 time.sleep(0.1)
 
+going_east = True
+speed_setpoint = 12
+target_z = -15
 while True:
     #vg.set_offboard_control_mode(ControllerType.POSITION)
     #vg.set_local_position_setpoint(0, 0, -11, 0)
     #vg.set_offboard_control_mode(ControllerType.VELOCITY)
     #vg.set_air_speed(1.0)
-    vg.set_local_velocity_setpoint(10.0, 0.0, 0.0, 0.0)
+    x = vg.get_x()
+    print(x)
+    z_err = target_z - vg.get_altitude()
+    vz = -0.2 * z_err
+    if going_east and x > 100:
+        going_east = False
+    elif not going_east and x < -100:
+        going_east = True
+
+    vg.set_offboard_control_mode(ControllerType.VELOCITY)
+    if going_east:
+        vg.set_local_velocity_setpoint(12, 0, vz, 0)
+    else:
+        vg.set_local_velocity_setpoint(-12, 0, vz, 0)
+
     time.sleep(0.1)
 
 #time.sleep(30.0)
