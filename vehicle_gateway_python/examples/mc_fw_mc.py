@@ -54,25 +54,35 @@ while vg.get_altitude() > -9.5:
     vg.set_offboard_control_mode(ControllerType.POSITION)
     vg.set_local_position_setpoint(0, 0, -11, 1.57)
 
+print('spinning...')
+for spin_count in range(0, 10):
+    vg.set_local_position_setpoint(0, 0, -11, 0)
+    time.sleep(0.25)
+
 # while True:
 #     vg.set_offboard_control_mode(ControllerType.POSITION)
 #     vg.set_local_position_setpoint(0, 0, -3, 1.57)
 #     time.sleep(0.1)
 
 print('transitioning to fixed-wing')
-# while True:
-#     vg.set_offboard_control_mode(ControllerType.VELOCITY)
-#     #vg.set_air_speed(1.0)
-#     vg.set_local_velocity_setpoint(0.0, 1.0, 0.0, 0.0)
-#     time.sleep(0.1)
-vg.transition_to_fw()
-while True:
+for vel_count in range(0, 10):
     vg.set_offboard_control_mode(ControllerType.VELOCITY)
+    vg.set_local_velocity_setpoint(10.0, 0.0, 0.0, 0.0)
+    time.sleep(0.1)
+# while True:
+#     #vg.set_air_speed(1.0)
+vg.transition_to_fw()
+time.sleep(0.1)
+
+while True:
+    #vg.set_offboard_control_mode(ControllerType.POSITION)
+    #vg.set_local_position_setpoint(0, 0, -11, 0)
+    #vg.set_offboard_control_mode(ControllerType.VELOCITY)
     #vg.set_air_speed(1.0)
-    vg.set_local_velocity_setpoint(0.0, 0.0, 0.0, 0.0)
+    vg.set_local_velocity_setpoint(10.0, 0.0, 0.0, 0.0)
     time.sleep(0.1)
 
-time.sleep(30.0)
+#time.sleep(30.0)
 
 # print('transitioning back to multicopter')
 # vg.transition_to_mc()

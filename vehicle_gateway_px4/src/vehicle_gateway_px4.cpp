@@ -462,7 +462,7 @@ void VehicleGatewayPX4::transition_to_fw()
     this->confirmation_,
     this->from_external_,
     4.0f,  // 4 = fixed-wing state, 3 = multicopter state
-    0.0f);  // 0 = normal transition, 1 = force immediate
+    1.0f);  // 0 = normal transition, 1 = force immediate
 }
 
 void VehicleGatewayPX4::transition_to_mc()
