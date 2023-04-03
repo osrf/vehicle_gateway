@@ -50,7 +50,7 @@
         <background_color>0.7 0.7 0.8</background_color>
         <camera_pose>-15 -15 8 0 0.58 0.86</camera_pose>
         <camera_clip>
-          <near>0.5</near>
+          <near>0.05</near>
           <far>1000.0</far>
         </camera_clip>
       </plugin>

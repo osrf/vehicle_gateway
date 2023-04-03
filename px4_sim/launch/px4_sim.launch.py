@@ -141,7 +141,11 @@ def generate_launch_description():
 
     drone_type = LaunchConfiguration('drone_type', default='x500')
     drone_type_args = DeclareLaunchArgument('drone_type', default_value=drone_type,
-                                            description='Sim Models (x500, rc_cessna, ...)')
+                                            description='Sim Models (x500, standard_vtol, rc_cessna)')
+
+    sensor_config = LaunchConfiguration('sensor_config', default='stock')
+    sensor_config_args = DeclareLaunchArgument('sensor_config', default_value=sensor_config,
+                                               description='Sensor configuration from configs_px4 directory')
 
     world_name = LaunchConfiguration('world_name', default='empty_px4_world')
     world_name_arg = DeclareLaunchArgument('world_name',
@@ -190,14 +194,16 @@ def generate_launch_description():
         coor_name='yaw')
 
     world_pkgs = get_package_share_directory('vehicle_gateway_worlds')
+    px4_dir = get_px4_dir()
+    gateway_models_dir = get_package_share_directory('vehicle_gateway_models')
 
-    os.environ['GZ_SIM_RESOURCE_PATH'] = ':' + os.path.join(get_px4_dir(), 'models')
-    os.environ['GZ_SIM_RESOURCE_PATH'] += ':' + os.path.join(get_px4_dir(), 'worlds')
+    os.environ['GZ_SIM_RESOURCE_PATH'] = ':' + os.path.join(px4_dir, 'models')
+    os.environ['GZ_SIM_RESOURCE_PATH'] += ':' + os.path.join(px4_dir, 'worlds')
     os.environ['GZ_SIM_RESOURCE_PATH'] += ':' + os.path.join(world_pkgs, 'worlds')
-    os.environ['GZ_SIM_RESOURCE_PATH'] += ':' + os.path.join(get_package_share_directory('vehicle_gateway_models'), 'models')
+    os.environ['GZ_SIM_RESOURCE_PATH'] += ':' + os.path.join(gateway_models_dir, 'models')
+    os.environ['GZ_SIM_RESOURCE_PATH'] += ':' + os.path.join(gateway_models_dir, 'configs_px4')
 
     rootfs = tempfile.TemporaryDirectory()
-    px4_dir = get_px4_dir()
 
     rc_script = os.path.join(px4_dir, 'etc/init.d-posix/rcS')
     print('using rootfs ', rootfs.name)
@@ -208,7 +214,7 @@ def generate_launch_description():
              '-s', rc_script,
              '-i', '0',
              '-d'],
-        cwd=get_px4_dir(),
+        cwd=px4_dir,
         output='screen')
 
     wait_spawn = ExecuteProcess(cmd=["sleep", "5"])
@@ -221,18 +227,21 @@ def generate_launch_description():
         output='screen')
 
     model_sdf_filename = [
-        get_package_share_directory('vehicle_gateway_models'),
-        '/models/',
+        gateway_models_dir,
+        '/configs_px4/',
         LaunchConfiguration('drone_type'),
-        '_camera',
+        '_',
+        LaunchConfiguration('sensor_config'),
         '/model.sdf']
+
+    model_name = [LaunchConfiguration('drone_type'), "_", LaunchConfiguration('sensor_config'), "_0"]
 
     spawn_entity = Node(
         package='ros_gz_sim',
         executable='create',
         output='screen',
         arguments=['-file', model_sdf_filename,
-                   '-name', [LaunchConfiguration('drone_type'), '_0'],
+                   '-name', model_name,
                    '-allow_renaming', 'true',
                    '-x', model_pose_x,
                    '-y', model_pose_y,
@@ -241,12 +250,10 @@ def generate_launch_description():
                    '-P', model_pose_pitch,
                    '-Y', model_pose_yaw])
 
-    model_name_env_var = SetEnvironmentVariable(
-        'PX4_GZ_MODEL_NAME',
-        [LaunchConfiguration('drone_type'), "_0"])
+    model_name_env_var = SetEnvironmentVariable('PX4_GZ_MODEL_NAME', model_name)
 
     autostart_magic_number = PythonExpression([
-        '{"x500": 4001, "standard_vtol": 4004}["',
+        '{"x500": 4001, "rc_cessna": 4003, "standard_vtol": 4004}["',
         LaunchConfiguration('drone_type'),
         '"]'])
 
@@ -269,6 +276,7 @@ def generate_launch_description():
         drone_type_args,
         model_pose_arg,
         frame_name_args,
+        sensor_config_args,
         spawn_entity,
         model_name_env_var,
         autostart_env_var,
