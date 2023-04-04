@@ -520,40 +520,19 @@ void VehicleGatewayPX4::set_air_speed(float speed)
 
 void VehicleGatewayPX4::set_speed(float speed, bool is_ground_speed)
 {
-  float speed_type = is_ground_speed ? 1.0f : 0.0f;
+  float speed_type = is_ground_speed ? 1.0f : 0.0f;  // true = ground speed, false = air speed
   this->send_command(
     // https://mavlink.io/en/messages/common.html#MAV_CMD_DO_CHANGE_SPEED
     px4_msgs::msg::VehicleCommand::VEHICLE_CMD_DO_CHANGE_SPEED,
     this->target_system_,
     this->target_component_,
-    this->source_system_,     // was hardcoded to 255
-    this->source_component_,  // was hardcoded to 1
-    this->confirmation_,      // was hardcoded to 0
-    this->from_external_,     // was hardcoded to true
+    this->source_system_,
+    this->source_component_,
+    this->confirmation_,
+    this->from_external_,
     speed_type,  // Speed type (0=Airspeed, 1=Ground Speed, 2=Climb Speed, 3=Descent Speed)
     speed,       // Speed (-1 indicates no change, -2 indicates return to default vehicle speed)
-    1.0f);       // Throttle (-1 indicates no change, -2 indicates return to default throttle value)
-}
-
-void VehicleGatewayPX4::set_air_speed(float speed)
-{
-  px4_msgs::msg::VehicleCommand msg_vehicle_command;
-
-  msg_vehicle_command.timestamp = this->px4_node_->get_clock()->now().nanoseconds() / 1000;
-  msg_vehicle_command.param1 = 0;
-  msg_vehicle_command.param2 = 0.1;
-  msg_vehicle_command.param1 = 0;  // 0=Airspeed, 1=Ground Speed
-  msg_vehicle_command.param2 = speed;
-  msg_vehicle_command.param3 = -1;
-  // command ID
-  msg_vehicle_command.command = px4_msgs::msg::VehicleCommand::VEHICLE_CMD_DO_CHANGE_SPEED;
-  // system which should execute the command
-  msg_vehicle_command.target_system = this->target_system_;
-  msg_vehicle_command.target_component = 1;  // component to execute the command, 0 for all
-  msg_vehicle_command.source_system = 255;  // system sending the command
-  msg_vehicle_command.source_component = 1;  // component sending the command
-  msg_vehicle_command.from_external = true;
-  this->vehicle_command_pub_->publish(msg_vehicle_command);
+    -1.0f);      // Throttle (-1 indicates no change, -2 indicates return to default throttle value)
 }
 
 void VehicleGatewayPX4::set_offboard_control_mode(vehicle_gateway::CONTROLLER_TYPE type)
