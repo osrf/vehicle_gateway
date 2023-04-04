@@ -110,7 +110,6 @@ public:
   /// \param[in] Desired air in m/s
   void SetAirSpeed(float speed);
 
-
   // Destroy autopilot API
   void Destroy();
 

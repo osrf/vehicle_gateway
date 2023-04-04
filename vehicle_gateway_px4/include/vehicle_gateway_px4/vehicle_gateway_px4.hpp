@@ -146,6 +146,8 @@ private:
     float param4 = 0.0f, float param5 = 0.0f, float param6 = 0.0f,
     float param7 = 0.0f);
 
+  void set_speed(float speed, bool is_ground_speed);
+
   // Orchestration
   std::thread spin_thread_;
   std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> exec_;
