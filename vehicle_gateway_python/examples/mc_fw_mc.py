@@ -71,7 +71,7 @@ for vel_count in range(0, 10):
     vg.set_local_position_setpoint(0, 0, -11, 0)
     time.sleep(0.1)
 # while True:
-#     #vg.set_air_speed(1.0)
+#     vg.set_air_speed(1.0)
 vg.transition_to_fw()
 time.sleep(0.1)
 
@@ -79,10 +79,10 @@ going_east = True
 speed_setpoint = 12
 target_z = -15
 while True:
-    #vg.set_offboard_control_mode(ControllerType.POSITION)
-    #vg.set_local_position_setpoint(0, 0, -11, 0)
-    #vg.set_offboard_control_mode(ControllerType.VELOCITY)
-    #vg.set_air_speed(1.0)
+    # vg.set_offboard_control_mode(ControllerType.POSITION)
+    # vg.set_local_position_setpoint(0, 0, -11, 0)
+    # vg.set_offboard_control_mode(ControllerType.VELOCITY)
+    # vg.set_air_speed(1.0)
     x = vg.get_x()
     print(x)
     z_err = target_z - vg.get_altitude()
@@ -100,7 +100,7 @@ while True:
 
     time.sleep(0.1)
 
-#time.sleep(30.0)
+# time.sleep(30.0)
 
 # print('transitioning back to multicopter')
 # vg.transition_to_mc()
