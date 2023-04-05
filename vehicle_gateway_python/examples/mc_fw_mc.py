@@ -38,7 +38,9 @@ while not ready_to_fly:
         vg.arm()
         vg.set_offboard_mode()
         time.sleep(0.2)
-        if vg.get_arming_state() == ArmingState.ARMED and vg.get_flight_mode() == FlightMode.OFFBOARD:
+        if (
+                vg.get_arming_state() == ArmingState.ARMED
+                and vg.get_flight_mode() == FlightMode.OFFBOARD):
             ready_to_fly = True
             break
 
