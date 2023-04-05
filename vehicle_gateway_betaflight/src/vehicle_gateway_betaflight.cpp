@@ -260,6 +260,12 @@ vehicle_gateway::FAILURE VehicleGatewayBetaflight::get_failure()
   return vehicle_gateway::NONE;
 }
 
+vehicle_gateway::VTOL_STATE VehicleGatewayBetaflight::get_vtol_state()
+{
+  // TODO(anyone): update with correct state
+  return vehicle_gateway::VTOL_STATE::UNDEFINED;
+}
+
 void VehicleGatewayBetaflight::takeoff() {}
 
 void VehicleGatewayBetaflight::land() {}

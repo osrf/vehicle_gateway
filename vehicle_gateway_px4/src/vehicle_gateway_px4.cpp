@@ -413,6 +413,11 @@ float VehicleGatewayPX4::get_air_speed()
   return 0.0f;
 }
 
+vehicle_gateway::VTOL_STATE VehicleGatewayPX4::get_vtol_state()
+{
+  return this->vtol_state_;
+}
+
 void VehicleGatewayPX4::takeoff()
 {
   this->send_command(

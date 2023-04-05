@@ -101,6 +101,16 @@ enum CONTROLLER_TYPE
   VELOCITY = 2              // Velocity control
 };
 
+
+enum VTOL_STATE // Based on https://mavlink.io/en/messages/common.html#MAV_VTOL_STATE
+{
+  UNDEFINED = 0,            // MAV is not configured as VTOL
+  TRANSITION_TO_FW = 1,     // VTOL is in transition from multicopter to fixed-wing
+  TRANSITION_TO_MC = 2,     // VTOL is in transition from fixed-wing to multicopter
+  MC = 3,                    // VTOL is in multicopter state
+  FW = 4,                    // VTOL is in fixed-wing state
+};
+
 class VehicleGateway
 {
 public:
@@ -193,6 +203,10 @@ public:
   /// Get ground speed
   /// \return Get ground speed
   virtual float get_air_speed() = 0;
+
+  /// GET current VTOL state
+  /// \return Current VTOL state
+  virtual VTOL_STATE get_vtol_state() = 0;
 
   /// Get altitude
   /// \return Get altitude
