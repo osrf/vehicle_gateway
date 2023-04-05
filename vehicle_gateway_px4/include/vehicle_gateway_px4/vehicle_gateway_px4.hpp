@@ -146,6 +146,9 @@ private:
     float param4 = 0.0f, float param5 = 0.0f, float param6 = 0.0f,
     float param7 = 0.0f);
 
+  /// Send a command to PX4 to set the speed
+  /// \param[in] speed Speed to set in m/s
+  /// \param[in] is_ground_speed True if the speed is a ground speed, false if it is an air speed
   void set_speed(float speed, bool is_ground_speed);
 
   // Orchestration
