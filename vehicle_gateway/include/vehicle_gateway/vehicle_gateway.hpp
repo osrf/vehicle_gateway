@@ -107,8 +107,8 @@ enum VTOL_STATE // Based on https://mavlink.io/en/messages/common.html#MAV_VTOL_
   UNDEFINED = 0,            // MAV is not configured as VTOL
   TRANSITION_TO_FW = 1,     // VTOL is in transition from multicopter to fixed-wing
   TRANSITION_TO_MC = 2,     // VTOL is in transition from fixed-wing to multicopter
-  MC = 3,                    // VTOL is in multicopter state
-  FW = 4,                    // VTOL is in fixed-wing state
+  MC = 3,                   // VTOL is in multicopter state
+  FW = 4,                   // VTOL is in fixed-wing state
 };
 
 class VehicleGateway
