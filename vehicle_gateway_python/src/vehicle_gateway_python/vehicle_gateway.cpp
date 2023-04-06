@@ -150,6 +150,11 @@ vehicle_gateway::FAILURE VehicleGatewayPython::GetFailure()
   return this->gateway_->get_failure();
 }
 
+vehicle_gateway::VTOL_STATE VehicleGatewayPython::GetVTOLState()
+{
+  return this->gateway_->get_vtol_state();
+}
+
 void VehicleGatewayPython::Takeoff()
 {
   this->gateway_->takeoff();

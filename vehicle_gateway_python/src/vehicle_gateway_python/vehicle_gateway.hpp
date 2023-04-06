@@ -88,6 +88,10 @@ public:
   /// \return Current failure
   vehicle_gateway::FAILURE GetFailure();
 
+  /// Get vtol state
+  /// \return VTOL state
+  vehicle_gateway::VTOL_STATE GetVTOLState();
+
   /// Set offboard_control_mode
   void SetOffboardControlMode(vehicle_gateway::CONTROLLER_TYPE type);
 

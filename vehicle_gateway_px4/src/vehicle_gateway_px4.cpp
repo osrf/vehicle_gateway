@@ -230,6 +230,32 @@ void VehicleGatewayPX4::init(int argc, const char ** argv)
       }
     });
 
+  this->vtol_vehicle_status_sub_ =
+    this->px4_node_->create_subscription<px4_msgs::msg::VtolVehicleStatus>(
+    "/fmu/out/vtol_vehicle_status",
+    qos_profile,
+    [this](px4_msgs::msg::VtolVehicleStatus::ConstSharedPtr msg) {
+      switch (msg->vehicle_vtol_state) {
+        case px4_msgs::msg::VtolVehicleStatus::VEHICLE_VTOL_STATE_UNDEFINED:
+          this->vtol_state_ = vehicle_gateway::VTOL_STATE::UNDEFINED;
+          break;
+        case px4_msgs::msg::VtolVehicleStatus::VEHICLE_VTOL_STATE_TRANSITION_TO_FW:
+          this->vtol_state_ = vehicle_gateway::VTOL_STATE::TRANSITION_TO_FW;
+          break;
+        case px4_msgs::msg::VtolVehicleStatus::VEHICLE_VTOL_STATE_TRANSITION_TO_MC:
+          this->vtol_state_ = vehicle_gateway::VTOL_STATE::TRANSITION_TO_MC;
+          break;
+        case px4_msgs::msg::VtolVehicleStatus::VEHICLE_VTOL_STATE_MC:
+          this->vtol_state_ = vehicle_gateway::VTOL_STATE::MC;
+          break;
+        case px4_msgs::msg::VtolVehicleStatus::VEHICLE_VTOL_STATE_FW:
+          this->vtol_state_ = vehicle_gateway::VTOL_STATE::FW;
+          break;
+        default:
+          this->vtol_state_ = vehicle_gateway::VTOL_STATE::UNDEFINED;
+      }
+    });
+
   this->vehicle_sensor_gps_sub_ = this->px4_node_->create_subscription<px4_msgs::msg::SensorGps>(
     "/fmu/out/vehicle_gps_position",
     qos_profile,
