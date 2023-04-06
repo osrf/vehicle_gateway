@@ -409,7 +409,7 @@ float VehicleGatewayPX4::get_ground_speed()
 
 float VehicleGatewayPX4::get_air_speed()
 {
-  // TODO
+  // TODO(anyone)
   return 0.0f;
 }
 
