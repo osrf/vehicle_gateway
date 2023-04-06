@@ -151,6 +151,10 @@ public:
   /// \return Vehicle type
   virtual VEHICLE_TYPE get_vehicle_type() = 0;
 
+  /// Get VTOL state
+  /// \return VTOL state
+  virtual VTOL_STATE get_vtol_state() = 0;
+
   // Takeoff the robot
   virtual void takeoff() = 0;
 
