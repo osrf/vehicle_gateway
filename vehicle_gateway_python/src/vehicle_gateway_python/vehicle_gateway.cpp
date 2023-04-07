@@ -311,5 +311,13 @@ define_vehicle_gateway(py::object module)
   .value("POSITION", vehicle_gateway::CONTROLLER_TYPE::POSITION)
   .value("VELOCITY", vehicle_gateway::CONTROLLER_TYPE::VELOCITY)
   .export_values();
+
+  pybind11::enum_<vehicle_gateway::VTOL_STATE>(module, "VtolState")
+  .value("UNDEFINED", vehicle_gateway::VTOL_STATE::UNDEFINED)
+  .value("TRANSITION_TO_FW", vehicle_gateway::VTOL_STATE::TRANSITION_TO_FW)
+  .value("TRANSITION_TO_MC", vehicle_gateway::VTOL_STATE::TRANSITION_TO_MC)
+  .value("MC", vehicle_gateway::VTOL_STATE::MC)
+  .value("FW", vehicle_gateway::VTOL_STATE::FW)
+  .export_values();
 }
 }  // namespace vehicle_gateway_python
