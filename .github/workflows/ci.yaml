@@ -44,5 +44,8 @@ jobs:
               },
               "test": {
                 "retest-until-pass": 5
+              },
+              "test": {
+                "packages-select-regex": "vehicle_gateway"
               }
             }
