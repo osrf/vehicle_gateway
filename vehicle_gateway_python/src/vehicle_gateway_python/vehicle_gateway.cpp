@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <pybind11/pybind11.h>
+#include <vector>
 
 #include "exceptions.hpp"
 #include "vehicle_gateway.hpp"
@@ -109,6 +110,13 @@ void VehicleGatewayPython::PublishLocalPositionSetpoint(float x, float y, float 
 void VehicleGatewayPython::SetGroundSpeed(float speed)
 {
   this->gateway_->set_ground_speed(speed);
+}
+
+std::vector<float> VehicleGatewayPython::GetLocalPosition()
+{
+  float x = 0, y = 0, z = 0;
+  this->gateway_->get_local_position(x, y, z);
+  return {x, y, z};
 }
 
 void VehicleGatewayPython::PublishLocalVelocitySetpoint(
@@ -251,6 +259,9 @@ define_vehicle_gateway(py::object module)
   .def(
     "get_failure", &VehicleGatewayPython::GetFailure,
     "Get failure")
+  .def(
+    "get_local_position", &VehicleGatewayPython::GetLocalPosition,
+    "Get local position")
   .def(
     "set_speed", &VehicleGatewayPython::SetGroundSpeed,
     "Set ground speed m/s")

@@ -94,6 +94,10 @@ public:
   /// \return Current failure
   vehicle_gateway::FAILURE GetFailure();
 
+  /// Get local position
+  /// \return Local position vector
+  std::vector<float> GetLocalPosition();
+
   /// Set offboard_control_mode
   void SetOffboardControlMode(vehicle_gateway::CONTROLLER_TYPE type);
 

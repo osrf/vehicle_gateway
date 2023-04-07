@@ -27,6 +27,9 @@ px4_gateway.takeoff()
 
 time.sleep(10)
 
+x, y, z = px4_gateway.get_local_position()
+print(f'Current position: (x: {x:.2f}, y: {y:.2f}, z: {z:.2f})')
+
 print('Landing...')
 px4_gateway.land()
 time.sleep(10)
