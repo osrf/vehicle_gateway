@@ -17,6 +17,12 @@
 #include "exceptions.hpp"
 #include "vehicle_gateway.hpp"
 
+#ifdef _WIN32
+#include <Windows.h>
+#else
+#include <unistd.h>
+#endif
+
 namespace vehicle_gateway_python
 {
 VehicleGatewayPython::VehicleGatewayPython(
@@ -64,9 +70,25 @@ void VehicleGatewayPython::Arm()
   this->gateway_->arm();
 }
 
+void VehicleGatewayPython::ArmSync()
+{
+  while (this->gateway_->get_arming_state() != vehicle_gateway::ARMING_STATE::ARMED) {
+    this->gateway_->arm();
+    usleep(1e5);  // 100 ms
+  }
+}
+
 void VehicleGatewayPython::Disarm()
 {
   this->gateway_->disarm();
+}
+
+void VehicleGatewayPython::DisarmSync()
+{
+  while (this->gateway_->get_arming_state() != vehicle_gateway::ARMING_STATE::STANDBY) {
+    this->gateway_->disarm();
+    usleep(1e5);  // 100 ms
+  }
 }
 
 void VehicleGatewayPython::TransitionToMultiCopter()
@@ -176,7 +198,13 @@ define_vehicle_gateway(py::object module)
     "arm", &VehicleGatewayPython::Arm,
     "Arm vehicle")
   .def(
+    "arm_sync", &VehicleGatewayPython::ArmSync,
+    "Arm vehicle")
+  .def(
     "disarm", &VehicleGatewayPython::Disarm,
+    "Disarm vehicle")
+  .def(
+    "disarm_sync", &VehicleGatewayPython::DisarmSync,
     "Disarm vehicle")
   .def(
     "get_ground_speed", &VehicleGatewayPython::GetGroundSpeed,

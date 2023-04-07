@@ -21,9 +21,7 @@ from vehicle_gateway import ArmingState
 px4_gateway = vehicle_gateway.init(args=sys.argv, plugin_type='px4')
 
 print('Arming...')
-while px4_gateway.get_arming_state() != ArmingState.ARMED:
-    px4_gateway.arm()
-    time.sleep(0.1)
+px4_gateway.arm_sync()
 
 print('Takeoff!')
 px4_gateway.takeoff()
@@ -35,9 +33,7 @@ px4_gateway.land()
 time.sleep(10)
 
 print('Disarming...')
-while px4_gateway.get_arming_state() != ArmingState.STANDBY:
-    px4_gateway.disarm()
-    time.sleep(0.5)
+px4_gateway.disarm_sync()
 
 px4_gateway.destroy()
 print('Takeoff and land demo complete.')

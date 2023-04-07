@@ -51,8 +51,14 @@ public:
   /// Arm
   void Arm();
 
+  /// Arm synchronously
+  void ArmSync();
+
   /// Disarm
   void Disarm();
+
+  /// Disarm synchronously
+  void DisarmSync();
 
   /// Transition to multicopter
   void TransitionToMultiCopter();
