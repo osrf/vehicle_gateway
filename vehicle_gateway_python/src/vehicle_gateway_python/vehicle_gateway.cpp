@@ -140,7 +140,7 @@ vehicle_gateway::FAILURE VehicleGatewayPython::GetFailure()
   return this->gateway_->get_failure();
 }
 
-vehicle_gateway::VTOL_STATE VehicleGatewayPython::GetVTOLState()
+vehicle_gateway::VTOL_STATE VehicleGatewayPython::GetVtolState()
 {
   return this->gateway_->get_vtol_state();
 }

@@ -90,7 +90,7 @@ public:
 
   /// Get vtol state
   /// \return VTOL state
-  vehicle_gateway::VTOL_STATE GetVTOLState();
+  vehicle_gateway::VTOL_STATE GetVtolState();
 
   /// Set offboard_control_mode
   void SetOffboardControlMode(vehicle_gateway::CONTROLLER_TYPE type);
