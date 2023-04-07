@@ -101,7 +101,7 @@ enum CONTROLLER_TYPE
   VELOCITY = 2              // Velocity control
 };
 
-enum VTOL_STATE // Based on https://mavlink.io/en/messages/common.html#MAV_VTOL_STATE
+enum VTOL_STATE  // Based on https://mavlink.io/en/messages/common.html#MAV_VTOL_STATE
 {
   UNDEFINED = 0,            // MAV is not configured as VTOL
   TRANSITION_TO_FW = 1,     // VTOL is in transition from multicopter to fixed-wing
@@ -155,7 +155,7 @@ public:
   /// \return VTOL state
   virtual VTOL_STATE get_vtol_state() = 0;
 
-  // Takeoff the robot
+  /// Takeoff the robot
   virtual void takeoff() = 0;
 
   /// Land the robot
@@ -164,7 +164,7 @@ public:
   /// Got to waypoint
   virtual void go_to_waypoint() = 0;
 
-  // VTOL
+  /// VTOL
   /// Transition to fixed wings
   virtual void transition_to_fw() = 0;
 
