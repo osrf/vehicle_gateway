@@ -16,7 +16,6 @@ import sys
 import time
 
 import vehicle_gateway
-from vehicle_gateway import ArmingState
 
 px4_gateway = vehicle_gateway.init(args=sys.argv, plugin_type='px4')
 
