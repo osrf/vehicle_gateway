@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sdf version='1.10'>
-  <model name='rc_cessna_stock'>
+  <model name='x500_stock'>
 
     <include merge="true">
-      <uri>model://rc_cessna</uri>
+      <uri>model://x500</uri>
     </include>
 
   </model>
