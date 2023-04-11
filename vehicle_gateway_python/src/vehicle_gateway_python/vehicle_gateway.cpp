@@ -13,9 +13,16 @@
 // limitations under the License.
 
 #include <pybind11/pybind11.h>
+#include <vector>
 
 #include "exceptions.hpp"
 #include "vehicle_gateway.hpp"
+
+#ifdef _WIN32
+#include <Windows.h>
+#else
+#include <unistd.h>
+#endif
 
 namespace vehicle_gateway_python
 {
@@ -64,9 +71,25 @@ void VehicleGatewayPython::Arm()
   this->gateway_->arm();
 }
 
+void VehicleGatewayPython::ArmSync()
+{
+  while (this->gateway_->get_arming_state() != vehicle_gateway::ARMING_STATE::ARMED) {
+    this->gateway_->arm();
+    usleep(1e5);  // 100 ms
+  }
+}
+
 void VehicleGatewayPython::Disarm()
 {
   this->gateway_->disarm();
+}
+
+void VehicleGatewayPython::DisarmSync()
+{
+  while (this->gateway_->get_arming_state() != vehicle_gateway::ARMING_STATE::STANDBY) {
+    this->gateway_->disarm();
+    usleep(1e5);  // 100 ms
+  }
 }
 
 void VehicleGatewayPython::TransitionToMultiCopter()
@@ -87,6 +110,13 @@ void VehicleGatewayPython::PublishLocalPositionSetpoint(float x, float y, float 
 void VehicleGatewayPython::SetGroundSpeed(float speed)
 {
   this->gateway_->set_ground_speed(speed);
+}
+
+std::vector<float> VehicleGatewayPython::GetLocalPosition()
+{
+  float x = 0, y = 0, z = 0;
+  this->gateway_->get_local_position(x, y, z);
+  return {x, y, z};
 }
 
 void VehicleGatewayPython::PublishLocalVelocitySetpoint(
@@ -181,7 +211,13 @@ define_vehicle_gateway(py::object module)
     "arm", &VehicleGatewayPython::Arm,
     "Arm vehicle")
   .def(
+    "arm_sync", &VehicleGatewayPython::ArmSync,
+    "Arm vehicle")
+  .def(
     "disarm", &VehicleGatewayPython::Disarm,
+    "Disarm vehicle")
+  .def(
+    "disarm_sync", &VehicleGatewayPython::DisarmSync,
     "Disarm vehicle")
   .def(
     "get_ground_speed", &VehicleGatewayPython::GetGroundSpeed,
@@ -228,6 +264,9 @@ define_vehicle_gateway(py::object module)
   .def(
     "get_failure", &VehicleGatewayPython::GetFailure,
     "Get failure")
+  .def(
+    "get_local_position", &VehicleGatewayPython::GetLocalPosition,
+    "Get local position")
   .def(
     "set_speed", &VehicleGatewayPython::SetGroundSpeed,
     "Set ground speed m/s")

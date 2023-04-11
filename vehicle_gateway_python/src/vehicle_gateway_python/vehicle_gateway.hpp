@@ -51,8 +51,14 @@ public:
   /// Arm
   void Arm();
 
+  /// Arm synchronously
+  void ArmSync();
+
   /// Disarm
   void Disarm();
+
+  /// Disarm synchronously
+  void DisarmSync();
 
   /// Transition to multicopter
   void TransitionToMultiCopter();
@@ -87,6 +93,10 @@ public:
   /// Get current failure
   /// \return Current failure
   vehicle_gateway::FAILURE GetFailure();
+
+  /// Get local position
+  /// \return Local position vector
+  std::vector<float> GetLocalPosition();
 
   /// Get vtol state
   /// \return VTOL state
