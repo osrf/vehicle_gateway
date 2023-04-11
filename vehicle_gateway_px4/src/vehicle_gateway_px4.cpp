@@ -360,6 +360,11 @@ vehicle_gateway::ARMING_STATE VehicleGatewayPX4::get_arming_state()
   return this->arming_state_;
 }
 
+vehicle_gateway::VTOL_STATE VehicleGatewayPX4::get_vtol_state()
+{
+  return this->vtol_state_;
+}
+
 void VehicleGatewayPX4::send_command(
   uint32_t command, uint8_t target_system, uint8_t target_component, uint8_t source_system,
   uint8_t source_component, uint8_t confirmation, bool from_external,
