@@ -441,6 +441,7 @@ float VehicleGatewayPX4::get_ground_speed()
 void VehicleGatewayPX4::takeoff()
 {
   this->send_command(
+    // https://mavlink.io/en/messages/common.html#MAV_CMD_NAV_TAKEOFF
     px4_msgs::msg::VehicleCommand::VEHICLE_CMD_NAV_TAKEOFF,
     this->target_system_,
     this->target_component_,
@@ -448,12 +449,12 @@ void VehicleGatewayPX4::takeoff()
     this->source_component_,
     this->confirmation_,
     this->from_external_,
-    0.1f,
-    0,
-    0,
-    1.57,  // orientation
-    this->lat_ * 1e-7,
-    this->lon_ * 1e-7,
+    0.1f,  // Minimum pitch (if airspeed sensor present), desired pitch without sensor(degrees)
+    0,     // Empty
+    0,     // Empty
+    1.57,  // Yaw angle (if magnetometer present), ignored without magnetometer. NaN to use the current system yaw heading mode (e.g. yaw towards next waypoint, yaw to home, etc.).(degrees)
+    this->lat_ * 1e-7,  // Latitude
+    this->lon_ * 1e-7,  // Longitude
     this->alt_ * 1e-7 + 5.0f);  // Altitude (meters)
 }
 
@@ -478,6 +479,7 @@ void VehicleGatewayPX4::land()
 void VehicleGatewayPX4::transition_to_fw()
 {
   this->send_command(
+    // https://mavlink.io/en/messages/common.html#MAV_CMD_DO_VTOL_TRANSITION
     px4_msgs::msg::VehicleCommand::VEHICLE_CMD_DO_VTOL_TRANSITION,
     this->target_system_,
     this->target_component_,
@@ -485,13 +487,14 @@ void VehicleGatewayPX4::transition_to_fw()
     this->source_component_,
     this->confirmation_,
     this->from_external_,
-    4.0f,
-    1.0f);
+    vehicle_gateway::VTOL_STATE::FW,  // The target VTOL state. For normal transitions, only MAV_VTOL_STATE_MC and MAV_VTOL_STATE_FW can be used.
+    1.0f);  // Force immediate transition to the specified MAV_VTOL_STATE. 1: Force immediate, 0: normal transition. Can be used, for example, to trigger an emergency "Quadchute". Caution: Can be dangerous/damage vehicle, depending on autopilot implementation of this command.
 }
 
 void VehicleGatewayPX4::transition_to_mc()
 {
   this->send_command(
+    // https://mavlink.io/en/messages/common.html#MAV_CMD_DO_VTOL_TRANSITION
     px4_msgs::msg::VehicleCommand::VEHICLE_CMD_DO_VTOL_TRANSITION,
     this->target_system_,
     this->target_component_,
@@ -499,8 +502,8 @@ void VehicleGatewayPX4::transition_to_mc()
     this->source_component_,
     this->confirmation_,
     this->from_external_,
-    3.0f,
-    1.0f);
+    vehicle_gateway::VTOL_STATE::MC,  // The target VTOL state. For normal transitions, only MAV_VTOL_STATE_MC and MAV_VTOL_STATE_FW can be used.
+    1.0f);  // Force immediate transition to the specified MAV_VTOL_STATE. 1: Force immediate, 0: normal transition. Can be used, for example, to trigger an emergency "Quadchute". Caution: Can be dangerous/damage vehicle, depending on autopilot implementation of this command.
 }
 
 void VehicleGatewayPX4::set_local_velocity_setpoint(float vx, float vy, float vz, float yaw_rate)
