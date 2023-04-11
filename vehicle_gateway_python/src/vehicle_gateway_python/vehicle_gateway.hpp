@@ -63,8 +63,14 @@ public:
   /// Transition to multicopter
   void TransitionToMultiCopter();
 
+  /// Transition to multicopter synchronously
+  void TransitionToMultiCopterSync();
+
   /// Transition to fixed wings
   void TransitionToFixedWings();
+
+  /// Transition to fixed wings synchronously
+  void TransitionToFixedWingsSync();
 
   void PublishLocalPositionSetpoint(float x, float y, float z, float yaw);
 
