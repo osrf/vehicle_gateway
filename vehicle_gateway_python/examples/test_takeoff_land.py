@@ -22,6 +22,8 @@ px4_gateway = vehicle_gateway.init(args=sys.argv, plugin_type='px4')
 print('Arming...')
 px4_gateway.arm_sync()
 
+time.sleep(2)  # not sure why this is needed - perhaps some internal state setting
+
 print('Takeoff!')
 px4_gateway.takeoff()
 
