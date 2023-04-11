@@ -236,7 +236,10 @@ define_vehicle_gateway(py::object module)
     "Land")
   .def(
     "get_altitude", &VehicleGatewayPython::GetAltitude,
-    "Get altitude in meter");
+    "Get altitude in meter")
+  .def(
+    "get_vtol_state", &VehicleGatewayPython::GetVtolState,
+    "Get VTOL state");
 
   pybind11::enum_<vehicle_gateway::ARMING_STATE>(module, "ArmingState")
   .value("INIT", vehicle_gateway::ARMING_STATE::INIT)
