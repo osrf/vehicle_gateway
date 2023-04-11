@@ -170,6 +170,11 @@ vehicle_gateway::FAILURE VehicleGatewayPython::GetFailure()
   return this->gateway_->get_failure();
 }
 
+vehicle_gateway::VTOL_STATE VehicleGatewayPython::GetVtolState()
+{
+  return this->gateway_->get_vtol_state();
+}
+
 void VehicleGatewayPython::Takeoff()
 {
   this->gateway_->takeoff();
@@ -344,6 +349,14 @@ define_vehicle_gateway(py::object module)
   .value("NO_CONTROLLER", vehicle_gateway::CONTROLLER_TYPE::NO_CONTROLLER)
   .value("POSITION", vehicle_gateway::CONTROLLER_TYPE::POSITION)
   .value("VELOCITY", vehicle_gateway::CONTROLLER_TYPE::VELOCITY)
+  .export_values();
+
+  pybind11::enum_<vehicle_gateway::VTOL_STATE>(module, "VtolState")
+  .value("UNDEFINED", vehicle_gateway::VTOL_STATE::UNDEFINED)
+  .value("TRANSITION_TO_FW", vehicle_gateway::VTOL_STATE::TRANSITION_TO_FW)
+  .value("TRANSITION_TO_MC", vehicle_gateway::VTOL_STATE::TRANSITION_TO_MC)
+  .value("MC", vehicle_gateway::VTOL_STATE::MC)
+  .value("FW", vehicle_gateway::VTOL_STATE::FW)
   .export_values();
 }
 }  // namespace vehicle_gateway_python

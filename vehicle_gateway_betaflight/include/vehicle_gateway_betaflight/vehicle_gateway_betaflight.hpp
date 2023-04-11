@@ -68,6 +68,9 @@ public:
   vehicle_gateway::FAILURE get_failure() override;
 
   /// Documentation inherited
+  vehicle_gateway::VTOL_STATE get_vtol_state() override;
+
+  /// Documentation inherited
   void takeoff() override;
 
   /// Documentation inherited
