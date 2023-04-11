@@ -454,7 +454,7 @@ void VehicleGatewayPX4::takeoff()
     1.57,  // orientation
     this->lat_ * 1e-7,
     this->lon_ * 1e-7,
-    this->alt_ + 5.0f);
+    this->alt_ * 1e-7 + 5.0f);  // Altitude (meters)
 }
 
 void VehicleGatewayPX4::land()
