@@ -23,6 +23,7 @@ FlightMode = _vehicle_gateway.FlightMode
 Failure = _vehicle_gateway.Failure
 VehicleType = _vehicle_gateway.VehicleType
 ControllerType = _vehicle_gateway.ControllerType
+VtolState = _vehicle_gateway.VtolState
 
 
 def init(
