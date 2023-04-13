@@ -97,9 +97,25 @@ void VehicleGatewayPython::TransitionToMultiCopter()
   this->gateway_->transition_to_mc();
 }
 
+void VehicleGatewayPython::TransitionToMultiCopterSync()
+{
+  while (this->gateway_->get_vtol_state() != vehicle_gateway::VTOL_STATE::MC) {
+    this->gateway_->transition_to_mc();
+    usleep(1e5);  // 100 ms
+  }
+}
+
 void VehicleGatewayPython::TransitionToFixedWings()
 {
   this->gateway_->transition_to_fw();
+}
+
+void VehicleGatewayPython::TransitionToFixedWingsSync()
+{
+  while (this->gateway_->get_vtol_state() != vehicle_gateway::VTOL_STATE::FW) {
+    this->gateway_->transition_to_fw();
+    usleep(1e5);  // 100 ms
+  }
 }
 
 void VehicleGatewayPython::PublishLocalPositionSetpoint(float x, float y, float z, float yaw)
@@ -226,7 +242,13 @@ define_vehicle_gateway(py::object module)
     "transition_to_fw", &VehicleGatewayPython::TransitionToFixedWings,
     "Transition to fixed wings")
   .def(
+    "transition_to_fw_sync", &VehicleGatewayPython::TransitionToFixedWingsSync,
+    "Transition to fixed wings")
+  .def(
     "transition_to_mc", &VehicleGatewayPython::TransitionToMultiCopter,
+    "Transition to multicopter")
+  .def(
+    "transition_to_mc_sync", &VehicleGatewayPython::TransitionToMultiCopterSync,
     "Transition to multicopter")
   .def(
     "takeoff", &VehicleGatewayPython::Takeoff,

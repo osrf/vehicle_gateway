@@ -21,23 +21,39 @@ px4_gateway = vehicle_gateway.init(args=sys.argv, plugin_type='px4')
 
 print('Arming...')
 px4_gateway.arm_sync()
-
 time.sleep(2)  # not sure why this is needed - perhaps some internal state setting
 
 print('Takeoff!')
 px4_gateway.takeoff()
+time.sleep(15)
 
-time.sleep(10)
+print('Transitioning to fixed-wing...')
+px4_gateway.transition_to_fw_sync()
+print(f'VTOL state: {px4_gateway.get_vtol_state().name}')
 
-x, y, z = px4_gateway.get_local_position()
-print(f'Current position: (x: {x:.2f}, y: {y:.2f}, z: {z:.2f})')
+start_time = time.time()
+while time.time() - start_time < 30:
+    x, y, z = px4_gateway.get_local_position()
+    print(f'Current position: (x: {x:.2f}, y: {y:.2f}, z: {z:.2f})')
+    time.sleep(1)
+
+print('Transitioning to multicopter...')
+px4_gateway.transition_to_mc_sync()
+print(f'VTOL state: {px4_gateway.get_vtol_state().name}')
+
+time.sleep(5)
+
+print('Returning to launch...')
+x, y, _ = px4_gateway.get_local_position()
+px4_gateway.set_local_position_setpoint(-x, -y, -10, 0)
+time.sleep(90)
 
 print('Landing...')
 px4_gateway.land()
-time.sleep(10)
 
+time.sleep(15)
 print('Disarming...')
 px4_gateway.disarm_sync()
 
 px4_gateway.destroy()
-print('Takeoff and land demo complete.')
+print('Demo complete.')
