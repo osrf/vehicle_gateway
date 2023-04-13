@@ -506,6 +506,27 @@ void VehicleGatewayPX4::transition_to_mc()
     1.0f);  // Force immediate transition to the specified MAV_VTOL_STATE
 }
 
+void VehicleGatewayPX4::go_to_latlon(float lat, float lon, float alt_amsl)
+{
+  this->send_command(
+    // https://mavlink.io/en/messages/common.html#MAV_CMD_DO_REPOSITION
+    px4_msgs::msg::VehicleCommand::VEHICLE_CMD_DO_REPOSITION,
+    this->target_system_,
+    this->target_component_,
+    this->source_system_,
+    this->source_component_,
+    this->confirmation_,
+    this->from_external_,
+    -1.0f,  // ground speed (m/s), less than 0 (-1) for default
+    NAN,    // bitmask TODO(anyone) MAV_DO_REPOSITION_FLAGS_CHANGE_MODE?
+    0.0f,   // loiter radius for plans (meters)
+    NAN,    // yaw heading (deg), NaN to use current system yaw heading. For planes indicates loiter direction (0: clockwise, 1: counter clockwise)
+    lat,    // latitude
+    lon,    // longitude
+    alt_amsl // altitude (m)
+  );
+}
+
 void VehicleGatewayPX4::set_local_velocity_setpoint(float vx, float vy, float vz, float yaw_rate)
 {
   px4_msgs::msg::TrajectorySetpoint msg;

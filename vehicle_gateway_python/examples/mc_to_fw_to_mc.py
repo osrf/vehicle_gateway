@@ -37,21 +37,35 @@ while time.time() - start_time < 30:
     print(f'Current position: (x: {x:.2f}, y: {y:.2f}, z: {z:.2f})')
     time.sleep(1)
 
+print('Setting latlon...')
+px4_gateway.go_to_latlon(47.3969120, 8.5452320, 1635)
+
+start_time = time.time()
+while time.time() - start_time < 30:
+    x, y, z = px4_gateway.get_local_position()
+    print(f'After position: (x: {x:.2f}, y: {y:.2f}, z: {z:.2f})')
+    time.sleep(1)
+
+print('Setting new latlon...')
+px4_gateway.go_to_latlon(47.3991872, 8.5453344, 1635)
+
+start_time = time.time()
+while time.time() - start_time < 30:
+    x, y, z = px4_gateway.get_local_position()
+    print(f'New position: (x: {x:.2f}, y: {y:.2f}, z: {z:.2f})')
+    time.sleep(1)
+
 print('Transitioning to multicopter...')
 px4_gateway.transition_to_mc_sync()
 print(f'VTOL state: {px4_gateway.get_vtol_state().name}')
 
 time.sleep(5)
 
-print('Returning to launch...')
-x, y, _ = px4_gateway.get_local_position()
-px4_gateway.set_local_position_setpoint(-x, -y, -10, 0)
-time.sleep(90)
-
 print('Landing...')
 px4_gateway.land()
 
 time.sleep(15)
+
 print('Disarming...')
 px4_gateway.disarm_sync()
 

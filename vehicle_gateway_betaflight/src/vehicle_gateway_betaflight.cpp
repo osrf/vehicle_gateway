@@ -295,6 +295,8 @@ float VehicleGatewayBetaflight::get_ground_speed()
   return 0.0;
 }
 
+void VehicleGatewayBetaflight::go_to_latlon(float lat, float lon, float alt) {}
+
 }  // namespace vehicle_gateway_betaflight
 #include <pluginlib/class_list_macros.hpp>
 

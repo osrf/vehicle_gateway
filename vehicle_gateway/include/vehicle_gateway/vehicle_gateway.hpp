@@ -171,6 +171,12 @@ public:
   /// Transition to multicopter
   virtual void transition_to_mc() = 0;
 
+  /// Go to latitude and longitude coordinates
+  /// \param[in] lat Desired latitude coordinate
+  /// \param[in] lon Desired longitude coordinate
+  /// \param[in] alt Desired altitude in meters
+  virtual void go_to_latlon(float lat, float lon, float alt) = 0;
+
   /// Set local position
   /// \param[in] x Desired x position
   /// \param[in] y Desired y position

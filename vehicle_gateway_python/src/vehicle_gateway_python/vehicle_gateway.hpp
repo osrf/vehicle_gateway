@@ -72,6 +72,9 @@ public:
   /// Transition to fixed wings synchronously
   void TransitionToFixedWingsSync();
 
+  /// Go to latitude and longitude coordinates
+  void PublishLatLonSetpoint(float lat, float lon, float alt);
+
   void PublishLocalPositionSetpoint(float x, float y, float z, float yaw);
 
   void PublishLocalVelocitySetpoint(float vx, float vy, float vz, float yaw_rate);

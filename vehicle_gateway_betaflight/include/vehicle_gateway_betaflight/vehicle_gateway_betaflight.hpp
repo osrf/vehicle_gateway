@@ -85,6 +85,9 @@ public:
   /// Documentation inherited
   void transition_to_mc() override;
 
+  /// Document inherited
+  void go_to_latlon(float lat, float lon, float alt) override;
+
   /// Documentation inherited
   void set_local_position_setpoint(float x, float y, float z, float yaw) override;
 
