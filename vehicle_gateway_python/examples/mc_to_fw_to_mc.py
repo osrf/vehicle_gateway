@@ -22,16 +22,17 @@ EARTH_RADIUS = 6378100  # meters
 
 px4_gateway = vehicle_gateway.init(args=sys.argv, plugin_type='px4')
 
+
 def print_latlon(_vg):
     lat, lon, alt = _vg.get_latlon()
     print(f'Lat: {lat:.5f}, Lon: {lon:.5f}, Alt: {alt:.5f})')
 
+
 def move_relative(_lat, _lon, _x, _y):
-    new_lat  = _lat  + (_x / EARTH_RADIUS) * (180 / math.pi)
+    new_lat = _lat + (_x / EARTH_RADIUS) * (180 / math.pi)
     new_lon = _lon + (_y / EARTH_RADIUS) * (180 / math.pi) / math.cos(_lat * math.pi/180)
     return new_lat, new_lon
 
-print_latlon(px4_gateway)
 
 print('Arming...')
 px4_gateway.arm_sync()
