@@ -522,10 +522,11 @@ void VehicleGatewayPX4::go_to_latlon(double lat, double lon, float alt_amsl)
     -1.0f,  // ground speed (m/s), less than 0 (-1) for default
     NAN,    // bitmask TODO(anyone) MAV_DO_REPOSITION_FLAGS_CHANGE_MODE?
     0.0f,   // loiter radius for plans (meters)
-    NAN,    // yaw heading (deg), NaN to use current system yaw heading. For planes indicates loiter direction (0: clockwise, 1: counter clockwise)
+    NAN,    // yaw heading (deg), NaN to use current system yaw heading.
+            // For planes indicates loiter direction (0: clockwise, 1: counter clockwise)
     lat,    // latitude
     lon,    // longitude
-    alt_amsl // altitude (m)
+    alt_amsl  // altitude (m)
   );
 }
 
@@ -642,7 +643,6 @@ void VehicleGatewayPX4::get_local_position(float & x, float & y, float & z)
 
 std::vector<double> VehicleGatewayPX4::get_latlon()
 {
-
   return {this->lat_, this->lon_, this->alt_};
 }
 
