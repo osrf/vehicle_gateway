@@ -260,9 +260,11 @@ void VehicleGatewayPX4::init(int argc, const char ** argv)
     "/fmu/out/vehicle_gps_position",
     qos_profile,
     [this](px4_msgs::msg::SensorGps::ConstSharedPtr msg) {
-      this->lat_ = msg->lat;
-      this->lon_ = msg->lon;
-      this->alt_ = msg->alt;
+      // 1e-7 and 1e-3 comes from:
+      // https://github.com/PX4/px4_msgs/blob/4db0a3f14ea81b9de7511d738f8ad9bd8ae5b3ad/msg/SensorGps.msg#L8-L10
+      this->lat_ = msg->lat * 1e-7;
+      this->lon_ = msg->lon * 1e-7;
+      this->alt_ = msg->alt * 1e-3;
     });
 
   this->vehicle_timesync_sub_ = this->px4_node_->create_subscription<px4_msgs::msg::TimesyncStatus>(
@@ -453,9 +455,9 @@ void VehicleGatewayPX4::takeoff()
     0,     // Empty
     0,     // Empty
     1.57,  // Yaw angle (degrees)
-    this->lat_ * 1e-7,  // Latitude
-    this->lon_ * 1e-7,  // Longitude
-    this->alt_ * 1e-7 + 5.0f);  // Altitude (meters)
+    this->lat_,  // Latitude
+    this->lon_,  // Longitude
+    this->alt_ + 5.0f);  // Altitude (meters)
 }
 
 void VehicleGatewayPX4::land()
@@ -472,8 +474,8 @@ void VehicleGatewayPX4::land()
     0,
     0,
     1.57,  // orientation
-    this->lat_ * 1e-7,
-    this->lon_ * 1e-7);
+    this->lat_,
+    this->lon_);
 }
 
 void VehicleGatewayPX4::transition_to_fw()
@@ -506,7 +508,7 @@ void VehicleGatewayPX4::transition_to_mc()
     1.0f);  // Force immediate transition to the specified MAV_VTOL_STATE
 }
 
-void VehicleGatewayPX4::go_to_latlon(float lat, float lon, float alt_amsl)
+void VehicleGatewayPX4::go_to_latlon(double lat, double lon, float alt_amsl)
 {
   this->send_command(
     // https://mavlink.io/en/messages/common.html#MAV_CMD_DO_REPOSITION
@@ -636,6 +638,12 @@ void VehicleGatewayPX4::get_local_position(float & x, float & y, float & z)
   x = this->current_pos_x_;
   y = this->current_pos_y_;
   z = this->current_pos_z_;
+}
+
+std::vector<double> VehicleGatewayPX4::get_latlon()
+{
+
+  return {this->lat_, this->lon_, this->alt_};
 }
 
 /// Documentation inherited

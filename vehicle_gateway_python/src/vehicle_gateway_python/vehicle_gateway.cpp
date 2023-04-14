@@ -118,9 +118,14 @@ void VehicleGatewayPython::TransitionToFixedWingsSync()
   }
 }
 
-void VehicleGatewayPython::PublishLatLonSetpoint(float lat, float lon, float alt)
+void VehicleGatewayPython::PublishLatLonSetpoint(double lat, double lon, float alt)
 {
   this->gateway_->go_to_latlon(lat, lon, alt);
+}
+
+std::vector<double> VehicleGatewayPython::GetLatLon()
+{
+  return this->gateway_->get_latlon();
 }
 
 void VehicleGatewayPython::PublishLocalPositionSetpoint(float x, float y, float z, float yaw)
@@ -261,6 +266,9 @@ define_vehicle_gateway(py::object module)
   .def(
     "go_to_latlon", &VehicleGatewayPython::PublishLatLonSetpoint,
     "PublishLatLonSetpoint")
+  .def(
+    "get_latlon", &VehicleGatewayPython::GetLatLon,
+    "GetLatLon")
   .def(
     "set_local_position_setpoint", &VehicleGatewayPython::PublishLocalPositionSetpoint,
     "PublishLocalPositionSetpoint")
