@@ -72,6 +72,12 @@ public:
   /// Transition to fixed wings synchronously
   void TransitionToFixedWingsSync();
 
+  /// Go to latitude and longitude coordinates
+  void PublishLatLonSetpoint(double lat, double lon, float alt);
+
+  /// Get latitude, longitude, and altitude
+  std::vector<double> GetLatLon();
+
   void PublishLocalPositionSetpoint(float x, float y, float z, float yaw);
 
   void PublishLocalVelocitySetpoint(float vx, float vy, float vz, float yaw_rate);

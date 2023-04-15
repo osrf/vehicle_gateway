@@ -171,6 +171,12 @@ public:
   /// Transition to multicopter
   virtual void transition_to_mc() = 0;
 
+  /// Go to latitude and longitude coordinates
+  /// \param[in] lat Desired latitude coordinate
+  /// \param[in] lon Desired longitude coordinate
+  /// \param[in] alt Desired altitude in meters
+  virtual void go_to_latlon(double lat, double lon, float alt) = 0;
+
   /// Set local position
   /// \param[in] x Desired x position
   /// \param[in] y Desired y position
@@ -202,6 +208,9 @@ public:
   /// Get altitude
   /// \return Get altitude
   virtual float get_altitude() = 0;
+
+  /// Get 0: latitude, 1: longitutde, and 2: altitutde
+  virtual std::vector<double> get_latlon() = 0;
 
   virtual void get_local_position(float & x, float & y, float & z) = 0;
 
