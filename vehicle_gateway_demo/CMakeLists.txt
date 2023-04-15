@@ -21,8 +21,8 @@ ament_target_dependencies(aruco_demo
   control_toolbox
   rclcpp
   std_msgs
-	vehicle_gateway_px4
-	aruco_opencv_msgs
+  vehicle_gateway_px4
+  aruco_opencv_msgs
 )
 
 add_executable(circles
@@ -35,7 +35,7 @@ ament_target_dependencies(circles
 
 install(DIRECTORY
   launch
-	config
+  config
   DESTINATION
     share/${PROJECT_NAME}
 )
