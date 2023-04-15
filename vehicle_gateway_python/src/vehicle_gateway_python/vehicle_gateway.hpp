@@ -51,14 +51,32 @@ public:
   /// Arm
   void Arm();
 
+  /// Arm synchronously
+  void ArmSync();
+
   /// Disarm
   void Disarm();
+
+  /// Disarm synchronously
+  void DisarmSync();
 
   /// Transition to multicopter
   void TransitionToMultiCopter();
 
+  /// Transition to multicopter synchronously
+  void TransitionToMultiCopterSync();
+
   /// Transition to fixed wings
   void TransitionToFixedWings();
+
+  /// Transition to fixed wings synchronously
+  void TransitionToFixedWingsSync();
+
+  /// Go to latitude and longitude coordinates
+  void PublishLatLonSetpoint(double lat, double lon, float alt);
+
+  /// Get latitude, longitude, and altitude
+  std::vector<double> GetLatLon();
 
   void PublishLocalPositionSetpoint(float x, float y, float z, float yaw);
 
@@ -87,6 +105,14 @@ public:
   /// Get current failure
   /// \return Current failure
   vehicle_gateway::FAILURE GetFailure();
+
+  /// Get local position
+  /// \return Local position vector
+  std::vector<float> GetLocalPosition();
+
+  /// Get vtol state
+  /// \return VTOL state
+  vehicle_gateway::VTOL_STATE GetVtolState();
 
   /// Set offboard_control_mode
   void SetOffboardControlMode(vehicle_gateway::CONTROLLER_TYPE type);

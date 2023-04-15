@@ -68,6 +68,9 @@ public:
   vehicle_gateway::FAILURE get_failure() override;
 
   /// Documentation inherited
+  vehicle_gateway::VTOL_STATE get_vtol_state() override;
+
+  /// Documentation inherited
   void takeoff() override;
 
   /// Documentation inherited
@@ -81,6 +84,9 @@ public:
 
   /// Documentation inherited
   void transition_to_mc() override;
+
+  /// Document inherited
+  void go_to_latlon(double lat, double lon, float alt) override;
 
   /// Documentation inherited
   void set_local_position_setpoint(float x, float y, float z, float yaw) override;
@@ -109,7 +115,11 @@ public:
   /// Documentation inherited
   float get_air_speed() override;
 
+  /// Documentation inherited
   void get_local_position(float & x, float & y, float & z) override;
+
+  /// Documentation inherited
+  std::vector<double> get_latlon() override;
 
   /// Documentation inherited
   bool ctbr(float roll, float pitch, float yaw, float throttle) override;

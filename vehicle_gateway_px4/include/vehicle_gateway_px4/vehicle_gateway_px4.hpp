@@ -26,6 +26,7 @@
 #include <rclcpp/rclcpp.hpp>
 
 #include <px4_msgs/msg/vehicle_status.hpp>
+#include <px4_msgs/msg/vtol_vehicle_status.hpp>
 #include <px4_msgs/msg/vehicle_command.hpp>
 #include <px4_msgs/msg/sensor_gps.hpp>
 #include <px4_msgs/msg/trajectory_setpoint.hpp>
@@ -74,6 +75,9 @@ public:
   vehicle_gateway::FAILURE get_failure() override;
 
   /// Documentation inherited
+  vehicle_gateway::VTOL_STATE get_vtol_state() override;
+
+  /// Documentation inherited
   void takeoff() override;
 
   /// Documentation inherited
@@ -87,6 +91,9 @@ public:
 
   /// Documentation inherited
   void transition_to_mc() override;
+
+  /// Documentation inherited
+  void go_to_latlon(double lat, double lon, float alt) override;
 
   /// Documentation inherited
   void set_local_position_setpoint(float x, float y, float z, float yaw) override;
@@ -115,7 +122,11 @@ public:
   /// Documentation inherited
   float get_altitude() override;
 
+  /// Documentation inherited
   void get_local_position(float & x, float & y, float & z) override;
+
+  /// Documentation inherited
+  std::vector<double> get_latlon() override;
 
   /// Documentation inherited
   bool ctbr(float roll, float pitch, float yaw, float throttle) override;
@@ -155,6 +166,7 @@ private:
   std::thread spin_thread_;
   std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> exec_;
   rclcpp::Subscription<px4_msgs::msg::VehicleStatus>::SharedPtr vehicle_status_sub_;
+  rclcpp::Subscription<px4_msgs::msg::VtolVehicleStatus>::SharedPtr vtol_vehicle_status_sub_;
   rclcpp::Subscription<px4_msgs::msg::TimesyncStatus>::SharedPtr vehicle_timesync_sub_;
   rclcpp::Subscription<px4_msgs::msg::VehicleOdometry>::SharedPtr vehicle_odometry_sub_;
   rclcpp::Publisher<px4_msgs::msg::VehicleCommand>::SharedPtr vehicle_command_pub_;
@@ -173,6 +185,7 @@ private:
   vehicle_gateway::ARM_DISARM_REASON arm_reason_;
   vehicle_gateway::ARM_DISARM_REASON disarm_reason_;
   vehicle_gateway::FAILURE failure_;
+  vehicle_gateway::VTOL_STATE vtol_state_{vehicle_gateway::VTOL_STATE::UNDEFINED};
 
   int target_system_{1};
 

@@ -30,22 +30,11 @@ jobs:
       - name: Build and test
         uses: ros-tooling/action-ros-ci@v0.3
         with:
-          package-name: |
-            betaflight_configurator
-            betaflight_controller
-            betaflight_demo
-            betaflight_gazebo
-            gz_aerial_plugins
-            vehicle_gateway
-            vehicle_gateway_betaflight
-            vehicle_gateway_px4
-            vehicle_gateway_python
-            vehicle_gateway_worlds
-            vehicle_gateway_integration_test
-            px4_sim
+          package-name:
           vcs-repo-file-url: |
             $GITHUB_WORKSPACE/dependencies.repos
           target-ros2-distro: humble
+          rosdep-skip-keys: gz-transport12 gz-common5 gz-math7 gz-msgs9 gz-gui7 gz-cmake3 gz-sim7
           colcon-defaults: |
             {
               "build": {
@@ -55,5 +44,10 @@ jobs:
               },
               "test": {
                 "retest-until-pass": 5
+              },
+              "test": {
+                "packages-select-regex": [
+                  "vehicle_gateway"
+                ]
               }
             }

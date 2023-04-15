@@ -230,13 +230,41 @@ void VehicleGatewayPX4::init(int argc, const char ** argv)
       }
     });
 
+  this->vtol_vehicle_status_sub_ =
+    this->px4_node_->create_subscription<px4_msgs::msg::VtolVehicleStatus>(
+    "/fmu/out/vtol_vehicle_status",
+    qos_profile,
+    [this](px4_msgs::msg::VtolVehicleStatus::ConstSharedPtr msg) {
+      switch (msg->vehicle_vtol_state) {
+        case px4_msgs::msg::VtolVehicleStatus::VEHICLE_VTOL_STATE_UNDEFINED:
+          this->vtol_state_ = vehicle_gateway::VTOL_STATE::UNDEFINED;
+          break;
+        case px4_msgs::msg::VtolVehicleStatus::VEHICLE_VTOL_STATE_TRANSITION_TO_FW:
+          this->vtol_state_ = vehicle_gateway::VTOL_STATE::TRANSITION_TO_FW;
+          break;
+        case px4_msgs::msg::VtolVehicleStatus::VEHICLE_VTOL_STATE_TRANSITION_TO_MC:
+          this->vtol_state_ = vehicle_gateway::VTOL_STATE::TRANSITION_TO_MC;
+          break;
+        case px4_msgs::msg::VtolVehicleStatus::VEHICLE_VTOL_STATE_MC:
+          this->vtol_state_ = vehicle_gateway::VTOL_STATE::MC;
+          break;
+        case px4_msgs::msg::VtolVehicleStatus::VEHICLE_VTOL_STATE_FW:
+          this->vtol_state_ = vehicle_gateway::VTOL_STATE::FW;
+          break;
+        default:
+          this->vtol_state_ = vehicle_gateway::VTOL_STATE::UNDEFINED;
+      }
+    });
+
   this->vehicle_sensor_gps_sub_ = this->px4_node_->create_subscription<px4_msgs::msg::SensorGps>(
     "/fmu/out/vehicle_gps_position",
     qos_profile,
     [this](px4_msgs::msg::SensorGps::ConstSharedPtr msg) {
-      this->lat_ = msg->lat;
-      this->lon_ = msg->lon;
-      this->alt_ = msg->alt;
+      // 1e-7 and 1e-3 comes from:
+      // https://github.com/PX4/px4_msgs/blob/4db0a3f14ea81b9de7511d738f8ad9bd8ae5b3ad/msg/SensorGps.msg#L8-L10
+      this->lat_ = msg->lat * 1e-7;
+      this->lon_ = msg->lon * 1e-7;
+      this->alt_ = msg->alt * 1e-3;
     });
 
   this->vehicle_timesync_sub_ = this->px4_node_->create_subscription<px4_msgs::msg::TimesyncStatus>(
@@ -334,6 +362,11 @@ vehicle_gateway::ARMING_STATE VehicleGatewayPX4::get_arming_state()
   return this->arming_state_;
 }
 
+vehicle_gateway::VTOL_STATE VehicleGatewayPX4::get_vtol_state()
+{
+  return this->vtol_state_;
+}
+
 void VehicleGatewayPX4::send_command(
   uint32_t command, uint8_t target_system, uint8_t target_component, uint8_t source_system,
   uint8_t source_component, uint8_t confirmation, bool from_external,
@@ -416,6 +449,7 @@ float VehicleGatewayPX4::get_air_speed()
 void VehicleGatewayPX4::takeoff()
 {
   this->send_command(
+    // https://mavlink.io/en/messages/common.html#MAV_CMD_NAV_TAKEOFF
     px4_msgs::msg::VehicleCommand::VEHICLE_CMD_NAV_TAKEOFF,
     this->target_system_,
     this->target_component_,
@@ -423,13 +457,13 @@ void VehicleGatewayPX4::takeoff()
     this->source_component_,
     this->confirmation_,
     this->from_external_,
-    0.1f,
-    0,
-    0,
-    1.57,  // orientation
-    this->lat_ * 1e-7,
-    this->lon_ * 1e-7,
-    this->alt_ + 5.0f);
+    0.1f,  // Minimum pitch (if airspeed sensor present), desired pitch without sensor (degrees)
+    0,     // Empty
+    0,     // Empty
+    1.57,  // Yaw angle (degrees)
+    this->lat_,  // Latitude
+    this->lon_,  // Longitude
+    this->alt_ + 5.0f);  // Altitude (meters)
 }
 
 void VehicleGatewayPX4::land()
@@ -446,14 +480,15 @@ void VehicleGatewayPX4::land()
     0,
     0,
     1.57,  // orientation
-    this->lat_ * 1e-7,
-    this->lon_ * 1e-7);
+    this->lat_,
+    this->lon_);
 }
 
 void VehicleGatewayPX4::transition_to_fw()
 {
   printf("sending VTOL_TRANSITION request\n");
   this->send_command(
+    // https://mavlink.io/en/messages/common.html#MAV_CMD_DO_VTOL_TRANSITION
     px4_msgs::msg::VehicleCommand::VEHICLE_CMD_DO_VTOL_TRANSITION,
     this->target_system_,
     this->target_component_,
@@ -461,13 +496,14 @@ void VehicleGatewayPX4::transition_to_fw()
     this->source_component_,
     this->confirmation_,
     this->from_external_,
-    4.0f,  // 4 = fixed-wing state, 3 = multicopter state
-    1.0f);  // 0 = normal transition, 1 = force immediate
+    vehicle_gateway::VTOL_STATE::FW,  // The target VTOL state
+    1.0f);  // Force immediate transition to the specified MAV_VTOL_STATE
 }
 
 void VehicleGatewayPX4::transition_to_mc()
 {
   this->send_command(
+    // https://mavlink.io/en/messages/common.html#MAV_CMD_DO_VTOL_TRANSITION
     px4_msgs::msg::VehicleCommand::VEHICLE_CMD_DO_VTOL_TRANSITION,
     this->target_system_,
     this->target_component_,
@@ -475,8 +511,30 @@ void VehicleGatewayPX4::transition_to_mc()
     this->source_component_,
     this->confirmation_,
     this->from_external_,
-    3.0f,
-    1.0f);
+    vehicle_gateway::VTOL_STATE::MC,  // The target VTOL state
+    1.0f);  // Force immediate transition to the specified MAV_VTOL_STATE
+}
+
+void VehicleGatewayPX4::go_to_latlon(double lat, double lon, float alt_amsl)
+{
+  this->send_command(
+    // https://mavlink.io/en/messages/common.html#MAV_CMD_DO_REPOSITION
+    px4_msgs::msg::VehicleCommand::VEHICLE_CMD_DO_REPOSITION,
+    this->target_system_,
+    this->target_component_,
+    this->source_system_,
+    this->source_component_,
+    this->confirmation_,
+    this->from_external_,
+    -1.0f,  // ground speed (m/s), less than 0 (-1) for default
+    NAN,    // bitmask TODO(anyone) MAV_DO_REPOSITION_FLAGS_CHANGE_MODE?
+    0.0f,   // loiter radius for plans (meters)
+    NAN,    // yaw heading (deg), NaN to use current system yaw heading.
+            // For planes indicates loiter direction (0: clockwise, 1: counter clockwise)
+    lat,    // latitude
+    lon,    // longitude
+    alt_amsl  // altitude (m)
+  );
 }
 
 void VehicleGatewayPX4::set_local_velocity_setpoint(float vx, float vy, float vz, float yaw_rate)
@@ -594,6 +652,11 @@ void VehicleGatewayPX4::get_local_position(float & x, float & y, float & z)
   x = this->current_pos_x_;
   y = this->current_pos_y_;
   z = this->current_pos_z_;
+}
+
+std::vector<double> VehicleGatewayPX4::get_latlon()
+{
+  return {this->lat_, this->lon_, this->alt_};
 }
 
 /// Documentation inherited

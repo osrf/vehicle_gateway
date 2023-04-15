@@ -13,9 +13,16 @@
 // limitations under the License.
 
 #include <pybind11/pybind11.h>
+#include <vector>
 
 #include "exceptions.hpp"
 #include "vehicle_gateway.hpp"
+
+#ifdef _WIN32
+#include <Windows.h>
+#else
+#include <unistd.h>
+#endif
 
 namespace vehicle_gateway_python
 {
@@ -64,9 +71,25 @@ void VehicleGatewayPython::Arm()
   this->gateway_->arm();
 }
 
+void VehicleGatewayPython::ArmSync()
+{
+  while (this->gateway_->get_arming_state() != vehicle_gateway::ARMING_STATE::ARMED) {
+    this->gateway_->arm();
+    usleep(1e5);  // 100 ms
+  }
+}
+
 void VehicleGatewayPython::Disarm()
 {
   this->gateway_->disarm();
+}
+
+void VehicleGatewayPython::DisarmSync()
+{
+  while (this->gateway_->get_arming_state() != vehicle_gateway::ARMING_STATE::STANDBY) {
+    this->gateway_->disarm();
+    usleep(1e5);  // 100 ms
+  }
 }
 
 void VehicleGatewayPython::TransitionToMultiCopter()
@@ -74,9 +97,35 @@ void VehicleGatewayPython::TransitionToMultiCopter()
   this->gateway_->transition_to_mc();
 }
 
+void VehicleGatewayPython::TransitionToMultiCopterSync()
+{
+  while (this->gateway_->get_vtol_state() != vehicle_gateway::VTOL_STATE::MC) {
+    this->gateway_->transition_to_mc();
+    usleep(1e5);  // 100 ms
+  }
+}
+
 void VehicleGatewayPython::TransitionToFixedWings()
 {
   this->gateway_->transition_to_fw();
+}
+
+void VehicleGatewayPython::TransitionToFixedWingsSync()
+{
+  while (this->gateway_->get_vtol_state() != vehicle_gateway::VTOL_STATE::FW) {
+    this->gateway_->transition_to_fw();
+    usleep(1e5);  // 100 ms
+  }
+}
+
+void VehicleGatewayPython::PublishLatLonSetpoint(double lat, double lon, float alt)
+{
+  this->gateway_->go_to_latlon(lat, lon, alt);
+}
+
+std::vector<double> VehicleGatewayPython::GetLatLon()
+{
+  return this->gateway_->get_latlon();
 }
 
 void VehicleGatewayPython::PublishLocalPositionSetpoint(float x, float y, float z, float yaw)
@@ -92,6 +141,13 @@ void VehicleGatewayPython::SetGroundSpeed(float speed)
 void VehicleGatewayPython::SetAirSpeed(float speed)
 {
   this->gateway_->set_air_speed(speed);
+}
+
+std::vector<float> VehicleGatewayPython::GetLocalPosition()
+{
+  float x = 0, y = 0, z = 0;
+  this->gateway_->get_local_position(x, y, z);
+  return {x, y, z};
 }
 
 void VehicleGatewayPython::PublishLocalVelocitySetpoint(
@@ -150,6 +206,11 @@ vehicle_gateway::FAILURE VehicleGatewayPython::GetFailure()
   return this->gateway_->get_failure();
 }
 
+vehicle_gateway::VTOL_STATE VehicleGatewayPython::GetVtolState()
+{
+  return this->gateway_->get_vtol_state();
+}
+
 void VehicleGatewayPython::Takeoff()
 {
   this->gateway_->takeoff();
@@ -193,7 +254,13 @@ define_vehicle_gateway(py::object module)
     "arm", &VehicleGatewayPython::Arm,
     "Arm vehicle")
   .def(
+    "arm_sync", &VehicleGatewayPython::ArmSync,
+    "Arm vehicle")
+  .def(
     "disarm", &VehicleGatewayPython::Disarm,
+    "Disarm vehicle")
+  .def(
+    "disarm_sync", &VehicleGatewayPython::DisarmSync,
     "Disarm vehicle")
   .def(
     "get_ground_speed", &VehicleGatewayPython::GetGroundSpeed,
@@ -202,11 +269,23 @@ define_vehicle_gateway(py::object module)
     "transition_to_fw", &VehicleGatewayPython::TransitionToFixedWings,
     "Transition to fixed wings")
   .def(
+    "transition_to_fw_sync", &VehicleGatewayPython::TransitionToFixedWingsSync,
+    "Transition to fixed wings")
+  .def(
     "transition_to_mc", &VehicleGatewayPython::TransitionToMultiCopter,
+    "Transition to multicopter")
+  .def(
+    "transition_to_mc_sync", &VehicleGatewayPython::TransitionToMultiCopterSync,
     "Transition to multicopter")
   .def(
     "takeoff", &VehicleGatewayPython::Takeoff,
     "TakeOff")
+  .def(
+    "go_to_latlon", &VehicleGatewayPython::PublishLatLonSetpoint,
+    "PublishLatLonSetpoint")
+  .def(
+    "get_latlon", &VehicleGatewayPython::GetLatLon,
+    "GetLatLon")
   .def(
     "set_local_position_setpoint", &VehicleGatewayPython::PublishLocalPositionSetpoint,
     "PublishLocalPositionSetpoint")
@@ -244,6 +323,9 @@ define_vehicle_gateway(py::object module)
     "set_ground_speed", &VehicleGatewayPython::SetGroundSpeed,
     "Set ground speed m/s")
   .def(
+    "get_local_position", &VehicleGatewayPython::GetLocalPosition,
+    "Get local position")
+  .def(
     "set_air_speed", &VehicleGatewayPython::SetAirSpeed,
     "Set air speed m/s")
   .def(
@@ -256,8 +338,8 @@ define_vehicle_gateway(py::object module)
     "get_altitude", &VehicleGatewayPython::GetAltitude,
     "Get altitude in meter")
   .def(
-    "get_x", &VehicleGatewayPython::GetX,
-    "Get X position");
+    "get_vtol_state", &VehicleGatewayPython::GetVtolState,
+    "Get VTOL state");
 
   pybind11::enum_<vehicle_gateway::ARMING_STATE>(module, "ArmingState")
   .value("INIT", vehicle_gateway::ARMING_STATE::INIT)
@@ -331,6 +413,14 @@ define_vehicle_gateway(py::object module)
   .value("NO_CONTROLLER", vehicle_gateway::CONTROLLER_TYPE::NO_CONTROLLER)
   .value("POSITION", vehicle_gateway::CONTROLLER_TYPE::POSITION)
   .value("VELOCITY", vehicle_gateway::CONTROLLER_TYPE::VELOCITY)
+  .export_values();
+
+  pybind11::enum_<vehicle_gateway::VTOL_STATE>(module, "VtolState")
+  .value("UNDEFINED", vehicle_gateway::VTOL_STATE::UNDEFINED)
+  .value("TRANSITION_TO_FW", vehicle_gateway::VTOL_STATE::TRANSITION_TO_FW)
+  .value("TRANSITION_TO_MC", vehicle_gateway::VTOL_STATE::TRANSITION_TO_MC)
+  .value("MC", vehicle_gateway::VTOL_STATE::MC)
+  .value("FW", vehicle_gateway::VTOL_STATE::FW)
   .export_values();
 }
 }  // namespace vehicle_gateway_python

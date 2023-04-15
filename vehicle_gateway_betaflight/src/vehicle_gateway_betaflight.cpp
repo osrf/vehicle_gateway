@@ -260,6 +260,12 @@ vehicle_gateway::FAILURE VehicleGatewayBetaflight::get_failure()
   return vehicle_gateway::NONE;
 }
 
+vehicle_gateway::VTOL_STATE VehicleGatewayBetaflight::get_vtol_state()
+{
+  // TODO(anyone): update with correct state
+  return vehicle_gateway::VTOL_STATE::UNDEFINED;
+}
+
 void VehicleGatewayBetaflight::takeoff() {}
 
 void VehicleGatewayBetaflight::land() {}
@@ -296,7 +302,15 @@ float VehicleGatewayBetaflight::get_air_speed()
   return 0.0;
 }
 
+void VehicleGatewayBetaflight::go_to_latlon(double lat, double lon, float alt) {}
+
+std::vector<double> VehicleGatewayBetaflight::get_latlon()
+{
+  return {-1, -1, -1};
+}
+
 }  // namespace vehicle_gateway_betaflight
+
 #include <pluginlib/class_list_macros.hpp>
 
 PLUGINLIB_EXPORT_CLASS(
