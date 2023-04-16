@@ -102,6 +102,9 @@ public:
   void set_ground_speed(float speed) override;
 
   /// Documentation inherited
+  void set_air_speed(float speed) override;
+
+  /// Documentation inherited
   void set_offboard_control_mode(vehicle_gateway::CONTROLLER_TYPE type) override;
 
   /// Documentation inherited
@@ -112,6 +115,9 @@ public:
 
   /// Documentation inherited
   float get_ground_speed() override;
+
+  /// Documentation inherited
+  float get_air_speed() override;
 
   /// Documentation inherited
   float get_altitude() override;
@@ -150,6 +156,11 @@ private:
     float param1 = 0.0f, float param2 = 0.0f, float param3 = 0.0f,
     float param4 = 0.0f, float param5 = 0.0f, float param6 = 0.0f,
     float param7 = 0.0f);
+
+  /// Send a command to PX4 to set the speed
+  /// \param[in] speed Speed to set in m/s
+  /// \param[in] is_ground_speed True if the speed is a ground speed, false if it is an air speed
+  void set_speed(float speed, bool is_ground_speed);
 
   // Orchestration
   std::thread spin_thread_;

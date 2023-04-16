@@ -121,14 +121,13 @@ public:
         this->gateway_->set_local_position_setpoint(0, 0, target_z, 0);
         RCLCPP_INFO(this->get_logger(), "Marker is not visible");
       } else {
-        //this->gateway_->set_local_position_setpoint(x, y, target_z, 0);
+        // this->gateway_->set_local_position_setpoint(x, y, target_z, 0);
         this->gateway_->set_local_position_setpoint(this->marker_x_, this->marker_y_, target_z, 0);
       }
 
       std::this_thread::sleep_for(50ms);
     }
     RCLCPP_INFO(this->get_logger(), "Vehicle end");
-
   }
 
   ~ArucoDemo()

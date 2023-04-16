@@ -138,6 +138,11 @@ void VehicleGatewayPython::SetGroundSpeed(float speed)
   this->gateway_->set_ground_speed(speed);
 }
 
+void VehicleGatewayPython::SetAirSpeed(float speed)
+{
+  this->gateway_->set_air_speed(speed);
+}
+
 std::vector<float> VehicleGatewayPython::GetLocalPosition()
 {
   float x = 0, y = 0, z = 0;
@@ -164,6 +169,11 @@ void VehicleGatewayPython::SetOffboardMode()
 float VehicleGatewayPython::GetGroundSpeed()
 {
   return this->gateway_->get_ground_speed();
+}
+
+float VehicleGatewayPython::GetAirSpeed()
+{
+  return this->gateway_->get_air_speed();
 }
 
 vehicle_gateway::FLIGHT_MODE VehicleGatewayPython::GetFlightMode()
@@ -214,6 +224,13 @@ void VehicleGatewayPython::Land()
 float VehicleGatewayPython::GetAltitude()
 {
   return this->gateway_->get_altitude();
+}
+
+float VehicleGatewayPython::GetX()
+{
+  float x = 0, y = 0, z = 0;
+  this->gateway_->get_local_position(x, y, z);
+  return x;
 }
 
 VehicleGatewayPython::~VehicleGatewayPython()
@@ -303,11 +320,17 @@ define_vehicle_gateway(py::object module)
     "get_failure", &VehicleGatewayPython::GetFailure,
     "Get failure")
   .def(
+    "set_ground_speed", &VehicleGatewayPython::SetGroundSpeed,
+    "Set ground speed m/s")
+  .def(
     "get_local_position", &VehicleGatewayPython::GetLocalPosition,
     "Get local position")
   .def(
-    "set_speed", &VehicleGatewayPython::SetGroundSpeed,
-    "Set ground speed m/s")
+    "set_air_speed", &VehicleGatewayPython::SetAirSpeed,
+    "Set air speed m/s")
+  .def(
+    "get_air_speed", &VehicleGatewayPython::GetAirSpeed,
+    "Get air speed m/s")
   .def(
     "land", &VehicleGatewayPython::Land,
     "Land")

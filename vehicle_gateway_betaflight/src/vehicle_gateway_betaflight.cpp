@@ -290,18 +290,28 @@ void VehicleGatewayBetaflight::set_offboard_mode() {}
 
 void VehicleGatewayBetaflight::set_ground_speed(float /*speed*/) {}
 
+void VehicleGatewayBetaflight::set_air_speed(float /*speed*/) {}
+
 float VehicleGatewayBetaflight::get_ground_speed()
 {
   return 0.0;
 }
 
-void VehicleGatewayBetaflight::go_to_latlon(double lat, double lon, float alt) {}
+float VehicleGatewayBetaflight::get_air_speed()
+{
+  return 0.0;
+}
+
+void VehicleGatewayBetaflight::go_to_latlon(
+  double /*lat*/, double /*lon*/, float /*alt*/) {}
+
 std::vector<double> VehicleGatewayBetaflight::get_latlon()
 {
   return {-1, -1, -1};
 }
 
 }  // namespace vehicle_gateway_betaflight
+
 #include <pluginlib/class_list_macros.hpp>
 
 PLUGINLIB_EXPORT_CLASS(

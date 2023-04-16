@@ -104,10 +104,16 @@ public:
   void set_ground_speed(float speed) override;
 
   /// Documentation inherited
+  void set_air_speed(float speed) override;
+
+  /// Documentation inherited
   float get_altitude() override;
 
   /// Documentation inherited
   float get_ground_speed() override;
+
+  /// Documentation inherited
+  float get_air_speed() override;
 
   /// Documentation inherited
   void get_local_position(float & x, float & y, float & z) override;

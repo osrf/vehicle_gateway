@@ -80,7 +80,12 @@ def generate_test_description():
         arguments=['udp4', '-p', '8888'],
         output='screen')
 
-    gz_args = '--headless-rendering -s -r -v 4 empty_px4_world.sdf'
+    if 'SHOW_GZ_GUI' in os.environ and os.environ['SHOW_GZ_GUI']:
+        gz_gui_args = ''
+    else:
+        gz_gui_args = '--headless-rendering -s'
+    gz_args = f'{gz_gui_args} -r -v 4 empty_px4_world.sdf'
+
     included_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             [os.path.join(get_package_share_directory('ros_gz_sim'),
