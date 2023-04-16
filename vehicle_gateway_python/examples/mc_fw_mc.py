@@ -38,7 +38,9 @@ while not ready_to_fly:
         vg.arm()
         vg.set_offboard_mode()
         time.sleep(0.2)
-        if vg.get_arming_state() == ArmingState.ARMED and vg.get_flight_mode() == FlightMode.OFFBOARD:
+        if (
+                vg.get_arming_state() == ArmingState.ARMED
+                and vg.get_flight_mode() == FlightMode.OFFBOARD):
             ready_to_fly = True
             break
 
@@ -71,7 +73,7 @@ for vel_count in range(0, 10):
     vg.set_local_position_setpoint(0, 0, -11, 0)
     time.sleep(0.1)
 # while True:
-#     #vg.set_air_speed(1.0)
+#     vg.set_air_speed(1.0)
 vg.transition_to_fw()
 time.sleep(0.1)
 
