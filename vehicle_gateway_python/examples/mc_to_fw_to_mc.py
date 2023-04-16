@@ -31,7 +31,8 @@ def print_latlon(_vg):
 
 
 def move_relative_meters(_lat, _lon, _x, _y):
-    new_lon = _lon + (_x / EARTH_RADIUS) * (180 / math.pi) / math.cos(_lat * math.pi/180)
+    new_lon = _lon + (_x / EARTH_RADIUS) * (180 / math.pi) \
+        / math.cos(_lat * math.pi/180)
     new_lat = _lat + (_y / EARTH_RADIUS) * (180 / math.pi)
     return new_lat, new_lon
 
@@ -47,7 +48,7 @@ def calc_distance_latlon(lat_1, lon_1, lat_2, lon_2):
 
 print('Arming...')
 px4_gateway.arm_sync()
-time.sleep(2)  # not sure why this is needed - perhaps some internal state setting
+time.sleep(2)  # not sure why... perhaps some internal state setting?
 
 print_latlon(px4_gateway)
 home_lat, home_lon, home_alt = px4_gateway.get_latlon()
@@ -82,7 +83,7 @@ while True:
     print(f'fw transition climbout, alt: {dalt}')
     # wait until we recover to close to our target altitude
     if dalt > TARGET_ALTITUDE - 2:
-        break;  # close enough...
+        break  # close enough...
 
 print('Sending new latlon coordinates...')
 new_lat, new_lon = move_relative_meters(home_lat, home_lon, 20, 150)
