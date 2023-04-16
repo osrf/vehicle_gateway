@@ -302,7 +302,8 @@ float VehicleGatewayBetaflight::get_air_speed()
   return 0.0;
 }
 
-void VehicleGatewayBetaflight::go_to_latlon(double lat, double lon, float alt) {}
+void VehicleGatewayBetaflight::go_to_latlon(
+  double /*lat*/, double /*lon*/, float /*alt*/) {}
 
 std::vector<double> VehicleGatewayBetaflight::get_latlon()
 {
