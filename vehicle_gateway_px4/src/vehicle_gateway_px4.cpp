@@ -639,7 +639,7 @@ bool VehicleGatewayPX4::ctbr(float roll, float pitch, float yaw, float throttle)
   return true;
 }
 
-bool VehicleGatewayPX4::set_motors(std::vector<uint16_t> /*motor_values*/)
+bool VehicleGatewayPX4::set_motors(std::vector<uint16_t>/*motor_values*/)
 {
   return true;
 }
