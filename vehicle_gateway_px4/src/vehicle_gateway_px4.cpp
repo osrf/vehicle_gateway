@@ -228,31 +228,26 @@ void VehicleGatewayPX4::init(int argc, const char ** argv)
         default:
           this->flight_mode_ = vehicle_gateway::FLIGHT_MODE::UNKNOWN_MODE;
       }
-    });
 
-  this->vtol_vehicle_status_sub_ =
-    this->px4_node_->create_subscription<px4_msgs::msg::VtolVehicleStatus>(
-    "/fmu/out/vtol_vehicle_status",
-    qos_profile,
-    [this](px4_msgs::msg::VtolVehicleStatus::ConstSharedPtr msg) {
-      switch (msg->vehicle_vtol_state) {
-        case px4_msgs::msg::VtolVehicleStatus::VEHICLE_VTOL_STATE_UNDEFINED:
-          this->vtol_state_ = vehicle_gateway::VTOL_STATE::UNDEFINED;
-          break;
-        case px4_msgs::msg::VtolVehicleStatus::VEHICLE_VTOL_STATE_TRANSITION_TO_FW:
+      // Use several fields in vehicle_status to determine vtol state since
+      // it seems that /fmu/out/vtol_vehicle_status is no longer being sent (?)
+      if (msg->in_transition_mode) {
+        if (msg->in_transition_to_fw) {
           this->vtol_state_ = vehicle_gateway::VTOL_STATE::TRANSITION_TO_FW;
-          break;
-        case px4_msgs::msg::VtolVehicleStatus::VEHICLE_VTOL_STATE_TRANSITION_TO_MC:
+        } else {
           this->vtol_state_ = vehicle_gateway::VTOL_STATE::TRANSITION_TO_MC;
-          break;
-        case px4_msgs::msg::VtolVehicleStatus::VEHICLE_VTOL_STATE_MC:
-          this->vtol_state_ = vehicle_gateway::VTOL_STATE::MC;
-          break;
-        case px4_msgs::msg::VtolVehicleStatus::VEHICLE_VTOL_STATE_FW:
-          this->vtol_state_ = vehicle_gateway::VTOL_STATE::FW;
-          break;
-        default:
-          this->vtol_state_ = vehicle_gateway::VTOL_STATE::UNDEFINED;
+        }
+      } else {
+        switch (msg->vehicle_type) {
+          case px4_msgs::msg::VehicleStatus::VEHICLE_TYPE_ROTARY_WING:
+            this->vtol_state_ = vehicle_gateway::VTOL_STATE::MC;
+            break;
+          case px4_msgs::msg::VehicleStatus::VEHICLE_TYPE_FIXED_WING:
+            this->vtol_state_ = vehicle_gateway::VTOL_STATE::FW;
+            break;
+          default:
+            this->vtol_state_ = vehicle_gateway::VTOL_STATE::UNDEFINED;
+        }
       }
     });
 
