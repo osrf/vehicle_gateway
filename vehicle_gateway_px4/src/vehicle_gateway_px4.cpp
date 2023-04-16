@@ -232,10 +232,11 @@ void VehicleGatewayPX4::init(int argc, const char ** argv)
       // Use several fields in vehicle_status to determine vtol state since
       // it seems that /fmu/out/vtol_vehicle_status is no longer being sent (?)
       if (msg->in_transition_mode) {
-        if (msg->in_transition_to_fw)
+        if (msg->in_transition_to_fw) {
           this->vtol_state_ = vehicle_gateway::VTOL_STATE::TRANSITION_TO_FW;
-        else
+        } else {
           this->vtol_state_ = vehicle_gateway::VTOL_STATE::TRANSITION_TO_MC;
+        }
       } else {
         switch (msg->vehicle_type) {
           case px4_msgs::msg::VehicleStatus::VEHICLE_TYPE_ROTARY_WING:
