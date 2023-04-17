@@ -17,7 +17,7 @@ import sys
 import time
 
 import vehicle_gateway
-from vehicle_gateway import ControllerType, FlightMode
+from vehicle_gateway import ControllerType
 
 
 px4_gateway = vehicle_gateway.init(args=sys.argv, plugin_type='px4')
@@ -25,7 +25,6 @@ px4_gateway = vehicle_gateway.init(args=sys.argv, plugin_type='px4')
 TARGET_ALTITUDE = 30  # meters above takeoff point
 
 EARTH_RADIUS = 6378100  # meters
-
 
 
 def print_latlon(_vg):
@@ -115,15 +114,15 @@ while True:
     print(f'dist: {dist}')
 
     if dist < 10:
-      print('changing target')
-      target_north *= -1
-      if target_north > 0:
-        target_airspeed = 19  # fly fast towards the north
-        lap_count += 1
-        if lap_count > 1: # todo: set to 1
-          break
-      else:
-        target_airspeed = 14  # fly slow towards the south
+        print('changing target')
+        target_north *= -1
+        if target_north > 0:
+            target_airspeed = 19  # fly fast towards the north
+            lap_count += 1
+            if lap_count > 1:
+                break
+        else:
+            target_airspeed = 14  # fly slow towards the south
 
     # I don't know why you have to repeatedly send this, but it seems necessary
     px4_gateway.set_air_speed(target_airspeed)
@@ -161,7 +160,7 @@ while True:
     dist = math.sqrt(vel_cmd[0] * vel_cmd[0] + vel_cmd[1] * vel_cmd[1])
     print(f'dist to home: {dist}')
     if dist < 20:
-      break
+        break
     # I don't know why you have to repeatedly send this, but it seems necessary
     px4_gateway.set_air_speed(14)
     time.sleep(0.1)
