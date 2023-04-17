@@ -166,6 +166,11 @@ void VehicleGatewayPython::SetOffboardMode()
   this->gateway_->set_offboard_mode();
 }
 
+void VehicleGatewayPython::SetOnboardMode()
+{
+  this->gateway_->set_onboard_mode();
+}
+
 float VehicleGatewayPython::GetGroundSpeed()
 {
   return this->gateway_->get_ground_speed();
@@ -224,13 +229,6 @@ void VehicleGatewayPython::Land()
 float VehicleGatewayPython::GetAltitude()
 {
   return this->gateway_->get_altitude();
-}
-
-float VehicleGatewayPython::GetX()
-{
-  float x = 0, y = 0, z = 0;
-  this->gateway_->get_local_position(x, y, z);
-  return x;
 }
 
 VehicleGatewayPython::~VehicleGatewayPython()
@@ -293,6 +291,9 @@ define_vehicle_gateway(py::object module)
     "set_local_velocity_setpoint", &VehicleGatewayPython::PublishLocalVelocitySetpoint,
     "PublishLocalVelocitySetpoint")
   .def(
+    "set_onboard_mode", &VehicleGatewayPython::SetOnboardMode,
+    "SetOnboardMode")
+  .def(
     "set_offboard_mode", &VehicleGatewayPython::SetOffboardMode,
     "SetOffboardMode")
   .def(
@@ -304,9 +305,6 @@ define_vehicle_gateway(py::object module)
   .def(
     "get_disarm_reason", &VehicleGatewayPython::GetDisarmReason,
     "Get disarm reason")
-  .def(
-    "set_offboard_control_mode", &VehicleGatewayPython::SetOffboardControlMode,
-    "SetOffboardControlMode")
   .def(
     "get_arming_state", &VehicleGatewayPython::GetArmingState,
     "Get arming state")
