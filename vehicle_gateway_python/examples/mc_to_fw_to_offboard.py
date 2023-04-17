@@ -129,27 +129,25 @@ while True:
 
     time.sleep(0.1)
 
-'''
-# (MQ) currently this does not work; for some reason the HOLD controller
-# doesn't really seem to be activated and the vehicle just flies in slow
-# wandering kind-of-circle/spiral, like there is some controller not yet
-# activated to direct heading or something.
-print('Flying back to orbit launch point...')
-time.sleep(0.1)
-px4_gateway.go_to_latlon(home_lat, home_lon, home_alt + TARGET_ALTITUDE)
-time.sleep(0.1)
-px4_gateway.set_onboard_mode()
-time.sleep(0.1)
-px4_gateway.go_to_latlon(home_lat, home_lon, home_alt + TARGET_ALTITUDE)
-for t in range(0, 60):
-    time.sleep(1)
-    px4_gateway.go_to_latlon(home_lat, home_lon, home_alt + TARGET_ALTITUDE)
-    cur_lat, cur_lon, cur_alt = px4_gateway.get_latlon()
-    distance = calc_distance_latlon(cur_lat, cur_lon, home_lat, home_lon)
-    print(f't: {t} distance to home: {distance} alt: {cur_alt - home_alt}')
-    if distance < 110:
-        break
-'''
+# # (MQ) currently this does not work; for some reason the HOLD controller
+# # doesn't really seem to be activated and the vehicle just flies in slow
+# # wandering kind-of-circle/spiral, like there is some controller not yet
+# # activated to direct heading or something.
+# print('Flying back to orbit launch point...')
+# time.sleep(0.1)
+# px4_gateway.go_to_latlon(home_lat, home_lon, home_alt + TARGET_ALTITUDE)
+# time.sleep(0.1)
+# px4_gateway.set_onboard_mode()
+# time.sleep(0.1)
+# px4_gateway.go_to_latlon(home_lat, home_lon, home_alt + TARGET_ALTITUDE)
+# for t in range(0, 60):
+#     time.sleep(1)
+#     px4_gateway.go_to_latlon(home_lat, home_lon, home_alt + TARGET_ALTITUDE)
+#     cur_lat, cur_lon, cur_alt = px4_gateway.get_latlon()
+#     distance = calc_distance_latlon(cur_lat, cur_lon, home_lat, home_lon)
+#     print(f't: {t} distance to home: {distance} alt: {cur_alt - home_alt}')
+#     if distance < 110:
+#         break
 
 # fly back towards the launch point at (0, 0)
 while True:
