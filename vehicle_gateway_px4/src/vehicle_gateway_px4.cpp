@@ -444,8 +444,8 @@ void VehicleGatewayPX4::set_onboard_mode()
     this->confirmation_,
     this->from_external_,
     1.0f,
-    4.0f,  // main mode: "auto"
-    3.0f); // sub-mode: 1="auto ready" ? 3="auto loiter", 4="auto mission"
+    4.0f,   // main mode: "auto"
+    3.0f);  // sub-mode: 1="auto ready" ? 3="auto loiter", 4="auto mission"
 }
 
 float VehicleGatewayPX4::get_ground_speed()
