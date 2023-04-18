@@ -17,12 +17,14 @@ import sys
 import time
 
 import vehicle_gateway
+from vehicle_gateway import ControllerType
 
-TARGET_ALTITUDE = 50  # meters above takeoff point
-
-EARTH_RADIUS = 6378100  # meters
 
 px4_gateway = vehicle_gateway.init(args=sys.argv, plugin_type='px4')
+
+TARGET_ALTITUDE = 30  # meters above takeoff point
+
+EARTH_RADIUS = 6378100  # meters
 
 
 def print_latlon(_vg):
@@ -85,31 +87,92 @@ while True:
     if dalt > TARGET_ALTITUDE - 2:
         break  # close enough...
 
-print('Sending new latlon coordinates...')
-new_lat, new_lon = move_relative_meters(home_lat, home_lon, 20, 150)
-px4_gateway.go_to_latlon(new_lat, new_lon, home_alt + TARGET_ALTITUDE)
+print('begin transitioning to offboard control')
+for t in range(0, 200):
+    time.sleep(0.1)
+    px4_gateway.set_local_velocity_setpoint(1, 0, 0, 0)
+    px4_gateway.set_offboard_control_mode(ControllerType.VELOCITY)
 
-print('Orbiting new latlon point...')
-time.sleep(60)
+px4_gateway.set_offboard_mode()
 
-print('Flying back to orbit launch point...')
-px4_gateway.go_to_latlon(home_lat, home_lon, home_alt + TARGET_ALTITUDE)
-for t in range(0, 60):
-    time.sleep(1)
-    cur_lat, cur_lon, cur_alt = px4_gateway.get_latlon()
-    distance = calc_distance_latlon(cur_lat, cur_lon, home_lat, home_lon)
-    print(f't: {t} distance to home: {distance} alt: {cur_alt - home_alt}')
-    if distance < 110:
+# print('enabled position controller')
+print('enabled velocity controller')
+target_north = 300
+target_east = 0
+target_airspeed = 15
+
+lap_count = 0
+while True:
+    current_ned = px4_gateway.get_local_position()
+    vel_cmd = [
+        target_north - current_ned[0],
+        target_east - current_ned[1],
+    ]
+    px4_gateway.set_offboard_control_mode(ControllerType.VELOCITY)
+    px4_gateway.set_local_velocity_setpoint(vel_cmd[0], vel_cmd[1], 0, 0)
+    dist = math.sqrt(vel_cmd[0] * vel_cmd[0] + vel_cmd[1] * vel_cmd[1])
+    print(f'dist: {dist}')
+
+    if dist < 10:
+        print('changing target')
+        target_north *= -1
+        if target_north > 0:
+            target_airspeed = 19  # fly fast towards the north
+            lap_count += 1
+            if lap_count > 1:
+                break
+        else:
+            target_airspeed = 14  # fly slow towards the south
+
+    # I don't know why you have to repeatedly send this, but it seems necessary
+    px4_gateway.set_air_speed(target_airspeed)
+
+    time.sleep(0.1)
+
+# # (MQ) currently this does not work; for some reason the HOLD controller
+# # doesn't really seem to be activated and the vehicle just flies in slow
+# # wandering kind-of-circle/spiral, like there is some controller not yet
+# # activated to direct heading or something.
+# print('Flying back to orbit launch point...')
+# time.sleep(0.1)
+# px4_gateway.go_to_latlon(home_lat, home_lon, home_alt + TARGET_ALTITUDE)
+# time.sleep(0.1)
+# px4_gateway.set_onboard_mode()
+# time.sleep(0.1)
+# px4_gateway.go_to_latlon(home_lat, home_lon, home_alt + TARGET_ALTITUDE)
+# for t in range(0, 60):
+#     time.sleep(1)
+#     px4_gateway.go_to_latlon(home_lat, home_lon, home_alt + TARGET_ALTITUDE)
+#     cur_lat, cur_lon, cur_alt = px4_gateway.get_latlon()
+#     distance = calc_distance_latlon(cur_lat, cur_lon, home_lat, home_lon)
+#     print(f't: {t} distance to home: {distance} alt: {cur_alt - home_alt}')
+#     if distance < 110:
+#         break
+
+# fly back towards the launch point at (0, 0)
+while True:
+    current_ned = px4_gateway.get_local_position()
+    vel_cmd = [-current_ned[0], -current_ned[1]]
+    px4_gateway.set_offboard_control_mode(ControllerType.VELOCITY)
+    px4_gateway.set_local_velocity_setpoint(vel_cmd[0], vel_cmd[1], 0, 0)
+    dist = math.sqrt(vel_cmd[0] * vel_cmd[0] + vel_cmd[1] * vel_cmd[1])
+    print(f'dist to home: {dist}')
+    if dist < 20:
         break
+    # I don't know why you have to repeatedly send this, but it seems necessary
+    px4_gateway.set_air_speed(14)
+    time.sleep(0.1)
 
 print('Transitioning to multicopter...')
 px4_gateway.transition_to_mc_sync()
 print(f'VTOL state: {px4_gateway.get_vtol_state().name}')
 
 print('Hover above landing point...')
+px4_gateway.set_onboard_mode()
 px4_gateway.go_to_latlon(home_lat, home_lon, home_alt + TARGET_ALTITUDE)
 for t in range(0, 60):
     time.sleep(1)
+    px4_gateway.go_to_latlon(home_lat, home_lon, home_alt + TARGET_ALTITUDE)
     cur_lat, cur_lon, cur_alt = px4_gateway.get_latlon()
     distance = calc_distance_latlon(cur_lat, cur_lon, home_lat, home_lon)
     print(f't: {t} distance to home: {distance} alt: {cur_alt - home_alt}')
@@ -130,7 +193,8 @@ for t in range(0, 30):
 print('Landing...')
 px4_gateway.land()
 
-# wait during multicopter descent
+# TODO(anyone): it would be nicer here to watch altitude or (even better)
+# the descent rate, and break when it's ~zero
 time.sleep(30)
 
 print('Disarming...')

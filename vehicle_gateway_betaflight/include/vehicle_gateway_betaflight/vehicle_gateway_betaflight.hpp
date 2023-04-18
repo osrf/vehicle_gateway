@@ -101,6 +101,9 @@ public:
   void set_offboard_mode() override;
 
   /// Documentation inherited
+  void set_onboard_mode() override;
+
+  /// Documentation inherited
   void set_ground_speed(float speed) override;
 
   /// Documentation inherited

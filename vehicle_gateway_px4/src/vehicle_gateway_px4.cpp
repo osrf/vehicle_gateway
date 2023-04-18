@@ -430,6 +430,24 @@ void VehicleGatewayPX4::set_offboard_mode()
     6.0f);
 }
 
+void VehicleGatewayPX4::set_onboard_mode()
+{
+  // Sometimes this is called "mission" or "main" mode in PX4 code/docs
+  // essentially this means the PX4 microcontroller itself is flying the
+  // vehicle and does not need a stream of commands from another computer
+  this->send_command(
+    px4_msgs::msg::VehicleCommand::VEHICLE_CMD_DO_SET_MODE,
+    this->target_system_,
+    this->target_component_,
+    this->source_system_,
+    this->source_component_,
+    this->confirmation_,
+    this->from_external_,
+    1.0f,
+    4.0f,   // main mode: "auto"
+    3.0f);  // sub-mode: 1="auto ready" ? 3="auto loiter", 4="auto mission"
+}
+
 float VehicleGatewayPX4::get_ground_speed()
 {
   return this->ground_speed_;
@@ -547,6 +565,11 @@ void VehicleGatewayPX4::set_local_velocity_setpoint(float vx, float vy, float vz
   msg.velocity[1] = vy;
   msg.velocity[2] = vz;
   msg.yawspeed = yaw_rate;
+
+  msg.acceleration[0] = std::numeric_limits<float>::quiet_NaN();
+  msg.acceleration[1] = std::numeric_limits<float>::quiet_NaN();
+  msg.acceleration[2] = std::numeric_limits<float>::quiet_NaN();
+
   this->vehicle_trajectory_setpoint_pub_->publish(msg);
 }
 

@@ -120,6 +120,9 @@ public:
   /// Set offboard control mode
   void SetOffboardMode();
 
+  /// Set onboard control mode
+  void SetOnboardMode();
+
   /// Get ground speed
   /// \return Get ground speed
   float GetGroundSpeed();
@@ -140,8 +143,6 @@ public:
   void Destroy();
 
   float GetAltitude();
-
-  float GetX();
 
 private:
   std::shared_ptr<vehicle_gateway::VehicleGateway> gateway_;

@@ -205,6 +205,9 @@ public:
   /// Set offboard mode
   virtual void set_offboard_mode() = 0;
 
+  /// Set onboard mode (the opposite of the previous function)
+  virtual void set_onboard_mode() = 0;
+
   /// Get ground speed
   /// \return Get ground speed
   virtual float get_ground_speed() = 0;
