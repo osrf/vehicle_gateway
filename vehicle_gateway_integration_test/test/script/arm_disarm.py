@@ -31,6 +31,6 @@ while vg.get_arming_state() != ArmingState.STANDBY:
     time.sleep(0.1)
 
 # TODO(quarkytale): remove
-pytest.fail(f"This is a test for capturing process exit codes.")
+pytest.fail("This is a test for capturing process exit codes.")
 
 vg.destroy()
