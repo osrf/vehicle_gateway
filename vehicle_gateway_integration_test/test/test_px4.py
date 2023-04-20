@@ -137,6 +137,8 @@ class TestFixture(unittest.TestCase):
             launch_service, proc_action, proc_info, proc_output
         ):
             proc_info.assertWaitForShutdown(process=proc_action, timeout=300)
+            launch_testing.asserts.assertExitCodes(proc_info, process=proc_action,
+                                                   allowable_exit_codes=[0])
 
         # shutdown px4
         p = subprocess.Popen('px4-shutdown',
@@ -156,4 +158,5 @@ class TestHelloWorldShutdown(unittest.TestCase):
 
     def test_exit_codes(self, proc_info, run_px4):
         """Check if the processes exited normally."""
-        launch_testing.asserts.assertExitCodes(proc_info, process=run_px4)
+        launch_testing.asserts.assertExitCodes(proc_info, process=run_px4,
+                                               allowable_exit_codes=[0])
