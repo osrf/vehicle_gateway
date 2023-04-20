@@ -13,8 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import pytest
-
 import sys
 import time
 
@@ -29,8 +27,5 @@ while vg.get_arming_state() != ArmingState.ARMED:
 while vg.get_arming_state() != ArmingState.STANDBY:
     vg.disarm()
     time.sleep(0.1)
-
-# TODO(quarkytale): remove
-pytest.fail("This is a test for capturing process exit codes.")
 
 vg.destroy()
