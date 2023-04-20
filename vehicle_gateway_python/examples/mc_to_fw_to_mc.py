@@ -18,7 +18,7 @@ import time
 
 import vehicle_gateway
 
-TARGET_ALTITUDE = 50  # (AMSL) meters above takeoff point
+TARGET_ALTITUDE = 50  # meters above takeoff point
 
 EARTH_RADIUS = 6378100  # meters
 
@@ -59,17 +59,17 @@ print_latlon(px4_gateway)
 
 for t in range(0, 10):
     lat, lon, alt_amsl = px4_gateway.get_latlon()
-    dalt_amsl = alt_amsl - home_alt_amsl
-    print(f'takeoff delay: {dalt_amsl}')
+    dalt = alt_amsl - home_alt_amsl
+    print(f'takeoff delay: {dalt}')
     time.sleep(1)
 
 px4_gateway.go_to_latlon(home_lat, home_lon, home_alt_amsl + TARGET_ALTITUDE)
 while True:
     time.sleep(1)
     lat, lon, alt_amsl = px4_gateway.get_latlon()
-    dalt_amsl = alt_amsl - home_alt_amsl
-    print(f'mc takeoff climb, current altitude: {dalt_amsl}')
-    if dalt_amsl > TARGET_ALTITUDE - 5:
+    dalt = alt_amsl - home_alt_amsl
+    print(f'mc takeoff climb, current altitude: {dalt}')
+    if dalt > TARGET_ALTITUDE - 5:
         break  # close enough...
 
 print('Transitioning to fixed-wing...')
@@ -79,10 +79,10 @@ px4_gateway.go_to_latlon(home_lat, home_lon, home_alt_amsl + TARGET_ALTITUDE)
 while True:
     time.sleep(1)
     lat, lon, alt_amsl = px4_gateway.get_latlon()
-    dalt_amsl = alt_amsl - home_alt_amsl
-    print(f'fw transition climbout, alt_amsl: {dalt_amsl}')
+    dalt = alt_amsl - home_alt_amsl
+    print(f'fw transition climbout, alt_amsl: {dalt}')
     # wait until we recover to close to our target altitude
-    if dalt_amsl > TARGET_ALTITUDE - 2:
+    if dalt > TARGET_ALTITUDE - 2:
         break  # close enough...
 
 print('Sending new latlon coordinates...')
