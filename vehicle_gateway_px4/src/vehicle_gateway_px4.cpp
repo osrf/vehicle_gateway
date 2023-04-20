@@ -546,7 +546,7 @@ void VehicleGatewayPX4::go_to_latlon(double lat, double lon, float alt_amsl)
             // For planes indicates loiter direction (0: clockwise, 1: counter clockwise)
     lat,    // latitude
     lon,    // longitude
-    alt_amsl  // altitude positive over mean sea level (MSL) (m)
+    alt_amsl  // altitude above mean sea level (AMSL) (m)
   );
 }
 

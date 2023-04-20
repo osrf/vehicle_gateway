@@ -73,7 +73,7 @@ public:
   void TransitionToFixedWingsSync();
 
   /// Go to latitude and longitude coordinates
-  void PublishLatLonSetpoint(double lat, double lon, float alt);
+  void PublishLatLonSetpoint(double lat, double lon, float alt_amsl);
 
   /// Get latitude, longitude, and altitude
   std::vector<double> GetLatLon();

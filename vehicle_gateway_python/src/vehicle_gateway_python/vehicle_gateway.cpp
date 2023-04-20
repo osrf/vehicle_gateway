@@ -118,9 +118,9 @@ void VehicleGatewayPython::TransitionToFixedWingsSync()
   }
 }
 
-void VehicleGatewayPython::PublishLatLonSetpoint(double lat, double lon, float alt)
+void VehicleGatewayPython::PublishLatLonSetpoint(double lat, double lon, float alt_amsl)
 {
-  this->gateway_->go_to_latlon(lat, lon, alt);
+  this->gateway_->go_to_latlon(lat, lon, alt_amsl);
 }
 
 std::vector<double> VehicleGatewayPython::GetLatLon()
