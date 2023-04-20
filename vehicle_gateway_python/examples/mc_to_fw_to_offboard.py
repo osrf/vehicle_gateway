@@ -160,7 +160,7 @@ while True:
     if dist < 20:
         break
     # I don't know why you have to repeatedly send this, but it seems necessary
-    px4_gateway.set_air_speed(14)
+    px4_gateway.set_air_speed(10)
     time.sleep(0.1)
 
 print('Transitioning to multicopter...')
