@@ -28,8 +28,8 @@ EARTH_RADIUS = 6378100  # meters
 
 
 def print_latlon(_vg):
-    lat, lon, alt = _vg.get_latlon()
-    print(f'Lat: {lat:.5f}, Lon: {lon:.5f}, Alt: {alt:.5f})')
+    lat, lon, alt_amsl = _vg.get_latlon()
+    print(f'Lat: {lat:.5f}, Lon: {lon:.5f}, Alt_AMSL: {alt_amsl:.5f})')
 
 
 def move_relative_meters(_lat, _lon, _x, _y):
@@ -53,23 +53,23 @@ px4_gateway.arm_sync()
 time.sleep(2)  # not sure why... perhaps some internal state setting?
 
 print_latlon(px4_gateway)
-home_lat, home_lon, home_alt = px4_gateway.get_latlon()
+home_lat, home_lon, home_alt_amsl = px4_gateway.get_latlon()
 
 print('Takeoff!')
 px4_gateway.takeoff()
 print_latlon(px4_gateway)
 
 for t in range(0, 10):
-    lat, lon, alt = px4_gateway.get_latlon()
-    dalt = alt - home_alt
+    lat, lon, alt_amsl = px4_gateway.get_latlon()
+    dalt = alt_amsl - home_alt_amsl
     print(f'takeoff delay: {dalt}')
     time.sleep(1)
 
-px4_gateway.go_to_latlon(home_lat, home_lon, home_alt + TARGET_ALTITUDE)
+px4_gateway.go_to_latlon(home_lat, home_lon, home_alt_amsl + TARGET_ALTITUDE)
 while True:
     time.sleep(1)
-    lat, lon, alt = px4_gateway.get_latlon()
-    dalt = alt - home_alt
+    lat, lon, alt_amsl = px4_gateway.get_latlon()
+    dalt = alt_amsl - home_alt_amsl
     print(f'mc takeoff climb, current altitude: {dalt}')
     if dalt > TARGET_ALTITUDE - 5:
         break  # close enough...
@@ -77,12 +77,12 @@ while True:
 print('Transitioning to fixed-wing...')
 px4_gateway.transition_to_fw_sync()
 print(f'VTOL state: {px4_gateway.get_vtol_state().name}')
-px4_gateway.go_to_latlon(home_lat, home_lon, home_alt + TARGET_ALTITUDE)
+px4_gateway.go_to_latlon(home_lat, home_lon, home_alt_amsl + TARGET_ALTITUDE)
 while True:
     time.sleep(1)
-    lat, lon, alt = px4_gateway.get_latlon()
-    dalt = alt - home_alt
-    print(f'fw transition climbout, alt: {dalt}')
+    lat, lon, alt_amsl = px4_gateway.get_latlon()
+    dalt = alt_amsl - home_alt_amsl
+    print(f'fw transition climbout, alt_amsl: {dalt}')
     # wait until we recover to close to our target altitude
     if dalt > TARGET_ALTITUDE - 2:
         break  # close enough...
@@ -135,17 +135,17 @@ while True:
 # # activated to direct heading or something.
 # print('Flying back to orbit launch point...')
 # time.sleep(0.1)
-# px4_gateway.go_to_latlon(home_lat, home_lon, home_alt + TARGET_ALTITUDE)
+# px4_gateway.go_to_latlon(home_lat, home_lon, home_alt_amsl + TARGET_ALTITUDE)
 # time.sleep(0.1)
 # px4_gateway.set_onboard_mode()
 # time.sleep(0.1)
-# px4_gateway.go_to_latlon(home_lat, home_lon, home_alt + TARGET_ALTITUDE)
+# px4_gateway.go_to_latlon(home_lat, home_lon, home_alt_amsl + TARGET_ALTITUDE)
 # for t in range(0, 60):
 #     time.sleep(1)
-#     px4_gateway.go_to_latlon(home_lat, home_lon, home_alt + TARGET_ALTITUDE)
-#     cur_lat, cur_lon, cur_alt = px4_gateway.get_latlon()
+#     px4_gateway.go_to_latlon(home_lat, home_lon, home_alt_amsl + TARGET_ALTITUDE)
+#     cur_lat, cur_lon, cur_alt_amsl = px4_gateway.get_latlon()
 #     distance = calc_distance_latlon(cur_lat, cur_lon, home_lat, home_lon)
-#     print(f't: {t} distance to home: {distance} alt: {cur_alt - home_alt}')
+#     print(f't: {t} distance to home: {distance} alt_amsl: {cur_alt_amsl - home_alt_amsl}')
 #     if distance < 110:
 #         break
 
@@ -169,24 +169,24 @@ print(f'VTOL state: {px4_gateway.get_vtol_state().name}')
 
 print('Hover above landing point...')
 px4_gateway.set_onboard_mode()
-px4_gateway.go_to_latlon(home_lat, home_lon, home_alt + TARGET_ALTITUDE)
+px4_gateway.go_to_latlon(home_lat, home_lon, home_alt_amsl + TARGET_ALTITUDE)
 for t in range(0, 60):
     time.sleep(1)
-    px4_gateway.go_to_latlon(home_lat, home_lon, home_alt + TARGET_ALTITUDE)
-    cur_lat, cur_lon, cur_alt = px4_gateway.get_latlon()
+    px4_gateway.go_to_latlon(home_lat, home_lon, home_alt_amsl + TARGET_ALTITUDE)
+    cur_lat, cur_lon, cur_alt_amsl = px4_gateway.get_latlon()
     distance = calc_distance_latlon(cur_lat, cur_lon, home_lat, home_lon)
-    print(f't: {t} distance to home: {distance} alt: {cur_alt - home_alt}')
+    print(f't: {t} distance to home: {distance} alt_amsl: {cur_alt_amsl - home_alt_amsl}')
     if distance < 1:
         break
 
 print('Descend to low altitude above landing point...')
-px4_gateway.go_to_latlon(home_lat, home_lon, home_alt + 10)
+px4_gateway.go_to_latlon(home_lat, home_lon, home_alt_amsl + 10)
 for t in range(0, 30):
     time.sleep(1)
-    cur_lat, cur_lon, cur_alt = px4_gateway.get_latlon()
-    rel_alt = cur_alt - home_alt
+    cur_lat, cur_lon, cur_alt_amsl = px4_gateway.get_latlon()
+    rel_alt = cur_alt_amsl - home_alt_amsl
     distance = calc_distance_latlon(cur_lat, cur_lon, home_lat, home_lon)
-    print(f't: {t} distance to home: {distance} alt: {rel_alt}')
+    print(f't: {t} distance to home: {distance} alt_amsl: {rel_alt}')
     if rel_alt < 12:
         break
 

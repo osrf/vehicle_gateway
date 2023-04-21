@@ -174,8 +174,8 @@ public:
   /// Go to latitude and longitude coordinates
   /// \param[in] lat Desired latitude coordinate
   /// \param[in] lon Desired longitude coordinate
-  /// \param[in] alt Desired altitude in meters
-  virtual void go_to_latlon(double lat, double lon, float alt) = 0;
+  /// \param[in] alt_amsl Desired altitude above mean sea level (AMSL) in meters
+  virtual void go_to_latlon(double lat, double lon, float alt_amsl) = 0;
 
   /// Set local position
   /// \param[in] x Desired x position

@@ -93,7 +93,7 @@ public:
   void transition_to_mc() override;
 
   /// Documentation inherited
-  void go_to_latlon(double lat, double lon, float alt) override;
+  void go_to_latlon(double lat, double lon, float alt_amsl) override;
 
   /// Documentation inherited
   void set_local_position_setpoint(float x, float y, float z, float yaw) override;
