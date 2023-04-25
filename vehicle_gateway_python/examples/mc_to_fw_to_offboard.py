@@ -90,13 +90,12 @@ while True:
 print('begin transitioning to offboard control')
 for t in range(0, 200):
     time.sleep(0.1)
-    px4_gateway.set_local_velocity_setpoint(1, 0, 0, 0)
-    px4_gateway.set_offboard_control_mode(ControllerType.VELOCITY)
+    px4_gateway.set_local_position_setpoint(10, 0, 0, 0)
+    px4_gateway.set_offboard_control_mode(ControllerType.POSITION)
 
 px4_gateway.set_offboard_mode()
 
-# print('enabled position controller')
-print('enabled velocity controller')
+print('enabled position controller')
 target_north = 300
 target_east = 0
 target_airspeed = 15
@@ -108,10 +107,11 @@ while True:
         target_north - current_ned[0],
         target_east - current_ned[1],
     ]
-    px4_gateway.set_offboard_control_mode(ControllerType.VELOCITY)
-    px4_gateway.set_local_velocity_setpoint(vel_cmd[0], vel_cmd[1], 0, 0)
+    px4_gateway.set_offboard_control_mode(ControllerType.POSITION)
+    px4_gateway.set_local_position_setpoint(15, 0, 0, 0)
+    # px4_gateway.set_local_velocity_setpoint(vel_cmd[0], vel_cmd[1], 0, 0)
     dist = math.sqrt(vel_cmd[0] * vel_cmd[0] + vel_cmd[1] * vel_cmd[1])
-    print(f'dist: {dist}')
+    # print(f'dist: {dist}')
 
     if dist < 10:
         print('changing target')
@@ -123,6 +123,12 @@ while True:
                 break
         else:
             target_airspeed = 14  # fly slow towards the south
+
+    _, _, z = current_ned
+
+    print(f'z: {z}')
+    if z > -5:
+        break
 
     # I don't know why you have to repeatedly send this, but it seems necessary
     px4_gateway.set_air_speed(target_airspeed)
@@ -150,45 +156,45 @@ while True:
 #         break
 
 # fly back towards the launch point at (0, 0)
-while True:
-    current_ned = px4_gateway.get_local_position()
-    vel_cmd = [-current_ned[0], -current_ned[1]]
-    px4_gateway.set_offboard_control_mode(ControllerType.VELOCITY)
-    px4_gateway.set_local_velocity_setpoint(vel_cmd[0], vel_cmd[1], 0, 0)
-    dist = math.sqrt(vel_cmd[0] * vel_cmd[0] + vel_cmd[1] * vel_cmd[1])
-    print(f'dist to home: {dist}')
-    if dist < 20:
-        break
-    # I don't know why you have to repeatedly send this, but it seems necessary
-    px4_gateway.set_air_speed(10)
-    time.sleep(0.1)
+# while True:
+#     current_ned = px4_gateway.get_local_position()
+#     vel_cmd = [-current_ned[0], -current_ned[1]]
+#     px4_gateway.set_offboard_control_mode(ControllerType.VELOCITY)
+#     px4_gateway.set_local_velocity_setpoint(vel_cmd[0], vel_cmd[1], 0, 0)
+#     dist = math.sqrt(vel_cmd[0] * vel_cmd[0] + vel_cmd[1] * vel_cmd[1])
+#     print(f'dist to home: {dist}')
+#     if dist < 20:
+#         break
+#     # I don't know why you have to repeatedly send this, but it seems necessary
+#     px4_gateway.set_air_speed(10)
+#     time.sleep(0.1)
 
 print('Transitioning to multicopter...')
 px4_gateway.transition_to_mc_sync()
 print(f'VTOL state: {px4_gateway.get_vtol_state().name}')
 
-print('Hover above landing point...')
-px4_gateway.set_onboard_mode()
-px4_gateway.go_to_latlon(home_lat, home_lon, home_alt + TARGET_ALTITUDE)
-for t in range(0, 60):
-    time.sleep(1)
-    px4_gateway.go_to_latlon(home_lat, home_lon, home_alt + TARGET_ALTITUDE)
-    cur_lat, cur_lon, cur_alt = px4_gateway.get_latlon()
-    distance = calc_distance_latlon(cur_lat, cur_lon, home_lat, home_lon)
-    print(f't: {t} distance to home: {distance} alt: {cur_alt - home_alt}')
-    if distance < 1:
-        break
+# print('Hover above landing point...')
+# px4_gateway.set_onboard_mode()
+# px4_gateway.go_to_latlon(home_lat, home_lon, home_alt + TARGET_ALTITUDE)
+# for t in range(0, 60):
+#     time.sleep(1)
+#     px4_gateway.go_to_latlon(home_lat, home_lon, home_alt + TARGET_ALTITUDE)
+#     cur_lat, cur_lon, cur_alt = px4_gateway.get_latlon()
+#     distance = calc_distance_latlon(cur_lat, cur_lon, home_lat, home_lon)
+#     print(f't: {t} distance to home: {distance} alt: {cur_alt - home_alt}')
+#     if distance < 1:
+#         break
 
-print('Descend to low altitude above landing point...')
-px4_gateway.go_to_latlon(home_lat, home_lon, home_alt + 10)
-for t in range(0, 30):
-    time.sleep(1)
-    cur_lat, cur_lon, cur_alt = px4_gateway.get_latlon()
-    rel_alt = cur_alt - home_alt
-    distance = calc_distance_latlon(cur_lat, cur_lon, home_lat, home_lon)
-    print(f't: {t} distance to home: {distance} alt: {rel_alt}')
-    if rel_alt < 12:
-        break
+# print('Descend to low altitude above landing point...')
+# px4_gateway.go_to_latlon(home_lat, home_lon, home_alt + 10)
+# for t in range(0, 30):
+#     time.sleep(1)
+#     cur_lat, cur_lon, cur_alt = px4_gateway.get_latlon()
+#     rel_alt = cur_alt - home_alt
+#     distance = calc_distance_latlon(cur_lat, cur_lon, home_lat, home_lon)
+#     print(f't: {t} distance to home: {distance} alt: {rel_alt}')
+#     if rel_alt < 12:
+#         break
 
 print('Landing...')
 px4_gateway.land()
