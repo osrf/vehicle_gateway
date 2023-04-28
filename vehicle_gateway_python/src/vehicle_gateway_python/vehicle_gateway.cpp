@@ -156,6 +156,13 @@ void VehicleGatewayPython::PublishLocalVelocitySetpoint(
   this->gateway_->set_local_velocity_setpoint(vx, vy, vz, yaw_rate);
 }
 
+void VehicleGatewayPython::PublishBodyRatesAndThrustSetpoint(
+  float roll_rate, float pitch_rate, float yaw_rate, float thrust)
+{
+  this->gateway_->set_body_rates_and_thrust_setpoint(
+    roll_rate, pitch_rate, yaw_rate, thrust);
+}
+
 void VehicleGatewayPython::SetOffboardControlMode(vehicle_gateway::CONTROLLER_TYPE type)
 {
   this->gateway_->set_offboard_control_mode(type);
@@ -291,6 +298,9 @@ define_vehicle_gateway(py::object module)
     "set_local_velocity_setpoint", &VehicleGatewayPython::PublishLocalVelocitySetpoint,
     "PublishLocalVelocitySetpoint")
   .def(
+    "set_body_rates_and_thrust_setpoint", &VehicleGatewayPython::PublishBodyRatesAndThrustSetpoint,
+    "PublishBodyRatesAndThrustSetpoint")
+  .def(
     "set_onboard_mode", &VehicleGatewayPython::SetOnboardMode,
     "SetOnboardMode")
   .def(
@@ -411,6 +421,7 @@ define_vehicle_gateway(py::object module)
   .value("NO_CONTROLLER", vehicle_gateway::CONTROLLER_TYPE::NO_CONTROLLER)
   .value("POSITION", vehicle_gateway::CONTROLLER_TYPE::POSITION)
   .value("VELOCITY", vehicle_gateway::CONTROLLER_TYPE::VELOCITY)
+  .value("BODY_RATES", vehicle_gateway::CONTROLLER_TYPE::BODY_RATES)
   .export_values();
 
   pybind11::enum_<vehicle_gateway::VTOL_STATE>(module, "VtolState")

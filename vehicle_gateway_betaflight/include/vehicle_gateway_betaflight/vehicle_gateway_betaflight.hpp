@@ -125,7 +125,8 @@ public:
   std::vector<double> get_latlon() override;
 
   /// Documentation inherited
-  bool ctbr(float roll, float pitch, float yaw, float throttle) override;
+  bool set_body_rates_and_thrust_setpoint(
+    float roll_rate, float pitch_rate, float yaw_rate, float thrust) override;
 
   /// Documentation inherited
   bool set_motors(std::vector<uint16_t> motor_values) override;

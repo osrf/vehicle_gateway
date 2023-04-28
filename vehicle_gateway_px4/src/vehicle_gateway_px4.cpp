@@ -616,41 +616,47 @@ void VehicleGatewayPX4::set_offboard_control_mode(vehicle_gateway::CONTROLLER_TY
   px4_msgs::msg::OffboardControlMode msg;
   msg.timestamp = this->px4_node_->get_clock()->now().nanoseconds() / 1000;
 
-  if (type == vehicle_gateway::CONTROLLER_TYPE::POSITION) {
-    msg.position = true;
-    msg.velocity = false;
-  } else if (type == vehicle_gateway::CONTROLLER_TYPE::VELOCITY) {
-    msg.position = false;
-    msg.velocity = true;
-  } else {
-    msg.position = false;
-    msg.velocity = false;
-    RCLCPP_INFO(this->px4_node_->get_logger(), "No controller is defined");
-  }
+  msg.position = false;
+  msg.velocity = false;
   msg.acceleration = false;
   msg.attitude = false;
   msg.body_rate = false;
+  msg.actuator = false;
+
+  if (type == vehicle_gateway::CONTROLLER_TYPE::POSITION) {
+    msg.position = true;
+  } else if (type == vehicle_gateway::CONTROLLER_TYPE::VELOCITY) {
+    msg.velocity = true;
+  } else if (type == vehicle_gateway::CONTROLLER_TYPE::BODY_RATES) {
+    msg.body_rate = true;
+  } else {
+    RCLCPP_WARN(this->px4_node_->get_logger(), "No controller is defined");
+  }
 
   this->vehicle_offboard_control_mode_pub_->publish(msg);
 }
 
-bool VehicleGatewayPX4::ctbr(float roll, float pitch, float yaw, float throttle)
+bool VehicleGatewayPX4::set_body_rates_and_thrust_setpoint(
+    float roll_rate, float pitch_rate, float yaw_rate, float thrust)
 {
   px4_msgs::msg::VehicleRatesSetpoint msg;
 
   msg.timestamp = this->px4_node_->get_clock()->now().nanoseconds() / 1000;
-  msg.roll = roll;
-  msg.pitch = pitch;
-  msg.yaw = yaw;
+  msg.roll = roll_rate;
+  msg.pitch = pitch_rate;
+  msg.yaw = yaw_rate;
 
-  // multicopter
-  if (this->vehicle_type_ == vehicle_gateway::VEHICLE_TYPE::ROTARY_WING) {
-    msg.thrust_body[2] = throttle;
-  } else if (this->vehicle_type_ == vehicle_gateway::VEHICLE_TYPE::FIXED_WING) {
-    // Fixed wing plane
-    msg.thrust_body[0] = throttle;
+  if (this->vehicle_type_ == vehicle_gateway::VEHICLE_TYPE::FIXED_WING) {
+    msg.thrust_body[0] = thrust;  // positive body X = forward
+    msg.thrust_body[1] = 0;
+    msg.thrust_body[2] = 0;
   }
-
+  else {
+    // it is either a multicopter or it's transitioning to/from multicopter
+    msg.thrust_body[0] = 0;
+    msg.thrust_body[1] = 0;
+    msg.thrust_body[2] = thrust;  // negative = "up" (away from ground)
+  }
   msg.reset_integral = false;
 
   this->vehicle_rates_setpoint_pub_->publish(msg);
