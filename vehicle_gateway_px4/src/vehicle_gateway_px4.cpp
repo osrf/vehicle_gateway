@@ -18,9 +18,11 @@
 #include <cmath>
 
 #include <px4_msgs/msg/vehicle_local_position_setpoint.hpp>
+#include <tf2/utils.h>
 
 namespace vehicle_gateway_px4
 {
+
 void VehicleGatewayPX4::init(int argc, const char ** argv)
 {
   if (argc != 0 && argv != nullptr) {
@@ -288,6 +290,26 @@ void VehicleGatewayPX4::init(int argc, const char ** argv)
       this->current_vel_x_ = msg->velocity[0];
       this->current_vel_y_ = msg->velocity[1];
       this->current_vel_z_ = msg->velocity[2];
+
+      // if the quaternion is valid, extract the euler angles for convenience
+      if (msg->q[0] != NAN) {
+        double y = 0, p = 0, r = 0;
+        // the ordering is different: PX4 does wxyz, TF2/Bullet does xyzw
+        tf2::getEulerYPR(
+          tf2::Quaternion(msg->q[1], msg->q[2], msg->q[3], msg->q[0]),
+          y, p, r);
+        this->yaw_ = static_cast<float>(y);
+        this->pitch_ = static_cast<float>(p);
+        this->roll_ = static_cast<float>(r);
+      }
+    });
+
+  this->airspeed_sub_ =
+    this->px4_node_->create_subscription<px4_msgs::msg::Airspeed>(
+    "/fmu/out/airspeed",
+    qos_profile,
+    [this](px4_msgs::msg::Airspeed::ConstSharedPtr msg) {
+      this->airspeed_ = msg->true_airspeed_m_s;
     });
 
   this->vehicle_rates_setpoint_pub_ =
@@ -453,10 +475,9 @@ float VehicleGatewayPX4::get_ground_speed()
   return this->ground_speed_;
 }
 
-float VehicleGatewayPX4::get_air_speed()
+float VehicleGatewayPX4::get_airspeed()
 {
-  // TODO(anyone)
-  return 0.0f;
+  return this->airspeed_;
 }
 
 void VehicleGatewayPX4::takeoff()
@@ -589,7 +610,7 @@ void VehicleGatewayPX4::set_ground_speed(float speed)
   this->set_speed(speed, true);
 }
 
-void VehicleGatewayPX4::set_air_speed(float speed)
+void VehicleGatewayPX4::set_airspeed(float speed)
 {
   this->set_speed(speed, false);
 }
@@ -677,6 +698,13 @@ void VehicleGatewayPX4::get_local_position(float & x, float & y, float & z)
   x = this->current_pos_x_;
   y = this->current_pos_y_;
   z = this->current_pos_z_;
+}
+
+void VehicleGatewayPX4::get_euler_rpy(float & roll, float & pitch, float & yaw)
+{
+  roll = this->roll_;
+  pitch = this->pitch_;
+  yaw = this->yaw_;
 }
 
 std::vector<double> VehicleGatewayPX4::get_latlon()

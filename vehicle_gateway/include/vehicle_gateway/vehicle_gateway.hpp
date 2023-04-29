@@ -191,7 +191,7 @@ public:
 
   /// Set air speed in m/s
   /// \param[in] speed Desired speed in m/s
-  virtual void set_air_speed(float speed) = 0;
+  virtual void set_airspeed(float speed) = 0;
 
   /// Set local velocity
   /// \param[in] vx Desired x velocity
@@ -215,7 +215,7 @@ public:
 
   /// Get ground speed
   /// \return Get ground speed
-  virtual float get_air_speed() = 0;
+  virtual float get_airspeed() = 0;
 
   /// Get altitude
   /// \return Get altitude
@@ -225,6 +225,8 @@ public:
   virtual std::vector<double> get_latlon() = 0;
 
   virtual void get_local_position(float & x, float & y, float & z) = 0;
+
+  virtual void get_euler_rpy(float & roll, float & pitch, float & yaw) = 0;
 
   virtual bool set_body_rates_and_thrust_setpoint(
     float roll_rate, float pitch_rate, float yaw_rate, float thrust) = 0;

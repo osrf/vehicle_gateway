@@ -293,14 +293,14 @@ void VehicleGatewayBetaflight::set_onboard_mode() {}
 
 void VehicleGatewayBetaflight::set_ground_speed(float /*speed*/) {}
 
-void VehicleGatewayBetaflight::set_air_speed(float /*speed*/) {}
+void VehicleGatewayBetaflight::set_airspeed(float /*speed*/) {}
 
 float VehicleGatewayBetaflight::get_ground_speed()
 {
   return 0.0;
 }
 
-float VehicleGatewayBetaflight::get_air_speed()
+float VehicleGatewayBetaflight::get_airspeed()
 {
   return 0.0;
 }
@@ -311,6 +311,13 @@ void VehicleGatewayBetaflight::go_to_latlon(
 std::vector<double> VehicleGatewayBetaflight::get_latlon()
 {
   return {-1, -1, -1};
+}
+
+void VehicleGatewayBetaflight::get_euler_rpy(float &roll, float &pitch, float &yaw) {
+  // TODO
+  roll = 0;
+  pitch = 0;
+  yaw = 0;
 }
 
 }  // namespace vehicle_gateway_betaflight

@@ -107,7 +107,7 @@ public:
   void set_ground_speed(float speed) override;
 
   /// Documentation inherited
-  void set_air_speed(float speed) override;
+  void set_airspeed(float speed) override;
 
   /// Documentation inherited
   float get_altitude() override;
@@ -116,10 +116,13 @@ public:
   float get_ground_speed() override;
 
   /// Documentation inherited
-  float get_air_speed() override;
+  float get_airspeed() override;
 
   /// Documentation inherited
   void get_local_position(float & x, float & y, float & z) override;
+
+  /// Documentation inherited
+  void get_euler_rpy(float & roll, float & pitch, float & yaw) override;
 
   /// Documentation inherited
   std::vector<double> get_latlon() override;

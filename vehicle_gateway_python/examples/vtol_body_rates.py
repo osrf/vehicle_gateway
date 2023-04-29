@@ -20,7 +20,7 @@ import vehicle_gateway
 from vehicle_gateway import ControllerType
 
 
-px4_gateway = vehicle_gateway.init(args=sys.argv, plugin_type='px4')
+vg = vehicle_gateway.init(args=sys.argv, plugin_type='px4')
 
 TARGET_ALTITUDE = 30  # meters above takeoff point
 
@@ -36,50 +36,62 @@ def calc_distance_latlon(lat_1, lon_1, lat_2, lon_2):
     return math.sqrt(dx * dx + dy * dy)
 
 
+def clamp(x, max_magnitude):
+    if x > max_magnitude:
+        return max_magnitude
+    elif x < -max_magnitude:
+        return -max_magnitude
+    return x
+
+
 print('Arming...')
-px4_gateway.arm_sync()
+vg.arm_sync()
 time.sleep(2)  # not sure why... perhaps some internal state setting?
 
-home_lat, home_lon, home_alt_amsl = px4_gateway.get_latlon()
+home_lat, home_lon, home_alt_amsl = vg.get_latlon()
 
 print('Takeoff!')
-px4_gateway.takeoff()
+vg.takeoff()
 
 for t in range(0, 10):
-    lat, lon, alt_amsl = px4_gateway.get_latlon()
+    lat, lon, alt_amsl = vg.get_latlon()
     dalt = alt_amsl - home_alt_amsl
-    print(f'takeoff delay: {dalt}')
+    r, p, y = vg.get_euler_rpy()
+    print(f'takeoff delay: {dalt} rpy: {r} {p} {y}')
     time.sleep(1)
 
-px4_gateway.go_to_latlon(home_lat, home_lon, home_alt_amsl + TARGET_ALTITUDE)
+vg.go_to_latlon(home_lat, home_lon, home_alt_amsl + TARGET_ALTITUDE)
 while True:
     time.sleep(1)
-    lat, lon, alt_amsl = px4_gateway.get_latlon()
+    lat, lon, alt_amsl = vg.get_latlon()
     dalt = alt_amsl - home_alt_amsl
     print(f'mc takeoff climb, current altitude: {dalt}')
     if dalt > TARGET_ALTITUDE - 5:
         break  # close enough...
 
 print('Transitioning to fixed-wing...')
-px4_gateway.transition_to_fw_sync()
-print(f'VTOL state: {px4_gateway.get_vtol_state().name}')
-px4_gateway.go_to_latlon(home_lat, home_lon, home_alt_amsl + TARGET_ALTITUDE)
+vg.transition_to_fw_sync()
+print(f'VTOL state: {vg.get_vtol_state().name}')
+vg.go_to_latlon(home_lat, home_lon, home_alt_amsl + TARGET_ALTITUDE)
 while True:
     time.sleep(1)
-    lat, lon, alt_amsl = px4_gateway.get_latlon()
+    lat, lon, alt_amsl = vg.get_latlon()
     dalt = alt_amsl - home_alt_amsl
-    print(f'fw transition climbout, alt_amsl: {dalt}')
+    r, p, y = vg.get_euler_rpy()
+    print(f'fw transition climbout, alt_amsl: {dalt} rpy: {r} {p} {y}')
     # wait until we recover to close to our target altitude
     if dalt > TARGET_ALTITUDE - 2:
         break  # close enough...
 
 print('begin transitioning to offboard control')
-for t in range(0, 200):
+for t in range(0, 20):
     time.sleep(0.1)
-    px4_gateway.set_body_rates_and_thrust_setpoint(0, 0, 0, 0.7)
-    px4_gateway.set_offboard_control_mode(ControllerType.BODY_RATES)
+    r, p, y = vg.get_euler_rpy()
+    print(f'offboard transition {t} / 200, alt_amsl: {dalt} rpy: {r} {p} {y}')
+    vg.set_body_rates_and_thrust_setpoint(0, 0, 0, 0.7)
+    vg.set_offboard_control_mode(ControllerType.BODY_RATES)
 
-px4_gateway.set_offboard_mode()
+vg.set_offboard_mode()
 
 print('enabled body-rate controller')
 target_north = 300
@@ -88,25 +100,52 @@ target_airspeed = 15
 
 lap_count = 0
 while True:
-    current_ned = px4_gateway.get_local_position()
+    current_ned = vg.get_local_position()
     pos_error = [
         target_north - current_ned[0],
         target_east - current_ned[1],
     ]
-    bearing = math.atan2(pos_error[1], pos_error[0])
+    roll, pitch, yaw = vg.get_euler_rpy()
+    # yaw comes from PX4 as 0 = north, pi/2 = east
+    # let's change that to cartesian with 0 = east, pi / 2 = north
+    yaw = math.pi / 2 - yaw
+    yaw_target = math.atan2(pos_error[0], pos_error[1])
+    yaw_error = yaw_target - yaw
+    if yaw_error > math.pi:
+        yaw_error -= 2 * math.pi
+    elif yaw_error < -math.pi:
+        yaw_error += 2 * math.pi
 
-    # roll_error = -roll
-    # pitch_error = -pitch
-    # yaw_error = bearing - yaw
+    roll_target = -1.5 * clamp(yaw_error, 0.5)
+    roll_error = roll_target - roll
+    roll_rate = roll_error
 
-    # todo: P controller with saturation for roll, pitch, yaw rates
+    # minimal altitude controller using pitch rate
+    current_altitude = -current_ned[2]
+    altitude_error = TARGET_ALTITUDE - current_altitude
+    pitch_target = 0.05 * clamp(altitude_error, 5.0) # max = .05 * 5 = 0.25
+    pitch_error = pitch_target - pitch
+    pitch_rate = 4.0 * pitch_error
 
-    px4_gateway.set_offboard_control_mode(ControllerType.BODY_RATES)
-    px4_gateway.set_body_rates_and_thrust_setpoint(0, 0, 0, 0.7)
+    yaw_rate = 0 # without a rudder, it seems yaw_rate doesn't control anything
+
+    # minimal airspeed controller using thrust
+    target_airspeed = 20.0
+    current_airspeed = vg.get_airspeed()
+    airspeed_error = target_airspeed - current_airspeed
+    thrust = 0.1 + 0.3 * airspeed_error
+    if thrust < 0.1:
+        thrust = 0.1
+    elif thrust > 1.0:
+        thrust = 1.0
+
+    vg.set_offboard_control_mode(ControllerType.BODY_RATES)
+    vg.set_body_rates_and_thrust_setpoint(roll_rate, pitch_rate, yaw_rate, thrust)
     dist = math.sqrt(pos_error[0] * pos_error[0] + pos_error[1] * pos_error[1])
-    print(f'dist: {dist}  bearing: {bearing}')
+    print(f'dist: {dist}  yaw_target: {yaw_target} airspeed: {current_airspeed} thrust: {thrust}')
 
     if dist < 10:
+        break
         print('changing target')
         target_north *= -1
         if target_north > 0:
@@ -117,9 +156,6 @@ while True:
         else:
             target_airspeed = 14  # fly slow towards the south
 
-    # I don't know why you have to repeatedly send this, but it seems necessary
-    # px4_gateway.set_air_speed(target_airspeed)
-
     time.sleep(0.1)
 
 # # (MQ) currently this does not work; for some reason the HOLD controller
@@ -128,56 +164,59 @@ while True:
 # # activated to direct heading or something.
 # print('Flying back to orbit launch point...')
 # time.sleep(0.1)
-# px4_gateway.go_to_latlon(home_lat, home_lon, home_alt_amsl + TARGET_ALTITUDE)
+# vg.go_to_latlon(home_lat, home_lon, home_alt_amsl + TARGET_ALTITUDE)
 # time.sleep(0.1)
-# px4_gateway.set_onboard_mode()
+# vg.set_onboard_mode()
 # time.sleep(0.1)
-# px4_gateway.go_to_latlon(home_lat, home_lon, home_alt_amsl + TARGET_ALTITUDE)
+# vg.go_to_latlon(home_lat, home_lon, home_alt_amsl + TARGET_ALTITUDE)
 # for t in range(0, 60):
 #     time.sleep(1)
-#     px4_gateway.go_to_latlon(home_lat, home_lon, home_alt_amsl + TARGET_ALTITUDE)
-#     cur_lat, cur_lon, cur_alt_amsl = px4_gateway.get_latlon()
+#     vg.go_to_latlon(home_lat, home_lon, home_alt_amsl + TARGET_ALTITUDE)
+#     cur_lat, cur_lon, cur_alt_amsl = vg.get_latlon()
 #     distance = calc_distance_latlon(cur_lat, cur_lon, home_lat, home_lon)
 #     print(f't: {t} distance to home: {distance} alt_amsl: {cur_alt_amsl - home_alt_amsl}')
 #     if distance < 110:
 #         break
 
-'''
-# fly back towards the launch point at (0, 0)
-while True:
-    current_ned = px4_gateway.get_local_position()
-    vel_cmd = [-current_ned[0], -current_ned[1]]
-    px4_gateway.set_offboard_control_mode(ControllerType.VELOCITY)
-    px4_gateway.set_local_velocity_setpoint(vel_cmd[0], vel_cmd[1], 0, 0)
-    dist = math.sqrt(vel_cmd[0] * vel_cmd[0] + vel_cmd[1] * vel_cmd[1])
-    print(f'dist to home: {dist}')
-    if dist < 20:
-        break
-    # I don't know why you have to repeatedly send this, but it seems necessary
-    px4_gateway.set_air_speed(14)
-    time.sleep(0.1)
-
-print('Transitioning to multicopter...')
-px4_gateway.transition_to_mc_sync()
-print(f'VTOL state: {px4_gateway.get_vtol_state().name}')
-
-print('Hover above landing point...')
-px4_gateway.set_onboard_mode()
-px4_gateway.go_to_latlon(home_lat, home_lon, home_alt_amsl + TARGET_ALTITUDE)
+vg.set_onboard_mode()
+vg.go_to_latlon(home_lat, home_lon, home_alt_amsl + TARGET_ALTITUDE)
 for t in range(0, 60):
     time.sleep(1)
-    px4_gateway.go_to_latlon(home_lat, home_lon, home_alt_amsl + TARGET_ALTITUDE)
-    cur_lat, cur_lon, cur_alt_amsl = px4_gateway.get_latlon()
+    cur_lat, cur_lon, cur_alt_amsl = vg.get_latlon()
+    distance = calc_distance_latlon(cur_lat, cur_lon, home_lat, home_lon)
+    print(f't: {t} distance to home: {distance} alt_amsl: {cur_alt_amsl - home_alt_amsl}')
+    if distance < 100:
+        break
+
+for t in range(0, 60):
+    vg.set_airspeed(10)
+    time.sleep(0.5)
+    current_airspeed = vg.get_airspeed()
+    if current_airspeed < 11:
+      break
+    print(f'slowing down {t} / 10  airspeed: {current_airspeed}')
+
+print('Transitioning to multicopter...')
+vg.transition_to_mc_sync()
+print(f'VTOL state: {vg.get_vtol_state().name}')
+
+print('Hover above landing point...')
+vg.set_onboard_mode()
+vg.go_to_latlon(home_lat, home_lon, home_alt_amsl + TARGET_ALTITUDE)
+for t in range(0, 60):
+    time.sleep(1)
+    vg.go_to_latlon(home_lat, home_lon, home_alt_amsl + TARGET_ALTITUDE)
+    cur_lat, cur_lon, cur_alt_amsl = vg.get_latlon()
     distance = calc_distance_latlon(cur_lat, cur_lon, home_lat, home_lon)
     print(f't: {t} distance to home: {distance} alt_amsl: {cur_alt_amsl - home_alt_amsl}')
     if distance < 1:
         break
 
 print('Descend to low altitude above landing point...')
-px4_gateway.go_to_latlon(home_lat, home_lon, home_alt_amsl + 10)
+vg.go_to_latlon(home_lat, home_lon, home_alt_amsl + 10)
 for t in range(0, 30):
     time.sleep(1)
-    cur_lat, cur_lon, cur_alt_amsl = px4_gateway.get_latlon()
+    cur_lat, cur_lon, cur_alt_amsl = vg.get_latlon()
     rel_alt = cur_alt_amsl - home_alt_amsl
     distance = calc_distance_latlon(cur_lat, cur_lon, home_lat, home_lon)
     print(f't: {t} distance to home: {distance} alt_amsl: {rel_alt}')
@@ -185,15 +224,14 @@ for t in range(0, 30):
         break
 
 print('Landing...')
-px4_gateway.land()
+vg.land()
 
 # TODO(anyone): it would be nicer here to watch altitude or (even better)
 # the descent rate, and break when it's ~zero
 time.sleep(30)
 
 print('Disarming...')
-px4_gateway.disarm_sync()
+vg.disarm_sync()
 
-px4_gateway.destroy()
+vg.destroy()
 print('Demo complete.')
-'''

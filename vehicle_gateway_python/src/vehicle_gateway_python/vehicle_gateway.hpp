@@ -112,6 +112,10 @@ public:
   /// \return Local position vector
   std::vector<float> GetLocalPosition();
 
+  /// Get Euler attitude
+  /// \return vector of euler RPY
+  std::vector<float> GetEulerRPY();
+
   /// Get vtol state
   /// \return VTOL state
   vehicle_gateway::VTOL_STATE GetVtolState();

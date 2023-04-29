@@ -140,7 +140,7 @@ void VehicleGatewayPython::SetGroundSpeed(float speed)
 
 void VehicleGatewayPython::SetAirSpeed(float speed)
 {
-  this->gateway_->set_air_speed(speed);
+  this->gateway_->set_airspeed(speed);
 }
 
 std::vector<float> VehicleGatewayPython::GetLocalPosition()
@@ -148,6 +148,14 @@ std::vector<float> VehicleGatewayPython::GetLocalPosition()
   float x = 0, y = 0, z = 0;
   this->gateway_->get_local_position(x, y, z);
   return {x, y, z};
+}
+
+std::vector<float> VehicleGatewayPython::GetEulerRPY()
+{
+  float r = 0, p = 0, y = 0;
+  this->gateway_->get_euler_rpy(r, p, y);
+  // printf("rpy: %.3f %.3f %.3f\n", r, p, y);
+  return {r, p, y};
 }
 
 void VehicleGatewayPython::PublishLocalVelocitySetpoint(
@@ -185,7 +193,7 @@ float VehicleGatewayPython::GetGroundSpeed()
 
 float VehicleGatewayPython::GetAirSpeed()
 {
-  return this->gateway_->get_air_speed();
+  return this->gateway_->get_airspeed();
 }
 
 vehicle_gateway::FLIGHT_MODE VehicleGatewayPython::GetFlightMode()
@@ -334,11 +342,14 @@ define_vehicle_gateway(py::object module)
     "get_local_position", &VehicleGatewayPython::GetLocalPosition,
     "Get local position")
   .def(
-    "set_air_speed", &VehicleGatewayPython::SetAirSpeed,
-    "Set air speed m/s")
+    "get_euler_rpy", &VehicleGatewayPython::GetEulerRPY,
+    "Get Euler RPY")
   .def(
-    "get_air_speed", &VehicleGatewayPython::GetAirSpeed,
-    "Get air speed m/s")
+    "set_airspeed", &VehicleGatewayPython::SetAirSpeed,
+    "Set airspeed m/s")
+  .def(
+    "get_airspeed", &VehicleGatewayPython::GetAirSpeed,
+    "Get airspeed m/s")
   .def(
     "land", &VehicleGatewayPython::Land,
     "Land")

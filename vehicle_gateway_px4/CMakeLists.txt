@@ -21,6 +21,7 @@ find_package(vehicle_gateway REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(px4_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(tf2 REQUIRED)
 
 add_library(vehicle_gateway_px4 src/vehicle_gateway_px4.cpp)
 target_include_directories(vehicle_gateway_px4 PUBLIC
@@ -32,6 +33,7 @@ ament_target_dependencies(
   px4_msgs
   rclcpp
   vehicle_gateway
+  tf2
 )
 
 add_executable(vehicle_gateway_px4_node src/vehicle_gateway_main.cpp)
@@ -44,6 +46,7 @@ ament_target_dependencies(
   "pluginlib"
   rclcpp
   px4_msgs
+  tf2
 )
 
 pluginlib_export_plugin_description_file(vehicle_gateway plugins.xml)
@@ -91,6 +94,7 @@ ament_export_dependencies(
   pluginlib
   rclcpp
   vehicle_gateway
+  tf2
 )
 
 ament_export_include_directories(

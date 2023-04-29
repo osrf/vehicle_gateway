@@ -125,7 +125,7 @@ while True:
             target_airspeed = 14  # fly slow towards the south
 
     # I don't know why you have to repeatedly send this, but it seems necessary
-    px4_gateway.set_air_speed(target_airspeed)
+    px4_gateway.set_airspeed(target_airspeed)
 
     time.sleep(0.1)
 
@@ -160,7 +160,7 @@ while True:
     if dist < 20:
         break
     # I don't know why you have to repeatedly send this, but it seems necessary
-    px4_gateway.set_air_speed(14)
+    px4_gateway.set_airspeed(14)
     time.sleep(0.1)
 
 print('Transitioning to multicopter...')
