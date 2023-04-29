@@ -82,7 +82,9 @@ public:
 
   void PublishLocalVelocitySetpoint(float vx, float vy, float vz, float yaw_rate);
 
-  void PublishBodyRatesAndThrustSetpoint(float roll_rate, float pitch_rate, float yaw_rate, float thrust);
+  void PublishBodyRatesAndThrustSetpoint(
+    float roll_rate, float pitch_rate, float yaw_rate,
+    float thrust);
 
   /// Get flight mode
   /// \return Flight mode

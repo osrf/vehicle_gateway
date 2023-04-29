@@ -216,7 +216,7 @@ bool VehicleGatewayBetaflight::set_motors(std::vector<uint16_t> motor_values)
 }
 
 bool VehicleGatewayBetaflight::set_body_rates_and_thrust_setpoint(
-    float roll_rate, float pitch_rate, float yaw_rate, float thrust)
+  float roll_rate, float pitch_rate, float yaw_rate, float thrust)
 {
   this->roll_ = roll_rate;
   this->pitch_ = pitch_rate;
@@ -313,7 +313,8 @@ std::vector<double> VehicleGatewayBetaflight::get_latlon()
   return {-1, -1, -1};
 }
 
-void VehicleGatewayBetaflight::get_euler_rpy(float &roll, float &pitch, float &yaw) {
+void VehicleGatewayBetaflight::get_euler_rpy(float & roll, float & pitch, float & yaw)
+{
   // TODO
   roll = 0;
   pitch = 0;

@@ -658,7 +658,7 @@ void VehicleGatewayPX4::set_offboard_control_mode(vehicle_gateway::CONTROLLER_TY
 }
 
 bool VehicleGatewayPX4::set_body_rates_and_thrust_setpoint(
-    float roll_rate, float pitch_rate, float yaw_rate, float thrust)
+  float roll_rate, float pitch_rate, float yaw_rate, float thrust)
 {
   px4_msgs::msg::VehicleRatesSetpoint msg;
 
@@ -671,8 +671,7 @@ bool VehicleGatewayPX4::set_body_rates_and_thrust_setpoint(
     msg.thrust_body[0] = thrust;  // positive body X = forward
     msg.thrust_body[1] = 0;
     msg.thrust_body[2] = 0;
-  }
-  else {
+  } else {
     // it is either a multicopter or it's transitioning to/from multicopter
     msg.thrust_body[0] = 0;
     msg.thrust_body[1] = 0;
