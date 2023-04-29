@@ -123,11 +123,11 @@ while True:
     # minimal altitude controller using pitch rate
     current_altitude = -current_ned[2]
     altitude_error = TARGET_ALTITUDE - current_altitude
-    pitch_target = 0.05 * clamp(altitude_error, 5.0) # max = .05 * 5 = 0.25
+    pitch_target = 0.05 * clamp(altitude_error, 5.0)
     pitch_error = pitch_target - pitch
     pitch_rate = 4.0 * pitch_error
 
-    yaw_rate = 0 # without a rudder, it seems yaw_rate doesn't control anything
+    yaw_rate = 0  # without a rudder, it seems yaw_rate doesn't do anything
 
     # minimal airspeed controller using thrust
     target_airspeed = 20.0
@@ -140,9 +140,10 @@ while True:
         thrust = 1.0
 
     vg.set_offboard_control_mode(ControllerType.BODY_RATES)
-    vg.set_body_rates_and_thrust_setpoint(roll_rate, pitch_rate, yaw_rate, thrust)
+    vg.set_body_rates_and_thrust_setpoint(
+        roll_rate, pitch_rate, yaw_rate, thrust)
     dist = math.sqrt(pos_error[0] * pos_error[0] + pos_error[1] * pos_error[1])
-    print(f'dist: {dist}  yaw_target: {yaw_target} airspeed: {current_airspeed} thrust: {thrust}')
+    print(f'dist: {dist}')
 
     if dist < 10:
         break
@@ -158,33 +159,13 @@ while True:
 
     time.sleep(0.1)
 
-# # (MQ) currently this does not work; for some reason the HOLD controller
-# # doesn't really seem to be activated and the vehicle just flies in slow
-# # wandering kind-of-circle/spiral, like there is some controller not yet
-# # activated to direct heading or something.
-# print('Flying back to orbit launch point...')
-# time.sleep(0.1)
-# vg.go_to_latlon(home_lat, home_lon, home_alt_amsl + TARGET_ALTITUDE)
-# time.sleep(0.1)
-# vg.set_onboard_mode()
-# time.sleep(0.1)
-# vg.go_to_latlon(home_lat, home_lon, home_alt_amsl + TARGET_ALTITUDE)
-# for t in range(0, 60):
-#     time.sleep(1)
-#     vg.go_to_latlon(home_lat, home_lon, home_alt_amsl + TARGET_ALTITUDE)
-#     cur_lat, cur_lon, cur_alt_amsl = vg.get_latlon()
-#     distance = calc_distance_latlon(cur_lat, cur_lon, home_lat, home_lon)
-#     print(f't: {t} distance to home: {distance} alt_amsl: {cur_alt_amsl - home_alt_amsl}')
-#     if distance < 110:
-#         break
-
 vg.set_onboard_mode()
 vg.go_to_latlon(home_lat, home_lon, home_alt_amsl + TARGET_ALTITUDE)
 for t in range(0, 60):
     time.sleep(1)
     cur_lat, cur_lon, cur_alt_amsl = vg.get_latlon()
     distance = calc_distance_latlon(cur_lat, cur_lon, home_lat, home_lon)
-    print(f't: {t} distance to home: {distance} alt_amsl: {cur_alt_amsl - home_alt_amsl}')
+    print(f't: {t} distance to home: {distance}')
     if distance < 100:
         break
 
@@ -193,7 +174,7 @@ for t in range(0, 60):
     time.sleep(0.5)
     current_airspeed = vg.get_airspeed()
     if current_airspeed < 11:
-      break
+        break
     print(f'slowing down {t} / 10  airspeed: {current_airspeed}')
 
 print('Transitioning to multicopter...')
@@ -208,7 +189,7 @@ for t in range(0, 60):
     vg.go_to_latlon(home_lat, home_lon, home_alt_amsl + TARGET_ALTITUDE)
     cur_lat, cur_lon, cur_alt_amsl = vg.get_latlon()
     distance = calc_distance_latlon(cur_lat, cur_lon, home_lat, home_lon)
-    print(f't: {t} distance to home: {distance} alt_amsl: {cur_alt_amsl - home_alt_amsl}')
+    print(f't: {t} distance to home: {distance}')
     if distance < 1:
         break
 
