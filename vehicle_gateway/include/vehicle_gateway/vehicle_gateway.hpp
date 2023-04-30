@@ -98,7 +98,8 @@ enum CONTROLLER_TYPE
 {
   NO_CONTROLLER = 0,        // No controller defined
   POSITION = 1,             // Position control
-  VELOCITY = 2              // Velocity control
+  VELOCITY = 2,             // Velocity control
+  BODY_RATES = 3,           // Body rates (rad/s) and thrust [-1, 1] controller
 };
 
 enum VTOL_STATE  // Based on https://mavlink.io/en/messages/common.html#MAV_VTOL_STATE
@@ -190,7 +191,7 @@ public:
 
   /// Set air speed in m/s
   /// \param[in] speed Desired speed in m/s
-  virtual void set_air_speed(float speed) = 0;
+  virtual void set_airspeed(float speed) = 0;
 
   /// Set local velocity
   /// \param[in] vx Desired x velocity
@@ -214,7 +215,7 @@ public:
 
   /// Get ground speed
   /// \return Get ground speed
-  virtual float get_air_speed() = 0;
+  virtual float get_airspeed() = 0;
 
   /// Get altitude
   /// \return Get altitude
@@ -225,7 +226,10 @@ public:
 
   virtual void get_local_position(float & x, float & y, float & z) = 0;
 
-  virtual bool ctbr(float roll, float pitch, float yaw, float throttle) = 0;
+  virtual void get_euler_rpy(float & roll, float & pitch, float & yaw) = 0;
+
+  virtual bool set_body_rates_and_thrust_setpoint(
+    float roll_rate, float pitch_rate, float yaw_rate, float thrust) = 0;
 
   virtual bool set_motors(std::vector<uint16_t> motor_values) = 0;
 

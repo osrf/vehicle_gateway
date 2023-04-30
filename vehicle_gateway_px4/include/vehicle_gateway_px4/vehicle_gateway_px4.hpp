@@ -34,6 +34,7 @@
 #include <px4_msgs/msg/timesync_status.hpp>
 #include <px4_msgs/msg/vehicle_odometry.hpp>
 #include <px4_msgs/msg/vehicle_rates_setpoint.hpp>
+#include <px4_msgs/msg/airspeed.hpp>
 
 namespace vehicle_gateway_px4
 {
@@ -102,7 +103,7 @@ public:
   void set_ground_speed(float speed) override;
 
   /// Documentation inherited
-  void set_air_speed(float speed) override;
+  void set_airspeed(float speed) override;
 
   /// Documentation inherited
   void set_offboard_control_mode(vehicle_gateway::CONTROLLER_TYPE type) override;
@@ -120,7 +121,7 @@ public:
   float get_ground_speed() override;
 
   /// Documentation inherited
-  float get_air_speed() override;
+  float get_airspeed() override;
 
   /// Documentation inherited
   float get_altitude() override;
@@ -129,10 +130,14 @@ public:
   void get_local_position(float & x, float & y, float & z) override;
 
   /// Documentation inherited
+  void get_euler_rpy(float & roll, float & pitch, float & yaw) override;
+
+  /// Documentation inherited
   std::vector<double> get_latlon() override;
 
   /// Documentation inherited
-  bool ctbr(float roll, float pitch, float yaw, float throttle) override;
+  bool set_body_rates_and_thrust_setpoint(
+    float roll_rate, float pitch_rate, float yaw_rate, float thrust) override;
 
   /// Documentation inherited
   bool set_motors(std::vector<uint16_t> motor_values) override;
@@ -179,6 +184,7 @@ private:
     vehicle_offboard_control_mode_pub_;
   rclcpp::Publisher<px4_msgs::msg::VehicleRatesSetpoint>::SharedPtr
     vehicle_rates_setpoint_pub_;
+  rclcpp::Subscription<px4_msgs::msg::Airspeed>::SharedPtr airspeed_sub_;
 
   // Service clients
   rclcpp::Node::SharedPtr px4_node_;
@@ -205,6 +211,7 @@ private:
   float current_vel_y_;
   float current_vel_z_;
   float ground_speed_;
+  float airspeed_{0};
 
   uint8_t target_component_{1};
   uint8_t source_system_{255};
@@ -213,6 +220,11 @@ private:
   bool from_external_{true};
 
   std::chrono::time_point<std::chrono::high_resolution_clock> timestamp_;
+
+  // save the most recent telemetry message data in these fields
+  float roll_{0};
+  float pitch_{0};
+  float yaw_{0};
 };
 
 }  // namespace vehicle_gateway_px4

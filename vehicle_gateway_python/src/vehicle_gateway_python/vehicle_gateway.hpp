@@ -82,6 +82,10 @@ public:
 
   void PublishLocalVelocitySetpoint(float vx, float vy, float vz, float yaw_rate);
 
+  void PublishBodyRatesAndThrustSetpoint(
+    float roll_rate, float pitch_rate, float yaw_rate,
+    float thrust);
+
   /// Get flight mode
   /// \return Flight mode
   vehicle_gateway::FLIGHT_MODE GetFlightMode();
@@ -109,6 +113,10 @@ public:
   /// Get local position
   /// \return Local position vector
   std::vector<float> GetLocalPosition();
+
+  /// Get Euler attitude
+  /// \return vector of euler RPY
+  std::vector<float> GetEulerRPY();
 
   /// Get vtol state
   /// \return VTOL state

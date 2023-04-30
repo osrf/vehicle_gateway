@@ -20,7 +20,9 @@ externalproject_add(px4-firmware
       build/px4_sitl_default/bin
       Tools/simulation/gz/models
       build/px4_sitl_default/etc
-      ${CMAKE_INSTALL_PREFIX}/share/px4_sim
+      ${CMAKE_INSTALL_PREFIX}/share/px4_sim &&
+    cp ${CMAKE_CURRENT_LIST_DIR}/dds_topics.yaml
+      ${PROJECT_BINARY_DIR}/px4-src/src/px4-firmware/src/modules/microdds_client/dds_topics.yaml
   BUILD_COMMAND ${MAKE_EXECUTABLE} px4_ros2 -j && make px4_sitl_default -j
   BUILD_IN_SOURCE ON
   CONFIGURE_COMMAND ""

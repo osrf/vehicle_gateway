@@ -107,7 +107,7 @@ public:
   void set_ground_speed(float speed) override;
 
   /// Documentation inherited
-  void set_air_speed(float speed) override;
+  void set_airspeed(float speed) override;
 
   /// Documentation inherited
   float get_altitude() override;
@@ -116,16 +116,20 @@ public:
   float get_ground_speed() override;
 
   /// Documentation inherited
-  float get_air_speed() override;
+  float get_airspeed() override;
 
   /// Documentation inherited
   void get_local_position(float & x, float & y, float & z) override;
 
   /// Documentation inherited
+  void get_euler_rpy(float & roll, float & pitch, float & yaw) override;
+
+  /// Documentation inherited
   std::vector<double> get_latlon() override;
 
   /// Documentation inherited
-  bool ctbr(float roll, float pitch, float yaw, float throttle) override;
+  bool set_body_rates_and_thrust_setpoint(
+    float roll_rate, float pitch_rate, float yaw_rate, float thrust) override;
 
   /// Documentation inherited
   bool set_motors(std::vector<uint16_t> motor_values) override;

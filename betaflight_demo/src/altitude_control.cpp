@@ -57,7 +57,7 @@ public:
   {
     int count = 0;
     while (this->gateway_->get_arming_state() != vehicle_gateway::ARMING_STATE::ARMED) {
-      if (!this->gateway_->ctbr(0, 0, 0, -1)) {
+      if (!this->gateway_->set_body_rates_and_thrust_setpoint(0, 0, 0, -1)) {
         RCLCPP_ERROR(this->get_logger(), "Error sending RC");
       }
       if (count == 1) {
@@ -106,7 +106,7 @@ public:
       RCLCPP_INFO(
         this->get_logger(), "target_vel %.2f desired alt: %.2f real alt: %.2f ",
         target_vel, this->desired_altitude_, altitude);
-      if (!this->gateway_->ctbr(0, 0, 0, target_vel)) {
+      if (!this->gateway_->set_body_rates_and_thrust_setpoint(0, 0, 0, target_vel)) {
         RCLCPP_ERROR(this->get_logger(), "Error sending RC");
       }
     }
