@@ -315,7 +315,7 @@ std::vector<double> VehicleGatewayBetaflight::get_latlon()
 
 void VehicleGatewayBetaflight::get_euler_rpy(float & roll, float & pitch, float & yaw)
 {
-  // TODO
+  // TODO(anyone)
   roll = 0;
   pitch = 0;
   yaw = 0;
