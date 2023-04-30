@@ -2,7 +2,7 @@ repositories:
   ros_gz:
     type: git
     url: https://github.com/gazebosim/ros_gz
-    version: ros2
+    version: 7c62a1ce3cfb4eb3b54e1cfd092c9b63a9d5f255
   uros/micro_ros_msgs:
     type: git
     url: https://github.com/micro-ROS/micro_ros_msgs.git
