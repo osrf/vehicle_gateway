@@ -525,7 +525,7 @@ void VehicleGatewayPX4::transition_to_mc()
     this->confirmation_,
     this->from_external_,
     vehicle_gateway::VTOL_STATE::MC,  // The target VTOL state
-    1.0f);  // Force immediate transition to the specified MAV_VTOL_STATE
+    0.0f);  // don't force immediate transition; allow PX4 to slow down first
 }
 
 void VehicleGatewayPX4::go_to_latlon(double lat, double lon, float alt_amsl)
