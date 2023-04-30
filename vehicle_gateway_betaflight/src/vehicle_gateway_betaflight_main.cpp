@@ -34,7 +34,7 @@ int main(int argc, const char ** argv)
     gateway->init(argc, argv);
     int count = 0;
     while (gateway->get_arming_state() != vehicle_gateway::ARMING_STATE::ARMED) {
-      if (!gateway->ctbr(0, 0, 0, -1)) {
+      if (!gateway->set_body_rates_and_thrust_setpoint(0, 0, 0, -1)) {
         std::cerr << "Error sending RC" << '\n';
       }
       if (count == 1) {
@@ -55,7 +55,7 @@ int main(int argc, const char ** argv)
       std::cerr << "gateway->get_arming_state() " <<
         static_cast<int>(gateway->get_arming_state()) << '\n';
       std::this_thread::sleep_for(50ms);
-      if (!gateway->ctbr(0, 0, 0, 0.1)) {
+      if (!gateway->set_body_rates_and_thrust_setpoint(0, 0, 0, 0.1)) {
         std::cerr << "Error sending RC" << '\n';
       }
     }

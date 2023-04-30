@@ -17,10 +17,12 @@
 #include <chrono>
 #include <cmath>
 
-#include <px4_msgs/msg/vehicle_local_position_setpoint.hpp>
+#include "px4_msgs/msg/vehicle_local_position_setpoint.hpp"
+#include "tf2/utils.h"
 
 namespace vehicle_gateway_px4
 {
+
 void VehicleGatewayPX4::init(int argc, const char ** argv)
 {
   if (argc != 0 && argv != nullptr) {
@@ -288,6 +290,26 @@ void VehicleGatewayPX4::init(int argc, const char ** argv)
       this->current_vel_x_ = msg->velocity[0];
       this->current_vel_y_ = msg->velocity[1];
       this->current_vel_z_ = msg->velocity[2];
+
+      // if the quaternion is valid, extract the euler angles for convenience
+      if (msg->q[0] != NAN) {
+        double y = 0, p = 0, r = 0;
+        // the ordering is different: PX4 does wxyz, TF2/Bullet does xyzw
+        tf2::getEulerYPR(
+          tf2::Quaternion(msg->q[1], msg->q[2], msg->q[3], msg->q[0]),
+          y, p, r);
+        this->yaw_ = static_cast<float>(y);
+        this->pitch_ = static_cast<float>(p);
+        this->roll_ = static_cast<float>(r);
+      }
+    });
+
+  this->airspeed_sub_ =
+    this->px4_node_->create_subscription<px4_msgs::msg::Airspeed>(
+    "/fmu/out/airspeed",
+    qos_profile,
+    [this](px4_msgs::msg::Airspeed::ConstSharedPtr msg) {
+      this->airspeed_ = msg->true_airspeed_m_s;
     });
 
   this->vehicle_rates_setpoint_pub_ =
@@ -453,10 +475,9 @@ float VehicleGatewayPX4::get_ground_speed()
   return this->ground_speed_;
 }
 
-float VehicleGatewayPX4::get_air_speed()
+float VehicleGatewayPX4::get_airspeed()
 {
-  // TODO(anyone)
-  return 0.0f;
+  return this->airspeed_;
 }
 
 void VehicleGatewayPX4::takeoff()
@@ -589,7 +610,7 @@ void VehicleGatewayPX4::set_ground_speed(float speed)
   this->set_speed(speed, true);
 }
 
-void VehicleGatewayPX4::set_air_speed(float speed)
+void VehicleGatewayPX4::set_airspeed(float speed)
 {
   this->set_speed(speed, false);
 }
@@ -616,41 +637,46 @@ void VehicleGatewayPX4::set_offboard_control_mode(vehicle_gateway::CONTROLLER_TY
   px4_msgs::msg::OffboardControlMode msg;
   msg.timestamp = this->px4_node_->get_clock()->now().nanoseconds() / 1000;
 
-  if (type == vehicle_gateway::CONTROLLER_TYPE::POSITION) {
-    msg.position = true;
-    msg.velocity = false;
-  } else if (type == vehicle_gateway::CONTROLLER_TYPE::VELOCITY) {
-    msg.position = false;
-    msg.velocity = true;
-  } else {
-    msg.position = false;
-    msg.velocity = false;
-    RCLCPP_INFO(this->px4_node_->get_logger(), "No controller is defined");
-  }
+  msg.position = false;
+  msg.velocity = false;
   msg.acceleration = false;
   msg.attitude = false;
   msg.body_rate = false;
+  msg.actuator = false;
+
+  if (type == vehicle_gateway::CONTROLLER_TYPE::POSITION) {
+    msg.position = true;
+  } else if (type == vehicle_gateway::CONTROLLER_TYPE::VELOCITY) {
+    msg.velocity = true;
+  } else if (type == vehicle_gateway::CONTROLLER_TYPE::BODY_RATES) {
+    msg.body_rate = true;
+  } else {
+    RCLCPP_WARN(this->px4_node_->get_logger(), "No controller is defined");
+  }
 
   this->vehicle_offboard_control_mode_pub_->publish(msg);
 }
 
-bool VehicleGatewayPX4::ctbr(float roll, float pitch, float yaw, float throttle)
+bool VehicleGatewayPX4::set_body_rates_and_thrust_setpoint(
+  float roll_rate, float pitch_rate, float yaw_rate, float thrust)
 {
   px4_msgs::msg::VehicleRatesSetpoint msg;
 
   msg.timestamp = this->px4_node_->get_clock()->now().nanoseconds() / 1000;
-  msg.roll = roll;
-  msg.pitch = pitch;
-  msg.yaw = yaw;
+  msg.roll = roll_rate;
+  msg.pitch = pitch_rate;
+  msg.yaw = yaw_rate;
 
-  // multicopter
-  if (this->vehicle_type_ == vehicle_gateway::VEHICLE_TYPE::ROTARY_WING) {
-    msg.thrust_body[2] = throttle;
-  } else if (this->vehicle_type_ == vehicle_gateway::VEHICLE_TYPE::FIXED_WING) {
-    // Fixed wing plane
-    msg.thrust_body[0] = throttle;
+  if (this->vehicle_type_ == vehicle_gateway::VEHICLE_TYPE::FIXED_WING) {
+    msg.thrust_body[0] = thrust;  // positive body X = forward
+    msg.thrust_body[1] = 0;
+    msg.thrust_body[2] = 0;
+  } else {
+    // it is either a multicopter or it's transitioning to/from multicopter
+    msg.thrust_body[0] = 0;
+    msg.thrust_body[1] = 0;
+    msg.thrust_body[2] = thrust;  // negative = "up" (away from ground)
   }
-
   msg.reset_integral = false;
 
   this->vehicle_rates_setpoint_pub_->publish(msg);
@@ -671,6 +697,13 @@ void VehicleGatewayPX4::get_local_position(float & x, float & y, float & z)
   x = this->current_pos_x_;
   y = this->current_pos_y_;
   z = this->current_pos_z_;
+}
+
+void VehicleGatewayPX4::get_euler_rpy(float & roll, float & pitch, float & yaw)
+{
+  roll = this->roll_;
+  pitch = this->pitch_;
+  yaw = this->yaw_;
 }
 
 std::vector<double> VehicleGatewayPX4::get_latlon()

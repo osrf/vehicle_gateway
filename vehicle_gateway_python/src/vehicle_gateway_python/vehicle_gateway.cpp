@@ -140,7 +140,7 @@ void VehicleGatewayPython::SetGroundSpeed(float speed)
 
 void VehicleGatewayPython::SetAirSpeed(float speed)
 {
-  this->gateway_->set_air_speed(speed);
+  this->gateway_->set_airspeed(speed);
 }
 
 std::vector<float> VehicleGatewayPython::GetLocalPosition()
@@ -150,10 +150,25 @@ std::vector<float> VehicleGatewayPython::GetLocalPosition()
   return {x, y, z};
 }
 
+std::vector<float> VehicleGatewayPython::GetEulerRPY()
+{
+  float r = 0, p = 0, y = 0;
+  this->gateway_->get_euler_rpy(r, p, y);
+  // printf("rpy: %.3f %.3f %.3f\n", r, p, y);
+  return {r, p, y};
+}
+
 void VehicleGatewayPython::PublishLocalVelocitySetpoint(
   float vx, float vy, float vz, float yaw_rate)
 {
   this->gateway_->set_local_velocity_setpoint(vx, vy, vz, yaw_rate);
+}
+
+void VehicleGatewayPython::PublishBodyRatesAndThrustSetpoint(
+  float roll_rate, float pitch_rate, float yaw_rate, float thrust)
+{
+  this->gateway_->set_body_rates_and_thrust_setpoint(
+    roll_rate, pitch_rate, yaw_rate, thrust);
 }
 
 void VehicleGatewayPython::SetOffboardControlMode(vehicle_gateway::CONTROLLER_TYPE type)
@@ -178,7 +193,7 @@ float VehicleGatewayPython::GetGroundSpeed()
 
 float VehicleGatewayPython::GetAirSpeed()
 {
-  return this->gateway_->get_air_speed();
+  return this->gateway_->get_airspeed();
 }
 
 vehicle_gateway::FLIGHT_MODE VehicleGatewayPython::GetFlightMode()
@@ -291,6 +306,9 @@ define_vehicle_gateway(py::object module)
     "set_local_velocity_setpoint", &VehicleGatewayPython::PublishLocalVelocitySetpoint,
     "PublishLocalVelocitySetpoint")
   .def(
+    "set_body_rates_and_thrust_setpoint", &VehicleGatewayPython::PublishBodyRatesAndThrustSetpoint,
+    "PublishBodyRatesAndThrustSetpoint")
+  .def(
     "set_onboard_mode", &VehicleGatewayPython::SetOnboardMode,
     "SetOnboardMode")
   .def(
@@ -324,11 +342,14 @@ define_vehicle_gateway(py::object module)
     "get_local_position", &VehicleGatewayPython::GetLocalPosition,
     "Get local position")
   .def(
-    "set_air_speed", &VehicleGatewayPython::SetAirSpeed,
-    "Set air speed m/s")
+    "get_euler_rpy", &VehicleGatewayPython::GetEulerRPY,
+    "Get Euler RPY")
   .def(
-    "get_air_speed", &VehicleGatewayPython::GetAirSpeed,
-    "Get air speed m/s")
+    "set_airspeed", &VehicleGatewayPython::SetAirSpeed,
+    "Set airspeed m/s")
+  .def(
+    "get_airspeed", &VehicleGatewayPython::GetAirSpeed,
+    "Get airspeed m/s")
   .def(
     "land", &VehicleGatewayPython::Land,
     "Land")
@@ -411,6 +432,7 @@ define_vehicle_gateway(py::object module)
   .value("NO_CONTROLLER", vehicle_gateway::CONTROLLER_TYPE::NO_CONTROLLER)
   .value("POSITION", vehicle_gateway::CONTROLLER_TYPE::POSITION)
   .value("VELOCITY", vehicle_gateway::CONTROLLER_TYPE::VELOCITY)
+  .value("BODY_RATES", vehicle_gateway::CONTROLLER_TYPE::BODY_RATES)
   .export_values();
 
   pybind11::enum_<vehicle_gateway::VTOL_STATE>(module, "VtolState")
