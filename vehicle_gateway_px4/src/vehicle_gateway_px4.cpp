@@ -581,6 +581,19 @@ void VehicleGatewayPX4::set_local_position_setpoint(float x, float y, float z, f
   msg.position[1] = y;
   msg.position[2] = z;
   msg.yaw = yaw;
+
+  // non-NaN velocity and acceleration fields are used as feedforward terms.
+  // We will just set them all to NaN, to keep this API simple.
+
+  msg.velocity[0] = std::numeric_limits<float>::quiet_NaN();
+  msg.velocity[1] = std::numeric_limits<float>::quiet_NaN();
+  msg.velocity[2] = std::numeric_limits<float>::quiet_NaN();
+  msg.yawspeed = std::numeric_limits<float>::quiet_NaN();
+
+  msg.acceleration[0] = std::numeric_limits<float>::quiet_NaN();
+  msg.acceleration[1] = std::numeric_limits<float>::quiet_NaN();
+  msg.acceleration[2] = std::numeric_limits<float>::quiet_NaN();
+
   this->vehicle_trajectory_setpoint_pub_->publish(msg);
 }
 

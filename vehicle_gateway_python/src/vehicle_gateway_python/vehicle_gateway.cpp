@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <limits>
 #include <pybind11/pybind11.h>
 #include <vector>
 
@@ -286,7 +287,11 @@ define_vehicle_gateway(py::object module)
     "GetLatLon")
   .def(
     "set_local_position_setpoint", &VehicleGatewayPython::PublishLocalPositionSetpoint,
-    "PublishLocalPositionSetpoint")
+    "PublishLocalPositionSetpoint",
+    py::arg("x"),
+    py::arg("y"),
+    py::arg("z"),
+    py::arg("yaw") = std::numeric_limits<float>::quiet_NaN())
   .def(
     "set_local_velocity_setpoint", &VehicleGatewayPython::PublishLocalVelocitySetpoint,
     "PublishLocalVelocitySetpoint")
