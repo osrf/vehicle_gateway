@@ -96,9 +96,9 @@ vg.set_offboard_mode()
 print('enabled body-rate controller')
 target_north = 300
 target_east = 0
-target_airspeed = 15
+target_airspeed = 20
 
-lap_count = 0
+waypoint_count = 0
 while True:
     current_ned = vg.get_local_position()
     pos_error = [
@@ -130,7 +130,6 @@ while True:
     yaw_rate = 0  # without a rudder, it seems yaw_rate doesn't do anything
 
     # minimal airspeed controller using thrust
-    target_airspeed = 20.0
     current_airspeed = vg.get_airspeed()
     airspeed_error = target_airspeed - current_airspeed
     thrust = 0.1 + 0.3 * airspeed_error
@@ -146,16 +145,16 @@ while True:
     print(f'dist: {dist}')
 
     if dist < 10:
-        break
         print('changing target')
         target_north *= -1
+        waypoint_count += 1
         if target_north > 0:
-            target_airspeed = 19  # fly fast towards the north
-            lap_count += 1
-            if lap_count > 1:
-                break
+            target_airspeed = 20
         else:
-            target_airspeed = 14  # fly slow towards the south
+            target_airspeed = 25
+
+        if waypoint_count > 1:
+            break
 
     time.sleep(0.1)
 
