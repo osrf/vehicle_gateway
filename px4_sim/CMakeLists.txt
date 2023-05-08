@@ -13,7 +13,7 @@ externalproject_add(px4-firmware
   GIT_REPOSITORY
     https://github.com/PX4/PX4-Autopilot
   GIT_TAG
-    main
+    3cc940cb06f233a22a8d1b948bc05f067491e212
   INSTALL_COMMAND
     mkdir -p ${CMAKE_INSTALL_PREFIX}/share/px4_sim &&
     rsync -avL --exclude .git --exclude build
