@@ -7,22 +7,21 @@ find_package(ament_cmake REQUIRED)
 find_package(ament_cmake)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(zenohc REQUIRED)
 
 add_executable(vehicle_gateway_multi_bridge
   src/vehicle_gateway_multi_bridge.cpp
 )
-ament_target_dependencies(vehicle_gateway_multi_bridge
-  rclcpp
-  std_msgs
-)
-include_directories(zenoh)
+target_link_libraries(vehicle_gateway_multi_bridge PRIVATE
+  rclcpp::rclcpp
+  ${std_msgs_TARGETS}
+  zenohc::lib)
 
-# install(DIRECTORY
-#   launch
-#   config
-#   DESTINATION
-#     share/${PROJECT_NAME}
-# )
+install(DIRECTORY
+  config
+  DESTINATION
+    share/${PROJECT_NAME}
+)
 
 install(
   TARGETS
