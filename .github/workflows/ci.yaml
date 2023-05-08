@@ -49,7 +49,7 @@ jobs:
                   "-DSKIP_QGROUNDCONTROL=1"
                 ],
                 "hooks": [
-                  "$HOME/.cargo/env",
+                  "$HOME/.cargo/env"
                 ]
               },
               "test": {
