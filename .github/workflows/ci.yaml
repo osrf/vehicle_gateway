@@ -47,6 +47,9 @@ jobs:
               "build": {
                 "cmake-args": [
                   "-DSKIP_QGROUNDCONTROL=1"
+                ],
+                "hooks": [
+                  "$HOME/.cargo/env",
                 ]
               },
               "test": {
