@@ -1,13 +1,14 @@
 #include <cstdio>
 #include "zenoh.h"
 
-int main(int argc, char **argv) {
+int main(int argc, char ** argv)
+{
   printf("hello world\n");
   if (argc < 2) {
     printf("usage: vehicle_gateway_multi_bridge CONFIG_FILENAME\n");
     return EXIT_FAILURE;
   }
-  const char *config_filename = argv[1];
+  const char * config_filename = argv[1];
   z_owned_config_t config = zc_config_from_file(config_filename);
   if (!z_check(config)) {
     printf("unable to parse zenoh config from [%s]\n", config_filename);
