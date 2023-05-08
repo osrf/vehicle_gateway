@@ -22,7 +22,7 @@ jobs:
       - name: Install rust
         run: |
           apt install curl
-          curl https://sh.rustup.rs -sSf | sh
+          curl https://sh.rustup.rs -sSf | sh -s -- -y
       - name: Install gazebo
         run: |
           export DEBIAN_FRONTEND=noninteractive
