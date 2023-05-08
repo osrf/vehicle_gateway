@@ -19,3 +19,7 @@ repositories:
     type: git
     url: https://github.com/christianrauch/msp
     version: master
+  zenohc:
+    type: git
+    url: https://github.com/eclipse-zenoh/zenoh-c
+    version: 0.7.1-rc
