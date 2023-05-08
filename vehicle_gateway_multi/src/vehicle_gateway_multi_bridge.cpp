@@ -3,7 +3,6 @@
 
 int main(int argc, char ** argv)
 {
-  printf("hello world\n");
   if (argc < 2) {
     printf("usage: vehicle_gateway_multi_bridge CONFIG_FILENAME\n");
     return EXIT_FAILURE;
