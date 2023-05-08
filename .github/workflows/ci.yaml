@@ -23,6 +23,8 @@ jobs:
         run: |
           apt install curl
           curl https://sh.rustup.rs -sSf | sh -s -- -y
+          source $HOME/.cargo/env
+          rustc --version
       - name: Install gazebo
         run: |
           export DEBIAN_FRONTEND=noninteractive
