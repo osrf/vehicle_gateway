@@ -275,7 +275,7 @@ def generate_launch_description():
 
     p1 = Popen(split("gz topic -l"), stdout=PIPE)
     p2 = Popen(split("grep -m 1 -e '/world/.*/clock'"), stdin=p1.stdout, stdout=PIPE)
-    p3 = Popen(split("sed 's/\/world\///g; s/\/clock//g'"), stdin=p2.stdout, stdout=PIPE)
+    p3 = Popen(split(r"sed 's/\/world\///g; s/\/clock//g'"), stdin=p2.stdout, stdout=PIPE)
     command_output = p3.stdout.read().decode('utf-8')
 
     # Bridge
