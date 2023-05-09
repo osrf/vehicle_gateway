@@ -243,7 +243,7 @@ def generate_launch_description():
         LaunchConfiguration('sensor_config'),
         '/model.sdf']
 
-    model_name = [LaunchConfiguration('drone_type'), "_", LaunchConfiguration('sensor_config'), "_0"]
+    model_name = [LaunchConfiguration('drone_type'), "_", LaunchConfiguration('sensor_config'), "_", LaunchConfiguration('drone_id')]
 
     spawn_entity = Node(
         package='ros_gz_sim',
