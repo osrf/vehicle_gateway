@@ -25,6 +25,8 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 import tempfile
 import os
 from launch.substitutions import LaunchConfiguration, PythonExpression
+from subprocess import Popen, PIPE
+from shlex import split
 from typing import List
 import xml.etree.ElementTree as ET
 
@@ -124,6 +126,12 @@ def seed_rootfs(rootfs):
 
 
 def generate_launch_description():
+    drone_id = LaunchConfiguration('drone_id', default='0')
+    drone_id_arg = DeclareLaunchArgument(
+        'drone_id',
+        default_value=drone_id,
+        description='Set the vehicle ID, default=0')
+
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
     use_sim_time_arg = DeclareLaunchArgument(
         'use_sim_time',
@@ -212,17 +220,18 @@ def generate_launch_description():
     run_px4 = ExecuteProcess(
         cmd=['px4', '%s/ROMFS/px4fmu_common' % rootfs.name,
              '-s', rc_script,
-             '-i', '0',
+             '-i', drone_id,
              '-d'],
         cwd=px4_dir,
         output='screen')
 
     wait_spawn = ExecuteProcess(cmd=["sleep", "5"])
 
+    port_micro_ros = PythonExpression(['list(range(8888, 9999))[', LaunchConfiguration('drone_id'), ']'])
     micro_ros_agent = Node(
         package='micro_ros_agent',
         executable='micro_ros_agent',
-        arguments=['udp4', '-p', '8888'],
+        arguments=['udp4', '-p', port_micro_ros],
         parameters=[{'use_sim_time': use_sim_time}],
         output='screen')
 
@@ -251,6 +260,7 @@ def generate_launch_description():
                    '-Y', model_pose_yaw])
 
     model_name_env_var = SetEnvironmentVariable('PX4_GZ_MODEL_NAME', model_name)
+    port_micro_ros_env_var = SetEnvironmentVariable('PX4_UXRCE_DDS_PORT', port_micro_ros)
 
     autostart_magic_number = PythonExpression([
         '{"x500": 4001, "rc_cessna": 4003, "standard_vtol": 4004}["',
@@ -262,6 +272,12 @@ def generate_launch_description():
         autostart_magic_number)
 
     os.environ['PX4_GZ_WORLD'] = ""
+
+    p1 = Popen(split("gz topic -l"), stdout=PIPE)
+    p2 = Popen(split("grep -m 1 -e '/world/.*/clock'"), stdin=p1.stdout, stdout=PIPE)
+    p3 = Popen(split("sed 's/\/world\///g; s/\/clock//g'"), stdin=p2.stdout, stdout=PIPE)
+    command_output = p3.stdout.read().decode('utf-8')
+
     # Bridge
     bridge = Node(
         package='ros_gz_bridge',
@@ -269,9 +285,11 @@ def generate_launch_description():
         arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
         output='screen'
     )
-    return LaunchDescription([
+
+    ld = LaunchDescription([
         # Launch gazebo environment
         use_sim_time_arg,
+        drone_id_arg,
         world_name_arg,
         drone_type_args,
         model_pose_arg,
@@ -279,14 +297,9 @@ def generate_launch_description():
         sensor_config_args,
         spawn_entity,
         model_name_env_var,
+        port_micro_ros_env_var,
         autostart_env_var,
         bridge,
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(
-                [os.path.join(get_package_share_directory('ros_gz_sim'),
-                              'launch', 'gz_sim.launch.py')]),
-            launch_arguments=[('gz_args', [' -r -v 4 ', LaunchConfiguration('world_name'), '.sdf'])]
-        ),
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=spawn_entity,
@@ -302,5 +315,18 @@ def generate_launch_description():
         use_groundcontrol,
         ExecuteProcess(cmd=['QGroundControl.AppImage'],
                        condition=IfCondition(LaunchConfiguration('groundcontrol'))),
-        micro_ros_agent
+        micro_ros_agent,
+        port_micro_ros_env_var
     ])
+
+    if len(command_output) == 0:
+        ld.add_action(IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                [os.path.join(get_package_share_directory('ros_gz_sim'),
+                              'launch', 'gz_sim.launch.py')]),
+            launch_arguments=[('gz_args', [' -r -v 4 ', LaunchConfiguration('world_name'), '.sdf'])]
+        ))
+    else:
+        print('Another gz instance is running, it will only try to spawn the model in gz.')
+
+    return ld
