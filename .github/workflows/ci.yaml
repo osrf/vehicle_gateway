@@ -24,6 +24,12 @@ jobs:
           apt install curl
           curl https://sh.rustup.rs -sSf | sh -s -- -y
           source $HOME/.cargo/env
+          echo ". $HOME/.cargo/env" >> ~/.bashrc
+          echo $HOME
+          rustc --version
+          cargo --version
+      - name: Test rust tools
+        run: |
           rustc --version
           cargo --version
       - name: Install gazebo
@@ -48,9 +54,6 @@ jobs:
                 "cmake-args": [
                   "-DSKIP_QGROUNDCONTROL=1"
                 ],
-                "hooks": [
-                  "$HOME/.cargo/env"
-                ]
               },
               "test": {
                 "retest-until-pass": 5
