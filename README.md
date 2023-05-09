@@ -95,6 +95,42 @@ source install/setup.bash
 python3 src/vehicle_gateway/vehicle_gateway_python/examples/test_takeoff_land.py
 ```
 
+# Multirobot
+
+There is an option that allow to run a multirobot setup. It's called `drone_id`:
+ - If `drone_id` is undefined or `0`, then we can only run one robot in the gz instance.
+ - If the `drone_id` is a number higher than `0` then it will create the same topics but with `/px4_{drone_id}` as a prefix.
+
+```bash
+cd ~/vg
+source install/setup.bash
+ros2 launch px4_sim px4_sim.launch.py drone_type:=x500 frame_name:=pad_1 world_name:=null_island drone_id:=1
+```
+
+In another terminal:
+
+```bash
+cd ~/vg
+source install/setup.bash
+ros2 launch px4_sim px4_sim.launch.py drone_type:=x500 frame_name:=pad_2 world_name:=null_island drone_id:=2
+```
+
+Then you will see two drones one positioned in the `pad_1` and another one in the `pad_2`. If you run `ros2 topic list` you will see:
+
+```bash
+...
+/px4_1/fmu/out/vehicle_gps_position
+/px4_1/fmu/out/vehicle_local_position
+/px4_1/fmu/out/vehicle_odometry
+/px4_1/fmu/out/vehicle_status
+/px4_2/fmu/in/obstacle_distance
+/px4_2/fmu/in/offboard_control_mode
+/px4_2/fmu/in/onboard_computer_status
+/px4_2/fmu/in/sensor_optical_flow
+/px4_2/fmu/in/telemetry_status
+...
+```
+
 # Running tests
 
 You can run an integration test suite which will test several flight capabilities. Gazebo will run headless simulation and report ability of the Vehicle Gateway plugin and a software-in-the-loop autopilot to perform various capabilities.
