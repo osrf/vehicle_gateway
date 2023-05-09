@@ -33,6 +33,14 @@ ament_target_dependencies(circles
   vehicle_gateway_px4
 )
 
+add_executable(vtol_position_control
+  src/vtol_position_control.cpp
+)
+ament_target_dependencies(vtol_position_control
+  rclcpp
+  vehicle_gateway_px4
+)
+
 install(DIRECTORY
   launch
   config
@@ -44,6 +52,7 @@ install(
   TARGETS
     aruco_demo
     circles
+    vtol_position_control
   DESTINATION lib/${PROJECT_NAME}
 )
 
