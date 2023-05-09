@@ -20,14 +20,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Install rust
-        run: |
-          apt install curl
-          curl https://sh.rustup.rs -sSf | sh -s -- -y
-          source $HOME/.cargo/env
-          echo ". $HOME/.cargo/env" >> ~/.bashrc
-          echo $HOME
-          rustc --version
-          cargo --version
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          default: true
+          override: true
+          components: rustfmt, clippy
       - name: Test rust tools
         run: |
           rustc --version
