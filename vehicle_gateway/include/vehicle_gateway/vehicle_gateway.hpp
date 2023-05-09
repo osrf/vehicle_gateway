@@ -221,7 +221,7 @@ public:
   /// \return Get altitude
   virtual float get_altitude() = 0;
 
-  /// Get 0: latitude, 1: longitutde, and 2: altitutde
+  /// Get 0: latitude, 1: longitude, and 2: altitude
   virtual std::vector<double> get_latlon() = 0;
 
   virtual void get_local_position(float & x, float & y, float & z) = 0;
