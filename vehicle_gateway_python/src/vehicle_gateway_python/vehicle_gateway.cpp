@@ -30,7 +30,8 @@ namespace vehicle_gateway_python
 {
 VehicleGatewayPython::VehicleGatewayPython(
   const std::vector<std::string> & _args,
-  const std::string & _plugin_name)
+  const std::string & _plugin_name,
+  unsigned int _vehicle_id)
 {
   this->loader_ = std::make_shared<pluginlib::ClassLoader<vehicle_gateway::VehicleGateway>>(
     "vehicle_gateway", "vehicle_gateway::VehicleGateway");
@@ -51,6 +52,7 @@ VehicleGatewayPython::VehicleGatewayPython(
     argv[index] = _args[index].c_str();
   }
 
+  this->gateway_->set_vehicle_id(_vehicle_id);
   this->gateway_->init(_args.size(), argv);
   delete[] argv;
 }
@@ -253,6 +255,11 @@ VehicleGatewayPython::~VehicleGatewayPython()
   this->Destroy();
 }
 
+unsigned int VehicleGatewayPython::GetVehicleID()
+{
+  return this->gateway_->get_vehicle_id();
+}
+
 void
 define_vehicle_gateway(py::object module)
 {
@@ -261,7 +268,7 @@ define_vehicle_gateway(py::object module)
     "VehicleGatewayPython")
   .def(
     py::init<const std::vector<std::string> &,
-    const std::string &>())
+    const std::string &, unsigned int>())
   .def(
     "destroy", &VehicleGatewayPython::Destroy,
     "Destroy object")
@@ -364,7 +371,10 @@ define_vehicle_gateway(py::object module)
     "Get altitude in meter")
   .def(
     "get_vtol_state", &VehicleGatewayPython::GetVtolState,
-    "Get VTOL state");
+    "Get VTOL state")
+  .def(
+    "get_vehicle_id", &VehicleGatewayPython::GetVehicleID,
+    "Get vehicleID");
 
   pybind11::enum_<vehicle_gateway::ARMING_STATE>(module, "ArmingState")
   .value("INIT", vehicle_gateway::ARMING_STATE::INIT)

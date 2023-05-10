@@ -41,6 +41,12 @@ public:
   void init(int argc, const char ** argv) override;
 
   /// Documentation inherited
+  void set_vehicle_id(unsigned int _vehicle_id) override;
+
+  /// Documentation inherited
+  unsigned int get_vehicle_id() override;
+
+  /// Documentation inherited
   void destroy() override;
 
   /// Documentation inherited
@@ -161,6 +167,8 @@ private:
   float throttle_{0};
   uint16_t arm_{0};
   float altitude{0};
+
+  unsigned int vehicle_id_{0};
 
   int index_box_arm_{-1};
 };

@@ -38,9 +38,13 @@ class VehicleGatewayPython : public Destroyable,
 public:
   VehicleGatewayPython(
     const std::vector<std::string> & _args,
-    const std::string & _plugin_name);
+    const std::string & _plugin_name,
+    unsigned int _vehicle_id);
 
   ~VehicleGatewayPython();
+
+  /// Get VehicleID
+  unsigned int GetVehicleID();
 
   /// Takeoff
   void Takeoff();

@@ -119,6 +119,14 @@ public:
   /// Initialize the autopilot
   virtual void init(int argc, const char ** argv) = 0;
 
+  /// Set Vehicle ID
+  /// \param[in] _vehicle_id Vehicle ID
+  virtual void set_vehicle_id(unsigned int _vehicle_id) = 0;
+
+  /// Get Vehicle ID
+  /// \return Vehicle ID
+  virtual unsigned int get_vehicle_id() = 0;
+
   /// Destroy the gateway
   virtual void destroy() = 0;
 

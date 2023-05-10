@@ -21,6 +21,15 @@
 
 namespace vehicle_gateway_betaflight
 {
+void VehicleGatewayBetaflight::set_vehicle_id(unsigned int _vehicle_id)
+{
+  this->vehicle_id_ = _vehicle_id;
+}
+
+unsigned int VehicleGatewayBetaflight::get_vehicle_id()
+{
+  return this->vehicle_id_;
+}
 
 void VehicleGatewayBetaflight::init(int argc, const char ** argv)
 {
