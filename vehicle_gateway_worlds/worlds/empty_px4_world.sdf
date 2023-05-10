@@ -74,5 +74,22 @@
         </visual>
       </link>
     </model>
+
+    <frame name="pad_1">
+      <pose>0.0 0.0 0.5 0.0 0.0 0.0</pose>
+    </frame>
+    <frame name="pad_2">
+      <pose>2.0 0.0 0.5 0.0 0.0 0.0</pose>
+    </frame>
+    <frame name="pad_3">
+      <pose>-2.0 0.0 0.5 0.0 0.0 0.0</pose>
+    </frame>
+    <frame name="pad_4">
+      <pose>0.0 2.0 0.5 0.0 0.0 0.0</pose>
+    </frame>
+    <frame name="pad_5">
+      <pose>0.0 -2.0 0.5 0.0 0.0 0.0</pose>
+    </frame>
+
   </world>
 </sdf>
