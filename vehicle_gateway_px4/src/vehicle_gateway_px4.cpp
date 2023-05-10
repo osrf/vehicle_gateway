@@ -59,8 +59,6 @@ void VehicleGatewayPX4::init(int argc, const char ** argv)
     this->target_system_ = this->vehicle_id_ + 1;
   }
 
-  std::cerr << "vehicle_id_prefix " << vehicle_id_prefix << '\n';
-
   this->vehicle_status_sub_ = this->px4_node_->create_subscription<px4_msgs::msg::VehicleStatus>(
     vehicle_id_prefix + "/fmu/out/vehicle_status",
     qos_profile,
@@ -331,8 +329,6 @@ void VehicleGatewayPX4::init(int argc, const char ** argv)
     [this](px4_msgs::msg::Airspeed::ConstSharedPtr msg) {
       this->airspeed_ = msg->true_airspeed_m_s;
     });
-
-    std::cerr << vehicle_id_prefix + "/fmu/in/vehicle_command" << '\n';
 
   this->vehicle_rates_setpoint_pub_ =
     this->px4_node_->create_publisher<px4_msgs::msg::VehicleRatesSetpoint>(
