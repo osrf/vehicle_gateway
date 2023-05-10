@@ -53,8 +53,7 @@ void VehicleGatewayPX4::init(int argc, const char ** argv)
 
   std::string vehicle_id_prefix{};
 
-  if (this->vehicle_id_ != 0)
-  {
+  if (this->vehicle_id_ != 0) {
     vehicle_id_prefix = "/px4_" + std::to_string(this->vehicle_id_);
     this->target_system_ = this->vehicle_id_ + 1;
   }
