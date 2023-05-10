@@ -315,8 +315,7 @@ def generate_launch_description():
         use_groundcontrol,
         ExecuteProcess(cmd=['QGroundControl.AppImage'],
                        condition=IfCondition(LaunchConfiguration('groundcontrol'))),
-        micro_ros_agent,
-        port_micro_ros_env_var
+        micro_ros_agent
     ])
 
     if len(command_output) == 0:
