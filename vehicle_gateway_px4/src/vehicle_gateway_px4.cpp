@@ -23,6 +23,16 @@
 namespace vehicle_gateway_px4
 {
 
+void VehicleGatewayPX4::set_vehicle_id(unsigned int _vehicle_id)
+{
+  this->vehicle_id_ = _vehicle_id;
+}
+
+unsigned int VehicleGatewayPX4::get_vehicle_id()
+{
+  return this->vehicle_id_;
+}
+
 void VehicleGatewayPX4::init(int argc, const char ** argv)
 {
   if (argc != 0 && argv != nullptr) {
@@ -41,8 +51,15 @@ void VehicleGatewayPX4::init(int argc, const char ** argv)
   // Guaranteed delivery is needed to send messages to late-joining subscriptions.
   .best_effort();
 
+  std::string vehicle_id_prefix{};
+
+  if (this->vehicle_id_ != 0) {
+    vehicle_id_prefix = "/px4_" + std::to_string(this->vehicle_id_);
+    this->target_system_ = this->vehicle_id_ + 1;
+  }
+
   this->vehicle_status_sub_ = this->px4_node_->create_subscription<px4_msgs::msg::VehicleStatus>(
-    "/fmu/out/vehicle_status",
+    vehicle_id_prefix + "/fmu/out/vehicle_status",
     qos_profile,
     [this](px4_msgs::msg::VehicleStatus::ConstSharedPtr msg) {
       auto set_arm_disarm_reason = [](uint8_t reason)
@@ -254,7 +271,7 @@ void VehicleGatewayPX4::init(int argc, const char ** argv)
     });
 
   this->vehicle_sensor_gps_sub_ = this->px4_node_->create_subscription<px4_msgs::msg::SensorGps>(
-    "/fmu/out/vehicle_gps_position",
+    vehicle_id_prefix + "/fmu/out/vehicle_gps_position",
     qos_profile,
     [this](px4_msgs::msg::SensorGps::ConstSharedPtr msg) {
       // 1e-7 and 1e-3 comes from:
@@ -265,7 +282,7 @@ void VehicleGatewayPX4::init(int argc, const char ** argv)
     });
 
   this->vehicle_timesync_sub_ = this->px4_node_->create_subscription<px4_msgs::msg::TimesyncStatus>(
-    "/fmu/out/timesync_status",
+    vehicle_id_prefix + "/fmu/out/timesync_status",
     qos_profile,
     [this](px4_msgs::msg::TimesyncStatus::ConstSharedPtr msg) {
       this->timestamp_ = std::chrono::time_point<std::chrono::high_resolution_clock>(
@@ -274,7 +291,7 @@ void VehicleGatewayPX4::init(int argc, const char ** argv)
 
   this->vehicle_odometry_sub_ =
     this->px4_node_->create_subscription<px4_msgs::msg::VehicleOdometry>(
-    "/fmu/out/vehicle_odometry",
+    vehicle_id_prefix + "/fmu/out/vehicle_odometry",
     qos_profile,
     [this](px4_msgs::msg::VehicleOdometry::ConstSharedPtr msg) {
       this->odom_timestamp_ = std::chrono::time_point<std::chrono::high_resolution_clock>(
@@ -306,7 +323,7 @@ void VehicleGatewayPX4::init(int argc, const char ** argv)
 
   this->airspeed_sub_ =
     this->px4_node_->create_subscription<px4_msgs::msg::Airspeed>(
-    "/fmu/out/airspeed",
+    vehicle_id_prefix + "/fmu/out/airspeed",
     qos_profile,
     [this](px4_msgs::msg::Airspeed::ConstSharedPtr msg) {
       this->airspeed_ = msg->true_airspeed_m_s;
@@ -314,15 +331,15 @@ void VehicleGatewayPX4::init(int argc, const char ** argv)
 
   this->vehicle_rates_setpoint_pub_ =
     this->px4_node_->create_publisher<px4_msgs::msg::VehicleRatesSetpoint>(
-    "/fmu/in/vehicle_rates_setpoint", qos_profile);
+    vehicle_id_prefix + "/fmu/in/vehicle_rates_setpoint", qos_profile);
   this->vehicle_command_pub_ = this->px4_node_->create_publisher<px4_msgs::msg::VehicleCommand>(
-    "/fmu/in/vehicle_command", qos_profile);
+    vehicle_id_prefix + "/fmu/in/vehicle_command", qos_profile);
   this->vehicle_trajectory_setpoint_pub_ =
     this->px4_node_->create_publisher<px4_msgs::msg::TrajectorySetpoint>(
-    "/fmu/in/trajectory_setpoint", qos_profile);
+    vehicle_id_prefix + "/fmu/in/trajectory_setpoint", qos_profile);
   this->vehicle_offboard_control_mode_pub_ =
     this->px4_node_->create_publisher<px4_msgs::msg::OffboardControlMode>(
-    "/fmu/in/offboard_control_mode", qos_profile);
+    vehicle_id_prefix + "/fmu/in/offboard_control_mode", qos_profile);
 }
 
 VehicleGatewayPX4::~VehicleGatewayPX4()

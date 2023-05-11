@@ -227,11 +227,10 @@ def generate_launch_description():
 
     wait_spawn = ExecuteProcess(cmd=["sleep", "5"])
 
-    port_micro_ros = PythonExpression(['list(range(8888, 9999))[', LaunchConfiguration('drone_id'), ']'])
     micro_ros_agent = Node(
         package='micro_ros_agent',
         executable='micro_ros_agent',
-        arguments=['udp4', '-p', port_micro_ros],
+        arguments=['udp4', '-p', '8888'],
         parameters=[{'use_sim_time': use_sim_time}],
         output='screen')
 
@@ -260,7 +259,6 @@ def generate_launch_description():
                    '-Y', model_pose_yaw])
 
     model_name_env_var = SetEnvironmentVariable('PX4_GZ_MODEL_NAME', model_name)
-    port_micro_ros_env_var = SetEnvironmentVariable('PX4_UXRCE_DDS_PORT', port_micro_ros)
 
     autostart_magic_number = PythonExpression([
         '{"x500": 4001, "rc_cessna": 4003, "standard_vtol": 4004}["',
@@ -297,7 +295,6 @@ def generate_launch_description():
         sensor_config_args,
         spawn_entity,
         model_name_env_var,
-        port_micro_ros_env_var,
         autostart_env_var,
         bridge,
         RegisterEventHandler(
@@ -314,11 +311,11 @@ def generate_launch_description():
         ),
         use_groundcontrol,
         ExecuteProcess(cmd=['QGroundControl.AppImage'],
-                       condition=IfCondition(LaunchConfiguration('groundcontrol'))),
-        micro_ros_agent
+                       condition=IfCondition(LaunchConfiguration('groundcontrol')))
     ])
 
     if len(command_output) == 0:
+        ld.add_action(micro_ros_agent)
         ld.add_action(IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 [os.path.join(get_package_share_directory('ros_gz_sim'),

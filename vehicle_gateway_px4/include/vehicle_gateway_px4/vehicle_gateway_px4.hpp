@@ -49,6 +49,12 @@ public:
   void init(int argc, const char ** argv) override;
 
   /// Documentation inherited
+  void set_vehicle_id(unsigned int _vehicle_id) override;
+
+  /// Documentation inherited
+  unsigned int get_vehicle_id() override;
+
+  /// Documentation inherited
   void destroy() override;
 
   /// Documentation inherited
@@ -218,6 +224,8 @@ private:
   uint8_t source_component_{0};
   uint8_t confirmation_{1};
   bool from_external_{true};
+
+  unsigned int vehicle_id_{0};
 
   std::chrono::time_point<std::chrono::high_resolution_clock> timestamp_;
 

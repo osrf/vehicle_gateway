@@ -29,6 +29,7 @@ VtolState = _vehicle_gateway.VtolState
 def init(
     args: Optional[List[str]] = None,
     plugin_type: str = None,
+    vehicle_id: int = 0,
 ) -> None:
     args if args is None else []
-    return _vehicle_gateway.VehicleGatewayPython(args, plugin_type)
+    return _vehicle_gateway.VehicleGatewayPython(args, plugin_type, vehicle_id)
