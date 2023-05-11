@@ -311,11 +311,11 @@ def generate_launch_description():
         ),
         use_groundcontrol,
         ExecuteProcess(cmd=['QGroundControl.AppImage'],
-                       condition=IfCondition(LaunchConfiguration('groundcontrol'))),
-        micro_ros_agent
+                       condition=IfCondition(LaunchConfiguration('groundcontrol')))
     ])
 
     if len(command_output) == 0:
+        ld.add_action(micro_ros_agent)
         ld.add_action(IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 [os.path.join(get_package_share_directory('ros_gz_sim'),
