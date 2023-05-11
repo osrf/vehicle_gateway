@@ -15,6 +15,7 @@
 
 from distutils.dir_util import copy_tree
 import os
+from shlex import split
 import subprocess
 import tempfile
 
@@ -187,15 +188,11 @@ def generate_test_description():
 class TestFixture(unittest.TestCase):
 
     def test_arm(self, launch_service, proc_info, proc_output):
-        proc_output.assertWaitFor('INFO  [px4] instance: 1',
-                                  timeout=100, stream='stdout')
-        proc_output.assertWaitFor('Ready for takeoff!',
-                                  timeout=100, stream='stdout')
-
-        proc_output.assertWaitFor('INFO  [px4] instance: 2',
-                                  timeout=100, stream='stdout')
-        proc_output.assertWaitFor('Ready for takeoff!',
-                                  timeout=100, stream='stdout')
+        for i in range(1, 3):
+            proc_output.assertWaitFor(f'INFO  [px4] instance: {i}',
+                                      timeout=100, stream='stdout')
+            proc_output.assertWaitFor('Ready for takeoff!',
+                                      timeout=100, stream='stdout')
 
         proc_action = Node(
             package='vehicle_gateway_integration_test',
@@ -210,12 +207,12 @@ class TestFixture(unittest.TestCase):
             launch_testing.asserts.assertExitCodes(proc_info, process=proc_action,
                                                    allowable_exit_codes=[0])
 
-        # shutdown px4
-        p = subprocess.Popen('px4-shutdown',
-                             shell=True,
-                             stdout=subprocess.PIPE,
-                             stderr=subprocess.PIPE)
-        p.wait()
+        for i in range(1, 3):
+            # shutdown px4
+            p = subprocess.Popen(split(f'px4-shutdown --instance {i}'),
+                                 stdout=subprocess.PIPE,
+                                 stderr=subprocess.PIPE)
+            p.wait()
         for proc in psutil.process_iter():
             # check whether the process name matches
             if proc.name() == 'ruby' or proc.name() == 'micro_ros_agent':
