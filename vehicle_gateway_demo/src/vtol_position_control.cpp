@@ -29,9 +29,10 @@
 
 using namespace std;
 
-const double EARTH_RADIUS = 6378100 ; // meters
+const double EARTH_RADIUS = 6378100;  // meters
 
-double calc_distance_latlon(double lat_1, double lon_1, double lat_2, double lon_2) {
+double calc_distance_latlon(double lat_1, double lon_1, double lat_2, double lon_2)
+{
   // This uses a planar approximation, not the real trigonometry. This
   // approximation is just fine for short distances, which is all we're
   // currently considering.
@@ -53,21 +54,25 @@ public:
     this->gateway_->init(0, nullptr);
   }
 
-  void arm_sync() {
+  void arm_sync()
+  {
     while (this->gateway_->get_arming_state() != vehicle_gateway::ARMING_STATE::ARMED) {
       this->gateway_->arm();
       usleep(1e5);  // 100 ms
     }
   }
 
-  void disarm_sync() {
+  void disarm_sync()
+  {
     while (this->gateway_->get_arming_state() != vehicle_gateway::ARMING_STATE::STANDBY) {
       this->gateway_->disarm();
       usleep(1e5);  // 100 ms
     }
   }
 
-  void go_to_latlon_sync(double lat, double lon, double alt, double latlon_threshold = 0.5, double alt_threshold = 0.5)
+  void go_to_latlon_sync(
+    double lat, double lon, double alt, double latlon_threshold = 0.5,
+    double alt_threshold = 0.5)
   {
     this->gateway_->go_to_latlon(lat, lon, alt);
     while (true) {
@@ -88,16 +93,15 @@ public:
   }
 
   void offboard_mode_go_to_local_setpoint(
-      double x,
-      double y,
-      double alt,
-      double yaw = numeric_limits<float>::quiet_NaN(),
-      double airspeeed = 15.0,
-      double distance_threshold = 10.0,
-      vehicle_gateway::CONTROLLER_TYPE controller_type = vehicle_gateway::CONTROLLER_TYPE::POSITION)
+    double x,
+    double y,
+    double alt,
+    double yaw = numeric_limits<float>::quiet_NaN(),
+    double airspeeed = 15.0,
+    double distance_threshold = 10.0,
+    vehicle_gateway::CONTROLLER_TYPE controller_type = vehicle_gateway::CONTROLLER_TYPE::POSITION)
   {
-    while (true)
-    {
+    while (true) {
       this->gateway_->set_offboard_control_mode(vehicle_gateway::CONTROLLER_TYPE::POSITION);
       this->gateway_->set_local_position_setpoint(x, y, alt, yaw);
       this->gateway_->set_airspeed(airspeeed);
@@ -109,8 +113,7 @@ public:
       const auto dalt = alt - current_ned_z;
       const auto distance = sqrt(pow(dx, 2) + pow(dy, 2) + pow(dalt, 2));
 
-      if (distance < distance_threshold)
-      {
+      if (distance < distance_threshold) {
         break;
       }
 
@@ -122,29 +125,32 @@ public:
   {
     for (int i = 0; i < 20; i++) {
       this->gateway_->set_local_position_setpoint(
-          0.0, 0.0,
-          numeric_limits<float>::quiet_NaN(), numeric_limits<float>::quiet_NaN());
+        0.0, 0.0,
+        numeric_limits<float>::quiet_NaN(), numeric_limits<float>::quiet_NaN());
       this->gateway_->set_offboard_control_mode(vehicle_gateway::CONTROLLER_TYPE::POSITION);
       usleep(1e5);  // 100 ms
     }
     this->gateway_->set_offboard_mode();
   }
 
-  void transition_to_multicopter_sync() {
+  void transition_to_multicopter_sync()
+  {
     while (this->gateway_->get_vtol_state() != vehicle_gateway::VTOL_STATE::MC) {
       this->gateway_->transition_to_mc();
       usleep(1e5);  // 100 ms
     }
   }
 
-  void transition_to_fixed_wing_sync() {
+  void transition_to_fixed_wing_sync()
+  {
     while (this->gateway_->get_vtol_state() != vehicle_gateway::VTOL_STATE::FW) {
       this->gateway_->transition_to_fw();
       usleep(1e5);  // 100 ms
     }
   }
 
-  void destroy(){
+  void destroy()
+  {
     if (this->gateway_) {
       this->gateway_->destroy();
       this->gateway_ = nullptr;
@@ -157,6 +163,7 @@ public:
   }
 
   std::shared_ptr<vehicle_gateway::VehicleGateway> gateway_;
+
 private:
   std::shared_ptr<pluginlib::ClassLoader<vehicle_gateway::VehicleGateway>> loader_;
 };
@@ -165,9 +172,6 @@ private:
 int main(int argc, const char * argv[])
 {
   rclcpp::init(argc, argv);
-
-  auto dist = calc_distance_latlon(12.5, 12.5, 12.6, 12.6);
-  cout << "Distance: " << dist << endl;
 
   const auto vg = std::make_shared<VehicleGatewayCpp>();
   const float TARGET_ATTITUDE = 30.0;
@@ -182,7 +186,7 @@ int main(int argc, const char * argv[])
   }
   cout << "Home altitude: " << home_position[2] << endl;
 
-  cout <<"Takeoff!" << endl;
+  cout << "Takeoff!" << endl;
   vg->gateway_->takeoff();
   sleep(1);
 
@@ -195,14 +199,20 @@ int main(int argc, const char * argv[])
 
   cout << "Enabled position controller" << endl;
   auto target_north = 200.0,
-       target_east = 0.0;
+    target_east = 0.0;
 
   cout << "Flying to first waypoint..." << endl;
-  vg->offboard_mode_go_to_local_setpoint(target_north, target_east, -TARGET_ATTITUDE, numeric_limits<float>::quiet_NaN(), 15);
+  vg->offboard_mode_go_to_local_setpoint(
+    target_north, target_east, -TARGET_ATTITUDE,
+    numeric_limits<float>::quiet_NaN(), 15);
   cout << "Flying to second waypoint..." << endl;
-  vg->offboard_mode_go_to_local_setpoint(-target_north, target_east, -TARGET_ATTITUDE, numeric_limits<float>::quiet_NaN(), 20);
+  vg->offboard_mode_go_to_local_setpoint(
+    -target_north, target_east, -TARGET_ATTITUDE,
+    numeric_limits<float>::quiet_NaN(), 20);
   cout << "Flying home..." << endl;
-  vg->offboard_mode_go_to_local_setpoint(0, 0, -TARGET_ATTITUDE, numeric_limits<float>::quiet_NaN(), 20);
+  vg->offboard_mode_go_to_local_setpoint(
+    0, 0, -TARGET_ATTITUDE,
+    numeric_limits<float>::quiet_NaN(), 20);
 
   cout << "Switching back to hold mode..." << endl;
   vg->gateway_->set_onboard_mode();
@@ -214,7 +224,7 @@ int main(int argc, const char * argv[])
 
   vg->go_to_latlon_sync(home_position[0], home_position[1], home_position[2] + TARGET_ATTITUDE);
 
-  cout <<"Landing..." << endl;
+  cout << "Landing..." << endl;
   vg->gateway_->land();
 
   cout << "Disarming..." << endl;
