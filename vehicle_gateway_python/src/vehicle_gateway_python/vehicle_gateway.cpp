@@ -75,7 +75,9 @@ void VehicleGatewayPython::Arm()
 
 void VehicleGatewayPython::ArmSync()
 {
-  while (this->gateway_->get_arming_state() != vehicle_gateway::ARMING_STATE::ARMED) {
+  while (this->gateway_->get_arming_state() != vehicle_gateway::ARMING_STATE::ARMED &&
+    rclcpp::ok())
+  {
     this->gateway_->arm();
     usleep(1e5);  // 100 ms
   }
@@ -88,7 +90,9 @@ void VehicleGatewayPython::Disarm()
 
 void VehicleGatewayPython::DisarmSync()
 {
-  while (this->gateway_->get_arming_state() != vehicle_gateway::ARMING_STATE::STANDBY) {
+  while (this->gateway_->get_arming_state() != vehicle_gateway::ARMING_STATE::STANDBY &&
+    rclcpp::ok())
+  {
     this->gateway_->disarm();
     usleep(1e5);  // 100 ms
   }
@@ -101,7 +105,9 @@ void VehicleGatewayPython::TransitionToMultiCopter()
 
 void VehicleGatewayPython::TransitionToMultiCopterSync()
 {
-  while (this->gateway_->get_vtol_state() != vehicle_gateway::VTOL_STATE::MC) {
+  while (this->gateway_->get_vtol_state() != vehicle_gateway::VTOL_STATE::MC &&
+    rclcpp::ok())
+  {
     this->gateway_->transition_to_mc();
     usleep(1e5);  // 100 ms
   }
@@ -114,7 +120,9 @@ void VehicleGatewayPython::TransitionToFixedWings()
 
 void VehicleGatewayPython::TransitionToFixedWingsSync()
 {
-  while (this->gateway_->get_vtol_state() != vehicle_gateway::VTOL_STATE::FW) {
+  while (this->gateway_->get_vtol_state() != vehicle_gateway::VTOL_STATE::FW &&
+    rclcpp::ok())
+  {
     this->gateway_->transition_to_fw();
     usleep(1e5);  // 100 ms
   }
