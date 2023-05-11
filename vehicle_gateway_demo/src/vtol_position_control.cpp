@@ -67,6 +67,26 @@ public:
     }
   }
 
+  void go_to_latlon_sync(double lat, double lon, double alt, double latlon_threshold = 0.5, double alt_threshold = 0.5)
+  {
+    this->gateway_->go_to_latlon(lat, lon, alt);
+    while (true) {
+      auto current_latlon = this->gateway_->get_latlon();
+      if (current_latlon.size() != 3) {
+        throw std::runtime_error("current_latlon should have three elements: lat, lon, alt");
+      }
+      auto current_lat = current_latlon[0];
+      auto current_lon = current_latlon[1];
+      auto current_alt = current_latlon[2];
+      auto latlon_distance = calc_distance_latlon(lat, lon, current_lat, current_lon);
+      auto alt_distance = sqrt(pow(alt - current_alt, 2));
+      if (latlon_distance < latlon_threshold && alt_distance < alt_threshold) {
+        break;
+      }
+      usleep(5e5);  // 500 ms
+    }
+  }
+
   void transition_to_multicopter_sync() {
     while (this->gateway_->get_vtol_state() != vehicle_gateway::VTOL_STATE::MC) {
       this->gateway_->transition_to_mc();
@@ -121,16 +141,27 @@ int main(int argc, const char * argv[])
 
   cout <<"Takeoff!" << endl;
   vg->gateway_->takeoff();
+  sleep(1);
+
+  vg->go_to_latlon_sync(home_position[0], home_position[1], home_position[2] + TARGET_ATTITUDE);
+
+  vg->transition_to_fixed_wing_sync();
+
+  cout << "Sleeping for 20 seconds..." << endl;
+  sleep(20);
+  cout << "Done sleeping." << endl;
 
 
-  sleep(10);
+  vg->transition_to_multicopter_sync();
+  sleep(1);
 
+  vg->go_to_latlon_sync(home_position[0], home_position[1], home_position[2] + TARGET_ATTITUDE);
 
   cout <<"Landing..." << endl;
   vg->gateway_->land();
 
-  cout << "Disarming..." << endl;
-  vg->disarm_sync();
+  // cout << "Disarming..." << endl;
+  // vg->disarm_sync();
 
   vg->destroy();
   cout << "Demo complete." << endl;
