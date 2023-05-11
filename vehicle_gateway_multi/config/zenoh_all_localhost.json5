@@ -1,0 +1,13 @@
+{
+  mode: "peer",
+  connect: {
+    endpoints: [
+      "tcp/localhost:7447",
+    ],
+  },
+  listen: {
+    endpoints: [
+      "tcp/0.0.0.0:0",
+    ],
+  },
+}
