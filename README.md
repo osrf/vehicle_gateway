@@ -45,6 +45,13 @@ Because the `ros_gz` bridge that ships with ROS 2 Humble targets the previous ve
 sudo apt remove ros-humble-ros-gz-bridge
 ```
 
+### Install Rust
+Zenoh is used for vehicle-to-vehicle communications. Because Zenoh is implemented in Rust, it is necessary to install a Rust toolchain in order to build it:
+```bash
+sudo apt install curl
+curl https://sh.rustup.rs -sSf | sh
+```
+
 ### Build the Vehicle Gateway
 We can now build the Vehicle Gateway itself. To keep paths short, we will make a colcon workspace named `vg` for "Vehicle Gateway", in your home directory. The Vehicle Gateway build will also download and build the PX4 firmware and Betaflight firmware, to allow software-in-the-loop (SITL) simulation of multiple autopilot software stacks.
 
