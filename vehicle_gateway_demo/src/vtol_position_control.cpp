@@ -92,7 +92,7 @@ public:
     }
   }
 
-  void offboard_mode_go_to_local_setpoint(
+  void offboard_mode_go_to_local_setpoint_sync(
     double x,
     double y,
     double alt,
@@ -202,15 +202,15 @@ int main(int argc, const char * argv[])
     target_east = 0.0;
 
   cout << "Flying to first waypoint..." << endl;
-  vg->offboard_mode_go_to_local_setpoint(
+  vg->offboard_mode_go_to_local_setpoint_sync(
     target_north, target_east, -TARGET_ATTITUDE,
     numeric_limits<float>::quiet_NaN(), 15);
   cout << "Flying to second waypoint..." << endl;
-  vg->offboard_mode_go_to_local_setpoint(
+  vg->offboard_mode_go_to_local_setpoint_sync(
     -target_north, target_east, -TARGET_ATTITUDE,
     numeric_limits<float>::quiet_NaN(), 20);
   cout << "Flying home..." << endl;
-  vg->offboard_mode_go_to_local_setpoint(
+  vg->offboard_mode_go_to_local_setpoint_sync(
     0, 0, -TARGET_ATTITUDE,
     numeric_limits<float>::quiet_NaN(), 20);
 
