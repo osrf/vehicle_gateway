@@ -87,6 +87,49 @@ public:
     }
   }
 
+  void offboard_mode_go_to_local_setpoint(
+      double x,
+      double y,
+      double alt,
+      double yaw = numeric_limits<float>::quiet_NaN(),
+      double airspeeed = 15.0,
+      double distance_threshold = 10.0,
+      vehicle_gateway::CONTROLLER_TYPE controller_type = vehicle_gateway::CONTROLLER_TYPE::POSITION)
+  {
+    while (true)
+    {
+      this->gateway_->set_offboard_control_mode(vehicle_gateway::CONTROLLER_TYPE::POSITION);
+      this->gateway_->set_local_position_setpoint(x, y, alt, yaw);
+      this->gateway_->set_airspeed(airspeeed);
+
+      float current_ned_x, current_ned_y, current_ned_z;
+      this->gateway_->get_local_position(current_ned_x, current_ned_y, current_ned_z);
+      const auto dx = x - current_ned_x;
+      const auto dy = y - current_ned_y;
+      const auto dalt = alt - current_ned_z;
+      const auto distance = sqrt(pow(dx, 2) + pow(dy, 2) + pow(dalt, 2));
+
+      if (distance < distance_threshold)
+      {
+        break;
+      }
+
+      usleep(1e5); // 100 ms
+    }
+  }
+
+  void transition_to_offboard_sync()
+  {
+    for (int i = 0; i < 20; i++) {
+      this->gateway_->set_local_position_setpoint(
+          0.0, 0.0,
+          numeric_limits<float>::quiet_NaN(), numeric_limits<float>::quiet_NaN());
+      this->gateway_->set_offboard_control_mode(vehicle_gateway::CONTROLLER_TYPE::POSITION);
+      usleep(1e5);  // 100 ms
+    }
+    this->gateway_->set_offboard_mode();
+  }
+
   void transition_to_multicopter_sync() {
     while (this->gateway_->get_vtol_state() != vehicle_gateway::VTOL_STATE::MC) {
       this->gateway_->transition_to_mc();
@@ -148,54 +191,23 @@ int main(int argc, const char * argv[])
   vg->transition_to_fixed_wing_sync();
 
   cout << "Begin transitioning to Offboard control..." << endl;
-  for (int i = 0; i < 20; i++) {
-    vg->gateway_->set_local_position_setpoint(0.0, 0.0, -TARGET_ATTITUDE, numeric_limits<float>::quiet_NaN());
-    vg->gateway_->set_offboard_control_mode(vehicle_gateway::CONTROLLER_TYPE::POSITION);
-    usleep(1e5);  // 100 ms
-  }
-  vg->gateway_->set_offboard_mode();
+  vg->transition_to_offboard_sync();
 
   cout << "Enabled position controller" << endl;
   auto target_north = 200.0,
-       target_east = 0.0,
-       target_airspeed = 15.0;
-  auto lap_count = 0;
-  const auto minimum_distance_to_change_target = 10.0;
+       target_east = 0.0;
 
-  while (true) {
-    vg->gateway_->set_offboard_control_mode(vehicle_gateway::CONTROLLER_TYPE::POSITION);
-    vg->gateway_->set_local_position_setpoint(target_north, target_east, -TARGET_ATTITUDE, numeric_limits<float>::quiet_NaN());
-    vg->gateway_->set_airspeed(target_airspeed);
-
-    float current_ned_x, current_ned_y, current_ned_z;
-    vg->gateway_->get_local_position(current_ned_x, current_ned_y, current_ned_z);
-    const auto dx = target_north - current_ned_x;
-    const auto dy = target_east - current_ned_y;
-    const auto distance = sqrt(pow(dx, 2) + pow(dy, 2));
-    cout << "Distance: " << distance << endl;
-
-    if (distance < minimum_distance_to_change_target) {
-      cout << "Changing target" << endl;
-      target_north *= -1;
-      if (target_north > 0) {
-        target_airspeed = 15.0;  // fly slower towards the north
-        lap_count++;
-        if (lap_count >= 1){
-          break;
-        }
-      } else {
-        target_airspeed = 20.0;  // fly fast towards the south
-      }
-    }
-
-    usleep(1e5);  // 100 ms
-  }
+  cout << "Flying to first waypoint..." << endl;
+  vg->offboard_mode_go_to_local_setpoint(target_north, target_east, -TARGET_ATTITUDE, numeric_limits<float>::quiet_NaN(), 15);
+  cout << "Flying to second waypoint..." << endl;
+  vg->offboard_mode_go_to_local_setpoint(-target_north, target_east, -TARGET_ATTITUDE, numeric_limits<float>::quiet_NaN(), 20);
+  cout << "Flying home..." << endl;
+  vg->offboard_mode_go_to_local_setpoint(0, 0, -TARGET_ATTITUDE, numeric_limits<float>::quiet_NaN(), 20);
 
   cout << "Switching back to hold mode..." << endl;
   vg->gateway_->set_onboard_mode();
-  vg->go_to_latlon_sync(home_position[0], home_position[1], home_position[2] + TARGET_ATTITUDE);
-  sleep(5);
 
+  cout << "Transitioning to multicopter..." << endl;
   vg->transition_to_multicopter_sync();
   cout << "VTOL state: " << vg->gateway_->get_vtol_state() << endl;
   sleep(1);
