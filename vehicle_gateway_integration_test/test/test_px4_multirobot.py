@@ -20,6 +20,7 @@ import subprocess
 import tempfile
 
 import unittest
+import xml.etree.ElementTree as ET
 
 from ament_index_python.packages import get_package_share_directory
 
@@ -35,7 +36,6 @@ from launch_testing.util import KeepAliveProc
 
 import psutil
 import pytest
-import xml.etree.ElementTree as ET
 
 
 def get_px4_dir():
@@ -56,7 +56,7 @@ def create_px4_instance(vehicle_id):
     rc_script = os.path.join(px4_dir, 'etc/init.d-posix/rcS')
     print('using rootfs ', rootfs.name)
     seed_rootfs(rootfs.name)
-    model_name = [LaunchConfiguration('vehicle_type'), "_stock_", vehicle_id]
+    model_name = [LaunchConfiguration('vehicle_type'), '_stock_', vehicle_id]
     run_px4 = ExecuteProcess(
         cmd=['px4', '%s/ROMFS/px4fmu_common' % rootfs.name,
              '-s', rc_script,
@@ -83,7 +83,7 @@ def create_px4_instance(vehicle_id):
     # to various troubles. Let's simplify and just treat SDF as
     # regular XML and do an XPath query
     sdf_root = ET.parse(world_sdf_path).getroot()
-    frame_node = sdf_root.find(f'.//frame[@name=\'pad_{vehicle_id}\']')
+    frame_node = sdf_root.find(f'.//frame[@name=\"pad_{vehicle_id}\"]')
     if not frame_node:
         raise ValueError(f'Could not find a frame named pad_{vehicle_id}')
     pose_node = frame_node.find('pose')
@@ -116,12 +116,13 @@ def generate_test_description():
     proc_env['PYTHONUNBUFFERED'] = '1'
 
     world_pkgs = get_package_share_directory('vehicle_gateway_worlds')
+    gtw_models = get_package_share_directory('vehicle_gateway_models')
 
     os.environ['GZ_SIM_RESOURCE_PATH'] = ':' + os.path.join(get_px4_dir(), 'models')
     os.environ['GZ_SIM_RESOURCE_PATH'] += ':' + os.path.join(get_px4_dir(), 'worlds')
     os.environ['GZ_SIM_RESOURCE_PATH'] += ':' + os.path.join(world_pkgs, 'worlds')
-    os.environ['GZ_SIM_RESOURCE_PATH'] += ':' + os.path.join(get_package_share_directory('vehicle_gateway_models'), 'models')
-    os.environ['GZ_SIM_RESOURCE_PATH'] += ':' + os.path.join(get_package_share_directory('vehicle_gateway_models'), 'configs_px4')
+    os.environ['GZ_SIM_RESOURCE_PATH'] += ':' + os.path.join(gtw_models, 'models')
+    os.environ['GZ_SIM_RESOURCE_PATH'] += ':' + os.path.join(gtw_models, 'configs_px4')
 
     if 'SHOW_GZ_GUI' in os.environ and os.environ['SHOW_GZ_GUI']:
         gz_gui_args = ''
