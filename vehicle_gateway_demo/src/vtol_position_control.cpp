@@ -15,12 +15,9 @@
 #include <cmath>
 #include <iostream>
 
-#include <rclcpp/rclcpp.hpp>
-
 #include <pluginlib/class_loader.hpp>
-
+#include <rclcpp/rclcpp.hpp>
 #include <vehicle_gateway_px4/vehicle_gateway_px4.hpp>
-
 #ifdef _WIN32
 #include <Windows.h>
 #else
@@ -54,17 +51,23 @@ public:
     this->gateway_->init(0, nullptr);
   }
 
+  // todo(anyone) move this into the vehicle_gateway interface
   void arm_sync()
   {
-    while (this->gateway_->get_arming_state() != vehicle_gateway::ARMING_STATE::ARMED) {
+    while (this->gateway_->get_arming_state() != vehicle_gateway::ARMING_STATE::ARMED &&
+      rclcpp::ok())
+    {
       this->gateway_->arm();
       usleep(1e5);  // 100 ms
     }
   }
 
+  // todo(anyone) move this into the vehicle_gateway interface
   void disarm_sync()
   {
-    while (this->gateway_->get_arming_state() != vehicle_gateway::ARMING_STATE::STANDBY) {
+    while (this->gateway_->get_arming_state() != vehicle_gateway::ARMING_STATE::STANDBY &&
+      rclcpp::ok())
+    {
       this->gateway_->disarm();
       usleep(1e5);  // 100 ms
     }
@@ -135,7 +138,7 @@ public:
 
   void transition_to_multicopter_sync()
   {
-    while (this->gateway_->get_vtol_state() != vehicle_gateway::VTOL_STATE::MC) {
+    while (this->gateway_->get_vtol_state() != vehicle_gateway::VTOL_STATE::MC && rclcpp::ok()) {
       this->gateway_->transition_to_mc();
       usleep(1e5);  // 100 ms
     }
@@ -143,7 +146,7 @@ public:
 
   void transition_to_fixed_wing_sync()
   {
-    while (this->gateway_->get_vtol_state() != vehicle_gateway::VTOL_STATE::FW) {
+    while (this->gateway_->get_vtol_state() != vehicle_gateway::VTOL_STATE::FW && rclcpp::ok()) {
       this->gateway_->transition_to_fw();
       usleep(1e5);  // 100 ms
     }
@@ -174,7 +177,7 @@ int main(int argc, const char * argv[])
   rclcpp::init(argc, argv);
 
   const auto vg = std::make_shared<VehicleGatewayCpp>();
-  const float TARGET_ATTITUDE = 30.0;
+  const float TARGET_ATTITUDE = 30.0f;
 
   cout << "Arming..." << endl;
   vg->arm_sync();
