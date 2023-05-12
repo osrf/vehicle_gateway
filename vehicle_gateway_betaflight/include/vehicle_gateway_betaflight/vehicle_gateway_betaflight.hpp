@@ -107,7 +107,8 @@ public:
   void go_to_latlon(double lat, double lon, float alt_amsl) override;
 
   /// Documentation inherited
-  void go_to_latlon_sync(double lat, double lon, double alt,
+  void go_to_latlon_sync(
+    double lat, double lon, double alt,
     double latlon_threshold = 0.5, double alt_threshold = 0.5) override;
 
   /// Documentation inherited
@@ -120,7 +121,8 @@ public:
     double yaw = std::numeric_limits<float>::quiet_NaN(),
     double airspeeed = 15.0,
     double distance_threshold = 10.0,
-    vehicle_gateway::CONTROLLER_TYPE controller_type = vehicle_gateway::CONTROLLER_TYPE::POSITION) override;
+    vehicle_gateway::CONTROLLER_TYPE controller_type = vehicle_gateway::CONTROLLER_TYPE::POSITION)
+  override;
 
   /// Documentation inherited
   void set_local_velocity_setpoint(float vx, float vy, float vz, float yaw_rate = 0.0f) override;

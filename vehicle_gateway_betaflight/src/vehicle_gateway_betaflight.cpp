@@ -339,7 +339,7 @@ void VehicleGatewayBetaflight::go_to_latlon(
 
 void VehicleGatewayBetaflight::go_to_latlon_sync(
   double /*lat*/, double /*lon*/, double /*alt*/, double /*latlon_threshold*/,
-  double /*alt_threshold*/){ }
+  double /*alt_threshold*/) {}
 
 std::vector<double> VehicleGatewayBetaflight::get_latlon()
 {

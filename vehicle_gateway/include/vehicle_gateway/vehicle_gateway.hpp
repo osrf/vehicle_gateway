@@ -203,7 +203,8 @@ public:
   /// \param[in] lat Desired latitude coordinate
   /// \param[in] lon Desired longitude coordinate
   /// \param[in] alt_amsl Desired altitude above mean sea level (AMSL) in meters
-  virtual void go_to_latlon_sync(double lat, double lon, double alt,
+  virtual void go_to_latlon_sync(
+    double lat, double lon, double alt,
     double latlon_threshold = 0.5, double alt_threshold = 0.5) = 0;
 
   /// Set local position
@@ -225,7 +226,8 @@ public:
     double yaw = std::numeric_limits<float>::quiet_NaN(),
     double airspeeed = 15.0,
     double distance_threshold = 10.0,
-    vehicle_gateway::CONTROLLER_TYPE controller_type = vehicle_gateway::CONTROLLER_TYPE::POSITION) = 0;
+    vehicle_gateway::CONTROLLER_TYPE controller_type = vehicle_gateway::CONTROLLER_TYPE::POSITION) =
+  0;
 
   /// Set ground speed in m/s
   /// \param[in] speed Desired speed in m/s

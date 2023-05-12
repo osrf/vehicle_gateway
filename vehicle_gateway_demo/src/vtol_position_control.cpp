@@ -77,7 +77,9 @@ int main(int argc, const char * argv[])
   vg->gateway_->takeoff();
   sleep(1);
 
-  vg->gateway_->go_to_latlon_sync(home_position[0], home_position[1], home_position[2] + TARGET_ATTITUDE);
+  vg->gateway_->go_to_latlon_sync(
+    home_position[0], home_position[1],
+    home_position[2] + TARGET_ATTITUDE);
 
   vg->gateway_->transition_to_fw_sync();
 
@@ -109,7 +111,9 @@ int main(int argc, const char * argv[])
   cout << "VTOL state: " << vg->gateway_->get_vtol_state() << endl;
   sleep(1);
 
-  vg->gateway_->go_to_latlon_sync(home_position[0], home_position[1], home_position[2] + TARGET_ATTITUDE);
+  vg->gateway_->go_to_latlon_sync(
+    home_position[0], home_position[1],
+    home_position[2] + TARGET_ATTITUDE);
 
   cout << "Landing..." << endl;
   vg->gateway_->land();
