@@ -23,8 +23,6 @@
 #include <unistd.h>
 #endif
 
-using namespace std;
-
 class VehicleGatewayCpp
 {
 public:
@@ -63,7 +61,7 @@ int main(int argc, const char * argv[])
   const auto vg = std::make_shared<VehicleGatewayCpp>();
   const float TARGET_ATTITUDE = 30.0f;
 
-  cout << "Arming..." << endl;
+  std::cout << "Arming..." << std::endl;
   vg->gateway_->arm_sync();
   sleep(2);
 
@@ -71,9 +69,9 @@ int main(int argc, const char * argv[])
   if (home_position.size() != 3) {
     throw std::runtime_error("home_position should have three elements: lat, lon, alt");
   }
-  cout << "Home altitude: " << home_position[2] << endl;
+  std::cout << "Home altitude: " << home_position[2] << std::endl;
 
-  cout << "Takeoff!" << endl;
+  std::cout << "Takeoff!" << std::endl;
   vg->gateway_->takeoff();
   sleep(1);
 
@@ -83,46 +81,46 @@ int main(int argc, const char * argv[])
 
   vg->gateway_->transition_to_fw_sync();
 
-  cout << "Begin transitioning to Offboard control..." << endl;
+  std::cout << "Begin transitioning to Offboard control..." << std::endl;
   vg->gateway_->transition_to_offboard_sync();
 
-  cout << "Enabled position controller" << endl;
+  std::cout << "Enabled position controller" << std::endl;
   auto target_north = 200.0,
     target_east = 0.0;
 
-  cout << "Flying to first waypoint..." << endl;
+  std::cout << "Flying to first waypoint..." << std::endl;
   vg->gateway_->offboard_mode_go_to_local_setpoint_sync(
     target_north, target_east, -TARGET_ATTITUDE,
-    numeric_limits<float>::quiet_NaN(), 15);
-  cout << "Flying to second waypoint..." << endl;
+    std::numeric_limits<float>::quiet_NaN(), 15);
+  std::cout << "Flying to second waypoint..." << std::endl;
   vg->gateway_->offboard_mode_go_to_local_setpoint_sync(
     -target_north, target_east, -TARGET_ATTITUDE,
-    numeric_limits<float>::quiet_NaN(), 20);
-  cout << "Flying home..." << endl;
+    std::numeric_limits<float>::quiet_NaN(), 20);
+  std::cout << "Flying home..." << std::endl;
   vg->gateway_->offboard_mode_go_to_local_setpoint_sync(
     0, 0, -TARGET_ATTITUDE,
-    numeric_limits<float>::quiet_NaN(), 20);
+    std::numeric_limits<float>::quiet_NaN(), 20);
 
-  cout << "Switching back to hold mode..." << endl;
+  std::cout << "Switching back to hold mode..." << std::endl;
   vg->gateway_->set_onboard_mode();
 
-  cout << "Transitioning to multicopter..." << endl;
+  std::cout << "Transitioning to multicopter..." << std::endl;
   vg->gateway_->transition_to_mc_sync();
-  cout << "VTOL state: " << vg->gateway_->get_vtol_state() << endl;
+  std::cout << "VTOL state: " << vg->gateway_->get_vtol_state() << std::endl;
   sleep(1);
 
   vg->gateway_->go_to_latlon_sync(
     home_position[0], home_position[1],
     home_position[2] + TARGET_ATTITUDE);
 
-  cout << "Landing..." << endl;
+  std::cout << "Landing..." << std::endl;
   vg->gateway_->land();
 
-  cout << "Disarming..." << endl;
+  std::cout << "Disarming..." << std::endl;
   vg->gateway_->disarm_sync();
 
   vg->destroy();
-  cout << "Demo complete." << endl;
+  std::cout << "Demo complete." << std::endl;
 
   rclcpp::shutdown();
   return 0;

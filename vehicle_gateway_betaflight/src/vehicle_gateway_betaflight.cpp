@@ -213,7 +213,7 @@ void VehicleGatewayBetaflight::arm()
 
 void VehicleGatewayBetaflight::arm_sync()
 {
-  // TODO
+  // TODO(anyone)
 }
 
 void VehicleGatewayBetaflight::disarm()
@@ -223,7 +223,7 @@ void VehicleGatewayBetaflight::disarm()
 
 void VehicleGatewayBetaflight::disarm_sync()
 {
-  // TODO
+  // TODO(anyone)
 }
 
 bool VehicleGatewayBetaflight::set_motors(std::vector<uint16_t> motor_values)

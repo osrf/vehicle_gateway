@@ -732,7 +732,7 @@ void VehicleGatewayPX4::offboard_mode_go_to_local_setpoint_sync(
       break;
     }
 
-    usleep(1e5); // 100 ms
+    usleep(1e5);  // 100 ms
   }
 }
 

@@ -17,8 +17,9 @@
 
 #include "vehicle_gateway/vehicle_gateway.hpp"
 
-#include <vector>
+#include <limits>
 #include <memory>
+#include <vector>
 
 #include <sensor_msgs/msg/imu.hpp>
 #include <sensor_msgs/msg/magnetic_field.hpp>

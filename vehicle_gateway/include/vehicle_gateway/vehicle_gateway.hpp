@@ -17,6 +17,7 @@
 
 #include <cmath>
 #include <cstdint>
+#include <limits>
 #include <vector>
 
 namespace vehicle_gateway
