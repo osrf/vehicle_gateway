@@ -23,6 +23,20 @@
 namespace vehicle_gateway_px4
 {
 
+const double EARTH_RADIUS = 6378100;  // meters
+
+double calc_distance_latlon(double lat_1, double lon_1, double lat_2, double lon_2)
+{
+  // This uses a planar approximation, not the real trigonometry. This
+  // approximation is just fine for short distances, which is all we're
+  // currently considering.
+
+  double dx = (EARTH_RADIUS * M_PI / 180) * (lon_2 - lon_1) * cos(lat_1);
+  double dy = (EARTH_RADIUS * M_PI / 180) * (lat_2 - lat_1);
+
+  return sqrt(dx * dx + dy * dy);
+}
+
 void VehicleGatewayPX4::set_vehicle_id(unsigned int _vehicle_id)
 {
   this->vehicle_id_ = _vehicle_id;
@@ -442,6 +456,16 @@ void VehicleGatewayPX4::arm()
     1.0f);
 }
 
+void VehicleGatewayPX4::arm_sync()
+{
+  while (get_arming_state() != vehicle_gateway::ARMING_STATE::ARMED &&
+    rclcpp::ok())
+  {
+    this->arm();
+    usleep(1e5);  // 100 ms
+  }
+}
+
 void VehicleGatewayPX4::disarm()
 {
   this->send_command(
@@ -453,6 +477,16 @@ void VehicleGatewayPX4::disarm()
     this->confirmation_,
     this->from_external_,
     0.0f);
+}
+
+void VehicleGatewayPX4::disarm_sync()
+{
+  while (get_arming_state() != vehicle_gateway::ARMING_STATE::STANDBY &&
+    rclcpp::ok())
+  {
+    this->disarm();
+    usleep(1e5);  // 100 ms
+  }
 }
 
 void VehicleGatewayPX4::set_offboard_mode()
@@ -551,6 +585,14 @@ void VehicleGatewayPX4::transition_to_fw()
     1.0f);  // Force immediate transition to the specified MAV_VTOL_STATE
 }
 
+void VehicleGatewayPX4::transition_to_mc_sync()
+{
+  while (this->get_vtol_state() != vehicle_gateway::VTOL_STATE::MC && rclcpp::ok()) {
+    this->transition_to_mc();
+    usleep(1e5);  // 100 ms
+  }
+}
+
 void VehicleGatewayPX4::transition_to_mc()
 {
   this->send_command(
@@ -564,6 +606,14 @@ void VehicleGatewayPX4::transition_to_mc()
     this->from_external_,
     vehicle_gateway::VTOL_STATE::MC,  // The target VTOL state
     0.0f);  // don't force immediate transition; allow PX4 to slow down first
+}
+
+void VehicleGatewayPX4::transition_to_fw_sync()
+{
+  while (get_vtol_state() != vehicle_gateway::VTOL_STATE::FW && rclcpp::ok()) {
+    transition_to_fw();
+    usleep(1e5);  // 100 ms
+  }
 }
 
 void VehicleGatewayPX4::go_to_latlon(double lat, double lon, float alt_amsl)
@@ -586,6 +636,28 @@ void VehicleGatewayPX4::go_to_latlon(double lat, double lon, float alt_amsl)
     lon,    // longitude
     alt_amsl  // altitude above mean sea level (AMSL) (m)
   );
+}
+
+void VehicleGatewayPX4::go_to_latlon_sync(
+  double lat, double lon, double alt, double latlon_threshold,
+  double alt_threshold)
+{
+  go_to_latlon(lat, lon, alt);
+  while (true) {
+    const auto current_latlon = get_latlon();
+    if (current_latlon.size() != 3) {
+      throw std::runtime_error("current_latlon should have three elements: lat, lon, alt");
+    }
+    const auto current_lat = current_latlon[0];
+    const auto current_lon = current_latlon[1];
+    const auto current_alt = current_latlon[2];
+    const auto latlon_distance = calc_distance_latlon(lat, lon, current_lat, current_lon);
+    const auto alt_distance = sqrt(pow(alt - current_alt, 2));
+    if (latlon_distance < latlon_threshold && alt_distance < alt_threshold) {
+      break;
+    }
+    usleep(5e5);  // 500 ms
+  }
 }
 
 void VehicleGatewayPX4::set_local_velocity_setpoint(float vx, float vy, float vz, float yaw_rate)
@@ -635,6 +707,35 @@ void VehicleGatewayPX4::set_local_position_setpoint(float x, float y, float z, f
   this->vehicle_trajectory_setpoint_pub_->publish(msg);
 }
 
+void VehicleGatewayPX4::offboard_mode_go_to_local_setpoint_sync(
+  double x,
+  double y,
+  double alt,
+  double yaw,
+  double airspeeed,
+  double distance_threshold,
+  vehicle_gateway::CONTROLLER_TYPE controller_type)
+{
+  while (true) {
+    set_offboard_control_mode(controller_type);
+    set_local_position_setpoint(x, y, alt, yaw);
+    set_airspeed(airspeeed);
+
+    float current_ned_x, current_ned_y, current_ned_z;
+    get_local_position(current_ned_x, current_ned_y, current_ned_z);
+    const auto dx = x - current_ned_x;
+    const auto dy = y - current_ned_y;
+    const auto dalt = alt - current_ned_z;
+    const auto distance = sqrt(pow(dx, 2) + pow(dy, 2) + pow(dalt, 2));
+
+    if (distance < distance_threshold) {
+      break;
+    }
+
+    usleep(1e5); // 100 ms
+  }
+}
+
 void VehicleGatewayPX4::set_ground_speed(float speed)
 {
   this->set_speed(speed, true);
@@ -660,6 +761,20 @@ void VehicleGatewayPX4::set_speed(float speed, bool is_ground_speed)
     speed_type,  // Speed type (0=Airspeed, 1=Ground Speed, 2=Climb Speed, 3=Descent Speed)
     speed,       // Speed (-1 indicates no change, -2 indicates return to default vehicle speed)
     -1.0f);      // Throttle (-1 indicates no change, -2 indicates return to default throttle value)
+}
+
+void VehicleGatewayPX4::transition_to_offboard_sync()
+{
+  for (int i = 0; i < 20; i++) {
+    set_local_position_setpoint(
+      0.0,
+      0.0,
+      std::numeric_limits<float>::quiet_NaN(),
+      std::numeric_limits<float>::quiet_NaN());
+    set_offboard_control_mode(vehicle_gateway::CONTROLLER_TYPE::POSITION);
+    usleep(1e5);  // 100 ms
+  }
+  set_offboard_mode();
 }
 
 void VehicleGatewayPX4::set_offboard_control_mode(vehicle_gateway::CONTROLLER_TYPE type)

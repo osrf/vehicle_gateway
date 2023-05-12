@@ -53,7 +53,13 @@ public:
   void arm() override;
 
   /// Documentation inherited
+  void arm_sync() override;
+
+  /// Documentation inherited
   void disarm() override;
+
+  /// Documentation inherited
+  void disarm_sync() override;
 
   /// Documentation inherited
   vehicle_gateway::ARMING_STATE get_arming_state() override;
@@ -89,13 +95,32 @@ public:
   void transition_to_fw() override;
 
   /// Documentation inherited
+  void transition_to_fw_sync() override;
+
+  /// Documentation inherited
   void transition_to_mc() override;
+
+  /// Documentation inherited
+  void transition_to_mc_sync() override;
 
   /// Document inherited
   void go_to_latlon(double lat, double lon, float alt_amsl) override;
 
   /// Documentation inherited
+  void go_to_latlon_sync(double lat, double lon, double alt,
+    double latlon_threshold = 0.5, double alt_threshold = 0.5) override;
+
+  /// Documentation inherited
   void set_local_position_setpoint(float x, float y, float z, float yaw) override;
+
+  void offboard_mode_go_to_local_setpoint_sync(
+    double x,
+    double y,
+    double alt,
+    double yaw = std::numeric_limits<float>::quiet_NaN(),
+    double airspeeed = 15.0,
+    double distance_threshold = 10.0,
+    vehicle_gateway::CONTROLLER_TYPE controller_type = vehicle_gateway::CONTROLLER_TYPE::POSITION) override;
 
   /// Documentation inherited
   void set_local_velocity_setpoint(float vx, float vy, float vz, float yaw_rate = 0.0f) override;
@@ -105,6 +130,9 @@ public:
 
   /// Documentation inherited
   void set_offboard_mode() override;
+
+  /// Documentation inherited
+  void transition_to_offboard_sync() override;
 
   /// Documentation inherited
   void set_onboard_mode() override;
