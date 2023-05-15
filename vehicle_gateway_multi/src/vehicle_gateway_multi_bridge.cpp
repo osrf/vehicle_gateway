@@ -53,7 +53,7 @@ int main(int argc, char ** argv)
     // time of telemetry data
     j["sec"] = 42;
     j["nsec"] = 43;
-    // telemetry: NED position, add other stuff in future?
+    // telemetry: north/east/down position, add other stuff in future?
     j["east"] = 1.234;
     j["north"] = 2.345;
     j["down"] = -3.456;
