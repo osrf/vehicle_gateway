@@ -216,6 +216,7 @@ def generate_launch_description():
                          '-d'],
                     cwd=px4_dir,
                     additional_env={'PX4_SYS_AUTOSTART': str(magic_number[vehicle['vehicle_type']]),
+                                    'ROS_DOMAIN_ID': str(vehicle['dds_domain_id']),
                                     'PX4_GZ_MODEL_NAME': model_name},
                     output='screen')
 
