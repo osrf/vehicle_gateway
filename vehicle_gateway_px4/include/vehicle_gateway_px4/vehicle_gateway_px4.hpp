@@ -19,6 +19,7 @@
 
 #include <chrono>
 #include <cstdint>
+#include <limits>
 #include <memory>
 #include <thread>
 #include <vector>
