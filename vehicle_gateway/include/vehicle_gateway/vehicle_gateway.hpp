@@ -15,7 +15,9 @@
 #ifndef VEHICLE_GATEWAY__VEHICLE_GATEWAY_HPP_
 #define VEHICLE_GATEWAY__VEHICLE_GATEWAY_HPP_
 
+#include <cmath>
 #include <cstdint>
+#include <limits>
 #include <vector>
 
 namespace vehicle_gateway
@@ -133,8 +135,14 @@ public:
   /// Arm vehicle
   virtual void arm() = 0;
 
+  /// Arm vehicle (blocking method)
+  virtual void arm_sync() = 0;
+
   /// Disarm vehicle
   virtual void disarm() = 0;
+
+  /// Disarm vehicle (blocking method)
+  virtual void disarm_sync() = 0;
 
   /// Get the arm state
   /// \return Arming state of the robot
@@ -177,8 +185,14 @@ public:
   /// Transition to fixed wings
   virtual void transition_to_fw() = 0;
 
+  /// Transition to fixed wings (blocking method)
+  virtual void transition_to_fw_sync() = 0;
+
   /// Transition to multicopter
   virtual void transition_to_mc() = 0;
+
+  /// Transition to multicopter (blocking method)
+  virtual void transition_to_mc_sync() = 0;
 
   /// Go to latitude and longitude coordinates
   /// \param[in] lat Desired latitude coordinate
@@ -186,12 +200,35 @@ public:
   /// \param[in] alt_amsl Desired altitude above mean sea level (AMSL) in meters
   virtual void go_to_latlon(double lat, double lon, float alt_amsl) = 0;
 
+  /// Go to latitude and longitude coordinates
+  /// \param[in] lat Desired latitude coordinate
+  /// \param[in] lon Desired longitude coordinate
+  /// \param[in] alt_amsl Desired altitude above mean sea level (AMSL) in meters
+  virtual void go_to_latlon_sync(
+    double lat, double lon, double alt,
+    double latlon_threshold = 0.5, double alt_threshold = 0.5) = 0;
+
   /// Set local position
   /// \param[in] x Desired x position
   /// \param[in] y Desired y position
   /// \param[in] z Desired z position
   /// \param[in] yaw Desired yaw position
   virtual void set_local_position_setpoint(float x, float y, float z, float yaw) = 0;
+
+  /// Set local position
+  /// \param[in] x Desired x position
+  /// \param[in] y Desired y position
+  /// \param[in] z Desired z position
+  /// \param[in] yaw Desired yaw position
+  virtual void offboard_mode_go_to_local_setpoint_sync(
+    double x,
+    double y,
+    double alt,
+    double yaw = std::numeric_limits<float>::quiet_NaN(),
+    double airspeeed = 15.0,
+    double distance_threshold = 10.0,
+    vehicle_gateway::CONTROLLER_TYPE controller_type = vehicle_gateway::CONTROLLER_TYPE::POSITION) =
+  0;
 
   /// Set ground speed in m/s
   /// \param[in] speed Desired speed in m/s
@@ -210,6 +247,9 @@ public:
   /// Set controller type
   /// \param[in] type Controller type
   virtual void set_offboard_control_mode(CONTROLLER_TYPE type) = 0;
+
+  /// Set offboard mode (blocking method)
+  virtual void transition_to_offboard_sync() = 0;
 
   /// Set offboard mode
   virtual void set_offboard_mode() = 0;

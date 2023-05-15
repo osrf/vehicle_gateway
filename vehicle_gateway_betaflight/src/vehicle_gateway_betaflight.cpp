@@ -211,11 +211,20 @@ void VehicleGatewayBetaflight::arm()
   this->arm_ = 1900;
 }
 
+void VehicleGatewayBetaflight::arm_sync()
+{
+  // TODO(anyone)
+}
+
 void VehicleGatewayBetaflight::disarm()
 {
   this->arm_ = 1000;
 }
 
+void VehicleGatewayBetaflight::disarm_sync()
+{
+  // TODO(anyone)
+}
 
 bool VehicleGatewayBetaflight::set_motors(std::vector<uint16_t> motor_values)
 {
@@ -284,10 +293,19 @@ void VehicleGatewayBetaflight::go_to_waypoint() {}
 
 void VehicleGatewayBetaflight::transition_to_fw() {}
 
+void VehicleGatewayBetaflight::transition_to_fw_sync() {}
+
 void VehicleGatewayBetaflight::transition_to_mc() {}
+
+void VehicleGatewayBetaflight::transition_to_mc_sync() {}
 
 void VehicleGatewayBetaflight::set_local_position_setpoint(
   float /*x*/, float /*y*/, float /*z*/, float /*yaw*/) {}
+
+void VehicleGatewayBetaflight::offboard_mode_go_to_local_setpoint_sync(
+  double /*x*/, double /*y*/, double /*z*/, double /*yaw*/,
+  double /*airspeeed*/, double /*distance_threshold*/,
+  vehicle_gateway::CONTROLLER_TYPE /*controller_type*/) {}
 
 /// Documentation inherited
 void VehicleGatewayBetaflight::set_local_velocity_setpoint(
@@ -295,6 +313,8 @@ void VehicleGatewayBetaflight::set_local_velocity_setpoint(
 
 void VehicleGatewayBetaflight::set_offboard_control_mode(
   vehicle_gateway::CONTROLLER_TYPE /*type*/) {}
+
+void VehicleGatewayBetaflight::transition_to_offboard_sync() {}
 
 void VehicleGatewayBetaflight::set_offboard_mode() {}
 
@@ -316,6 +336,10 @@ float VehicleGatewayBetaflight::get_airspeed()
 
 void VehicleGatewayBetaflight::go_to_latlon(
   double /*lat*/, double /*lon*/, float /*alt_amsl*/) {}
+
+void VehicleGatewayBetaflight::go_to_latlon_sync(
+  double /*lat*/, double /*lon*/, double /*alt*/, double /*latlon_threshold*/,
+  double /*alt_threshold*/) {}
 
 std::vector<double> VehicleGatewayBetaflight::get_latlon()
 {
