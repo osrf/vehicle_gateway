@@ -1,0 +1,12 @@
+- vehicle_id: 1
+  frame_name: pad_1
+  vehicle_type: x500
+  sensor_config: stock
+  model_pose: ""
+  dds_domain_id: 1
+- vehicle_id: 2
+  frame_name: pad_2
+  vehicle_type: standard_vtol
+  sensor_config: stock
+  model_pose: ""
+  dds_domain_id: 3
