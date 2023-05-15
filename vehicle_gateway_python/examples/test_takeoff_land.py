@@ -14,10 +14,12 @@
 
 import sys
 import time
+import threading
+import rclpy
 
 import vehicle_gateway
 
-px4_gateway = vehicle_gateway.init(args=sys.argv, plugin_type='px4', vehicle_id=0)
+px4_gateway = vehicle_gateway.init(args=sys.argv, plugin_type='px4', vehicle_id=int(sys.argv[1]))
 
 print('Arming...')
 px4_gateway.arm_sync()
