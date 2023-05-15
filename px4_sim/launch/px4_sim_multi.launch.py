@@ -196,7 +196,7 @@ def generate_launch_description():
     ])
 
     magic_number = {"x500": 4001, "rc_cessna": 4003, "standard_vtol": 4004}
-    with open(os.environ['MULTIROBOT_CONFIG'], "r") as stream:
+    with open(os.environ['MULTIROBOT_CONFIG']) as stream:
         try:
             yaml_data = yaml.safe_load(stream)
             for vehicle in yaml_data:
