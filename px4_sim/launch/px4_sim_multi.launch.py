@@ -16,17 +16,13 @@ from ament_index_python.packages import get_package_share_directory
 from distutils.dir_util import copy_tree
 from launch import LaunchDescription, Substitution, SomeSubstitutionsType, LaunchContext
 from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription
-from launch.actions import RegisterEventHandler, SetEnvironmentVariable
 from launch.conditions import IfCondition
-from launch.event_handlers import OnProcessExit
 from launch_ros.actions import Node
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 import tempfile
 import os
-from launch.substitutions import LaunchConfiguration, PythonExpression
-from subprocess import Popen, PIPE
-from shlex import split
+from launch.substitutions import LaunchConfiguration
 from typing import List
 import yaml
 import xml.etree.ElementTree as ET
@@ -155,9 +151,6 @@ def generate_launch_description():
     os.environ['GZ_SIM_RESOURCE_PATH'] += ':' + os.path.join(world_pkgs, 'worlds')
     os.environ['GZ_SIM_RESOURCE_PATH'] += ':' + os.path.join(gateway_models_dir, 'models')
     os.environ['GZ_SIM_RESOURCE_PATH'] += ':' + os.path.join(gateway_models_dir, 'configs_px4')
-
-
-    wait_spawn = ExecuteProcess(cmd=["sleep", "5"])
 
     micro_ros_agent = Node(
         package='micro_ros_agent',
