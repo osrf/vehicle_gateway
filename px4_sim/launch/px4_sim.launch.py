@@ -132,6 +132,12 @@ def generate_launch_description():
         default_value=drone_id,
         description='Set the vehicle ID, default=0')
 
+    dds_domain_id = LaunchConfiguration('dds_domain_id', default='')
+    dds_domain_id_arg = DeclareLaunchArgument(
+        'dds_domain_id',
+        default_value=dds_domain_id,
+        description='Set DDS_DOMAIN_ID')
+
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
     use_sim_time_arg = DeclareLaunchArgument(
         'use_sim_time',
@@ -223,6 +229,7 @@ def generate_launch_description():
              '-i', drone_id,
              '-d'],
         cwd=px4_dir,
+        additional_env={'ROS_DOMAIN_ID': LaunchConfiguration('dds_domain_id')},
         output='screen')
 
     wait_spawn = ExecuteProcess(cmd=["sleep", "5"])
@@ -287,6 +294,7 @@ def generate_launch_description():
     ld = LaunchDescription([
         # Launch gazebo environment
         use_sim_time_arg,
+        dds_domain_id_arg,
         drone_id_arg,
         world_name_arg,
         drone_type_args,
