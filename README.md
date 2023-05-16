@@ -148,17 +148,19 @@ Create a file called `multirobot_config.yaml`:
   vehicle_type: x500
   sensor_config: stock
   model_pose: ""
+  dds_domain_id: ""
 - vehicle_id: 2
   frame_name: pad_2
   vehicle_type: standard_vtol
   sensor_config: stock
   model_pose: ""
+  dds_domain_id: ""
 ```
 
 Export and run the script `px4_sim_multi.launch.py` with the following commands:
 
 ```bash
-MULTIROBOT_CONFIG=<path_to_config_file>/multirobot_config.yaml
+export MULTIROBOT_CONFIG=<path_to_config_file>/multirobot_config.yaml
 ros2 launch px4_sim px4_sim_multi.launch.py
 ```
 
