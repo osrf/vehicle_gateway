@@ -79,16 +79,32 @@
       <pose>0.0 0.0 0.5 0.0 0.0 0.0</pose>
     </frame>
     <frame name="pad_2">
-      <pose>2.0 0.0 0.5 0.0 0.0 0.0</pose>
+      <pose>4.0 0.0 0.5 0.0 0.0 0.0</pose>
     </frame>
     <frame name="pad_3">
-      <pose>-2.0 0.0 0.5 0.0 0.0 0.0</pose>
+      <pose>-4.0 0.0 0.5 0.0 0.0 0.0</pose>
     </frame>
     <frame name="pad_4">
-      <pose>0.0 2.0 0.5 0.0 0.0 0.0</pose>
+      <pose>0.0 6.0 0.5 0.0 0.0 0.0</pose>
     </frame>
     <frame name="pad_5">
-      <pose>0.0 -2.0 0.5 0.0 0.0 0.0</pose>
+      <pose>0.0 -6.0 0.5 0.0 0.0 0.0</pose>
+    </frame>
+
+    <frame name="pad_6">
+      <pose>4.0 6.0 0.5 0.0 0.0 0.0</pose>
+    </frame>
+    <frame name="pad_7">
+      <pose>-4.0 6.0 0.5 0.0 0.0 0.0</pose>
+    </frame>
+    <frame name="pad_8">
+      <pose>4.0 -6.0 0.5 0.0 0.0 0.0</pose>
+    </frame>
+    <frame name="pad_9">
+      <pose>-4.0 -6.0 0.5 0.0 0.0 0.0</pose>
+    </frame>
+    <frame name="pad_10">
+      <pose>-4.0 -10.0 0.5 0.0 0.0 0.0</pose>
     </frame>
 
   </world>
