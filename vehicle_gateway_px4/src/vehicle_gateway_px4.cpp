@@ -20,6 +20,12 @@
 #include "px4_msgs/msg/vehicle_local_position_setpoint.hpp"
 #include "tf2/utils.h"
 
+#ifdef _WIN32
+#include <Windows.h>
+#else
+#include <unistd.h>
+#endif
+
 namespace vehicle_gateway_px4
 {
 
