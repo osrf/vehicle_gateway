@@ -189,35 +189,38 @@ def generate_test_description():
 class TestFixture(unittest.TestCase):
 
     def test_arm(self, launch_service, proc_info, proc_output):
-        for i in range(1, 3):
-            proc_output.assertWaitFor(f'INFO  [px4] instance: {i}',
-                                      timeout=100, stream='stdout')
-            proc_output.assertWaitFor('Ready for takeoff!',
-                                      timeout=100, stream='stdout')
+        try:
+            for i in range(1, 3):
+                proc_output.assertWaitFor(f'INFO  [px4] instance: {i}',
+                                          timeout=100, stream='stdout')
+                proc_output.assertWaitFor('Ready for takeoff!',
+                                          timeout=100, stream='stdout')
 
-        proc_action = Node(
-            package='vehicle_gateway_integration_test',
-            executable=LaunchConfiguration('script_test'),
-            output='screen'
-        )
+            proc_action = Node(
+                package='vehicle_gateway_integration_test',
+                executable=LaunchConfiguration('script_test'),
+                output='screen'
+            )
 
-        with launch_testing.tools.launch_process(
-            launch_service, proc_action, proc_info, proc_output
-        ):
-            proc_info.assertWaitForShutdown(process=proc_action, timeout=300)
-            launch_testing.asserts.assertExitCodes(proc_info, process=proc_action,
-                                                   allowable_exit_codes=[0])
-
-        for i in range(1, 3):
-            # shutdown px4
-            p = subprocess.Popen(split(f'px4-shutdown --instance {i}'),
-                                 stdout=subprocess.PIPE,
-                                 stderr=subprocess.PIPE)
-            p.wait()
-        for proc in psutil.process_iter():
-            # check whether the process name matches
-            if proc.name() == 'ruby' or proc.name() == 'micro_ros_agent':
-                proc.kill()
+            with launch_testing.tools.launch_process(
+                launch_service, proc_action, proc_info, proc_output
+            ):
+                proc_info.assertWaitForShutdown(process=proc_action, timeout=300)
+                launch_testing.asserts.assertExitCodes(proc_info, process=proc_action,
+                                                       allowable_exit_codes=[0])
+        except AssertionError as e:
+            print(e.what())
+        finally:
+            for i in range(1, 3):
+                # shutdown px4
+                p = subprocess.Popen(split(f'px4-shutdown --instance {i}'),
+                                     stdout=subprocess.PIPE,
+                                     stderr=subprocess.PIPE)
+                p.wait()
+            for proc in psutil.process_iter():
+                # check whether the process name matches
+                if proc.name() == 'ruby' or proc.name() == 'micro_ros_agent':
+                    proc.kill()
 
 
 # These tests are run after the processes in generate_test_description() have shutdown.
