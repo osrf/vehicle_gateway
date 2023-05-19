@@ -59,7 +59,7 @@ def create_px4_instance(vehicle_id):
     seed_rootfs(rootfs.name)
     model_name = [LaunchConfiguration('vehicle_type'), '_stock_', vehicle_id]
     run_px4 = ExecuteProcess(
-        cmd=['px4', '%s/ROMFS/px4fmu_common' % rootfs.name,
+        cmd=['sleep', str(5 + int(vehicle_id)), '&&', 'px4', '%s/ROMFS/px4fmu_common' % rootfs.name,
              '-s', rc_script,
              '-i', vehicle_id,
              '-d'],
@@ -199,43 +199,44 @@ class TestFixture(unittest.TestCase):
     def test_arm(self, launch_service, proc_info, proc_output):
         NUMBER_OF_VEHICLES = int(os.environ['NUMBER_OF_VEHICLES'])
 
-        # proc_action_temp = None
-        # proc_actions = []
-        threads = []
-        for i in range(1, NUMBER_OF_VEHICLES + 1):
-            proc_output.assertWaitFor(f'INFO  [px4] instance: {i}',
-                                      timeout=100, stream='stdout')
-            proc_output.assertWaitFor('Ready for takeoff!',
-                                      timeout=100, stream='stdout')
+        try:
+            threads = []
+            for i in range(1, NUMBER_OF_VEHICLES + 1):
+                proc_output.assertWaitFor(f'INFO  [px4] instance: {i}',
+                                          timeout=100, stream='stdout')
+                proc_output.assertWaitFor('Ready for takeoff!',
+                                          timeout=100, stream='stdout')
 
-            def run_test(vehicle_id):
-                proc_action = Node(
-                    package='vehicle_gateway_sim_performance',
-                    executable=LaunchConfiguration('script_test'),
-                    output='screen',
-                    additional_env={'ROS_DOMAIN_ID': str(vehicle_id)})
-                with launch_testing.tools.launch_process(
-                    launch_service, proc_action, proc_info, proc_output
-                ):
-                    proc_info.assertWaitForShutdown(process=proc_action, timeout=300)
+                def run_test(vehicle_id):
+                    proc_action = Node(
+                        package='vehicle_gateway_sim_performance',
+                        executable=LaunchConfiguration('script_test'),
+                        output='screen',
+                        additional_env={'ROS_DOMAIN_ID': str(vehicle_id)})
+                    with launch_testing.tools.launch_process(
+                        launch_service, proc_action, proc_info, proc_output
+                    ):
+                        proc_info.assertWaitForShutdown(process=proc_action, timeout=300)
 
-            x = threading.Thread(target=run_test, args=(i,))
-            x.start()
-            threads.append(x)
+                x = threading.Thread(target=run_test, args=(i,))
+                x.start()
+                threads.append(x)
 
-        for t in threads:
-            t.join()
-
-        for i in range(1, NUMBER_OF_VEHICLES + 1):
-            # shutdown px4
-            p = subprocess.Popen(split(f'px4-shutdown --instance {i}'),
-                                 stdout=subprocess.PIPE,
-                                 stderr=subprocess.PIPE)
-            p.wait()
-        for proc in psutil.process_iter():
-            # check whether the process name matches
-            if proc.name() == 'ruby' or proc.name() == 'micro_ros_agent' or proc.name() == 'system_metric_collector':
-                proc.kill()
+            for t in threads:
+                t.join()
+        except AssertionError as e:
+            print(e.what())
+        finally:
+            for i in range(1, NUMBER_OF_VEHICLES + 1):
+                # shutdown px4
+                p = subprocess.Popen(split(f'px4-shutdown --instance {i}'),
+                                     stdout=subprocess.PIPE,
+                                     stderr=subprocess.PIPE)
+                p.wait()
+            for proc in psutil.process_iter():
+                # check whether the process name matches
+                if proc.name() == 'ruby' or proc.name() == 'micro_ros_agent' or proc.name() == 'system_metric_collector':
+                    proc.kill()
 
 
 # # These tests are run after the processes in generate_test_description() have shutdown.

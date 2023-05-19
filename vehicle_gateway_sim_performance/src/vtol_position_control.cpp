@@ -67,7 +67,7 @@ void position_control(int vehicle_id)
 
   const float TARGET_ATTITUDE = 30.0f + vehicle_id * 5;
 
-  std::cout << "Arming..." << std::endl;
+  std::cout << "Arming... " << vehicle_id << std::endl;
   vg->gateway_->arm_sync();
   sleep(2);
 
@@ -75,9 +75,9 @@ void position_control(int vehicle_id)
   if (home_position.size() != 3) {
     throw std::runtime_error("home_position should have three elements: lat, lon, alt");
   }
-  std::cout << "Home altitude: " << home_position[2] << std::endl;
+  std::cout << "Home altitude: " << vehicle_id << " - " << home_position[2] << std::endl;
 
-  std::cout << "Takeoff!" << std::endl;
+  std::cout << "Takeoff! " << vehicle_id << std::endl;
   vg->gateway_->takeoff();
   sleep(1);
 
@@ -87,46 +87,46 @@ void position_control(int vehicle_id)
 
   vg->gateway_->transition_to_fw_sync();
 
-  std::cout << "Begin transitioning to Offboard control..." << std::endl;
+  std::cout << "Begin transitioning to Offboard control... " << vehicle_id << std::endl;
   vg->gateway_->transition_to_offboard_sync();
 
-  std::cout << "Enabled position controller" << std::endl;
+  std::cout << "Enabled position controller " << vehicle_id<< std::endl;
   auto target_north = 200.0,
     target_east = 0.0;
 
-  std::cout << "Flying to first waypoint..." << std::endl;
+  std::cout << "Flying to first waypoint... " << vehicle_id << std::endl;
   vg->gateway_->offboard_mode_go_to_local_setpoint_sync(
     target_north, target_east, -TARGET_ATTITUDE,
     std::numeric_limits<float>::quiet_NaN(), 15);
-  std::cout << "Flying to second waypoint..." << std::endl;
+  std::cout << "Flying to second waypoint... " << vehicle_id << std::endl;
   vg->gateway_->offboard_mode_go_to_local_setpoint_sync(
     -target_north, target_east, -TARGET_ATTITUDE,
     std::numeric_limits<float>::quiet_NaN(), 20);
-  std::cout << "Flying home..." << std::endl;
+  std::cout << "Flying home... " << vehicle_id << std::endl;
   vg->gateway_->offboard_mode_go_to_local_setpoint_sync(
     0, 0, -TARGET_ATTITUDE,
     std::numeric_limits<float>::quiet_NaN(), 20);
 
-  std::cout << "Switching back to hold mode..." << std::endl;
+  std::cout << "Switching back to hold mode... " << vehicle_id << std::endl;
   vg->gateway_->set_onboard_mode();
 
-  std::cout << "Transitioning to multicopter..." << std::endl;
+  std::cout << "Transitioning to multicopter... " << vehicle_id << std::endl;
   vg->gateway_->transition_to_mc_sync();
-  std::cout << "VTOL state: " << vg->gateway_->get_vtol_state() << std::endl;
+  std::cout << "VTOL state:  " << vehicle_id << " - " << vg->gateway_->get_vtol_state() << std::endl;
   sleep(1);
 
   vg->gateway_->go_to_latlon_sync(
     home_position[0], home_position[1],
     home_position[2] + TARGET_ATTITUDE);
 
-  std::cout << "Landing..." << std::endl;
+  std::cout << "Landing... " << vehicle_id << std::endl;
   vg->gateway_->land();
 
-  std::cout << "Disarming..." << std::endl;
+  std::cout << "Disarming... " << vehicle_id << std::endl;
   vg->gateway_->disarm_sync();
 
   vg->destroy();
-  std::cout << "Test complete." << std::endl;
+  std::cout << "Test complete. " << vehicle_id << std::endl;
 }
 
 int main(int argc, const char * argv[])
