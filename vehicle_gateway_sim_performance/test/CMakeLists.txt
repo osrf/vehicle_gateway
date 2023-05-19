@@ -6,9 +6,3 @@ foreach(val RANGE 1 12 2)
     TIMEOUT 700
   )
 endforeach()
-
-install(
-  PROGRAMS
-    script/takeoff_land_multirobot.py
-  DESTINATION lib/${PROJECT_NAME}
-)
