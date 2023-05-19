@@ -159,7 +159,7 @@ def generate_test_description():
     system_metric_collector = Node(
         package='vehicle_gateway_sim_performance',
         executable='system_metric_collector',
-        arguments=['system_collector_' + str(NUMBER_OF_VEHICLES) + '.csv'],
+        arguments=['system_collector_' + str(NUMBER_OF_VEHICLES) + '_multi_dds_domain.csv'],
         output='screen')
 
     ld = launch.LaunchDescription([
