@@ -35,6 +35,7 @@ static sem_t sentinel;
 
 std::mutex mutex_stats;
 double gazebo_rtf = 0.0;
+int num_reading = 0;
 
 static void post_sentinel(int signum)
 {
@@ -50,7 +51,8 @@ void cb(const gz::msgs::WorldStatistics & _msg)
 {
   // std::cout << "Msg: " << _msg.real_time_factor() << std::endl << std::endl;
   mutex_stats.lock();
-  gazebo_rtf = _msg.real_time_factor();
+  gazebo_rtf += _msg.real_time_factor();
+  num_reading++;
   mutex_stats.unlock();
 }
 
@@ -102,7 +104,9 @@ int main(int argc, char * argv[])
     if (m_os.is_open()) {
       mutex_stats.lock();
       m_os << seconds_running << ", " << cpu_system_percentage <<
-        ", " << phy_mem_system_usage << ", " << gazebo_rtf << std::endl;
+        ", " << phy_mem_system_usage << ", " << gazebo_rtf / num_reading << std::endl;
+      num_reading = 0;
+      gazebo_rtf = 0.0;
       mutex_stats.unlock();
     }
   }

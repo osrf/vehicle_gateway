@@ -136,16 +136,30 @@ int main(int argc, const char * argv[])
   loader_ = std::make_shared<pluginlib::ClassLoader<vehicle_gateway::VehicleGateway>>(
     "vehicle_gateway", "vehicle_gateway::VehicleGateway");
 
-  const char * env_value = getenv("NUMBER_OF_VEHICLES");
-  if (env_value == nullptr) {
-    return -1;
+  const char * ros_domain_id_c = getenv("ROS_DOMAIN_ID");
+  int number_of_vehicles = 1;
+  int ros_domain_id = 0;
+  if (ros_domain_id_c != nullptr) {
+    ros_domain_id = atoi(ros_domain_id_c);
+  } else {
+    const char * number_of_vehicles_c = getenv("NUMBER_OF_VEHICLES");
+    if (number_of_vehicles_c != nullptr) {
+      number_of_vehicles = atoi(number_of_vehicles_c);
+    }
   }
 
+  std::cout << "ROS_DOMAIN_ID " << ros_domain_id << '\n';
+  std::cout << "NUMBER_OF_VEHICLES " << number_of_vehicles << '\n';
+
   std::vector<std::thread> threads;
-  for (int i = 0; i < atoi(env_value); i++) {
-    threads.push_back(std::thread(position_control, i + 1));
+  for (int i = 0; i < number_of_vehicles; i++) {
+    if (ros_domain_id == 0) {
+      threads.push_back(std::thread(position_control, i + 1));
+    } else {
+      threads.push_back(std::thread(position_control, ros_domain_id));
+    }
   }
-  for (int i = 0; i < atoi(env_value); i++) {
+  for (int i = 0; i < number_of_vehicles; i++) {
     threads[i].join();
   }
 
