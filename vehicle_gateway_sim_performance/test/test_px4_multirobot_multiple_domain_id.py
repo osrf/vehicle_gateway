@@ -18,6 +18,7 @@ import os
 from shlex import split
 import subprocess
 import tempfile
+import threading
 
 import unittest
 import xml.etree.ElementTree as ET
@@ -193,8 +194,6 @@ def generate_test_description():
     return ld, context
 
 
-import threading
-
 class TestFixture(unittest.TestCase):
 
     def test_arm(self, launch_service, proc_info, proc_output):
@@ -216,7 +215,8 @@ class TestFixture(unittest.TestCase):
                     output='screen',
                     additional_env={'ROS_DOMAIN_ID': str(vehicle_id)})
                 with launch_testing.tools.launch_process(
-                    launch_service, proc_action, proc_info, proc_output):
+                    launch_service, proc_action, proc_info, proc_output
+                ):
                     proc_info.assertWaitForShutdown(process=proc_action, timeout=300)
 
             x = threading.Thread(target=run_test, args=(i,))
