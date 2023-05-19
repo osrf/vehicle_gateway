@@ -46,7 +46,7 @@ static void post_sentinel(int signum)
 
 //////////////////////////////////////////////////
 /// \brief Function called each time a topic update is received.
-void cb(const gz::msgs::WorldStatistics &_msg)
+void cb(const gz::msgs::WorldStatistics & _msg)
 {
   // std::cout << "Msg: " << _msg.real_time_factor() << std::endl << std::endl;
   mutex_stats.lock();
@@ -79,8 +79,7 @@ int main(int argc, char * argv[])
   std::string topic = "/stats";
 
   // Subscribe to a topic by registering a callback.
-  if (!node.Subscribe(topic, cb))
-  {
+  if (!node.Subscribe(topic, cb)) {
     std::cerr << "Error subscribing to topic [" << topic << "]" << std::endl;
     return -1;
   }
