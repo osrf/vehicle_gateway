@@ -18,6 +18,18 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(vehicle_gateway_px4 REQUIRED)
 
+#============================================================================
+# Find gz-cmake
+#============================================================================
+# If you get an error at this line, you need to install gz-cmake
+find_package(gz-cmake3 REQUIRED)
+
+# Find the Gazebo transport library
+#--------------------------------------
+# Find gz-transport
+gz_find_package(gz-transport12 REQUIRED)
+set(GZ_TRANSPORT_VER ${gz-transport12_VERSION_MAJOR})
+
 add_executable(system_metric_collector
   src/main.cpp
   src/linux_cpu_system_measurement.cpp
@@ -25,7 +37,12 @@ add_executable(system_metric_collector
 )
 target_include_directories(system_metric_collector PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>)
+  $<INSTALL_INTERFACE:include>
+)
+
+target_link_libraries(system_metric_collector
+  gz-transport${GZ_TRANSPORT_VER}::core
+)
 
 ament_export_include_directories(
   include

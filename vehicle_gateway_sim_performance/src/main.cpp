@@ -16,10 +16,25 @@
 #include <chrono>
 #include <csignal>
 #include <string>
+
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4251)
+#endif
+#include <google/protobuf/message.h>
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+
+#include <gz/transport.hh>
+
 #include "linux_memory_system_measurement.hpp"
 #include "linux_cpu_system_measurement.hpp"
 
 static sem_t sentinel;
+
+std::mutex mutex_stats;
+double gazebo_rtf = 0.0;
 
 static void post_sentinel(int signum)
 {
@@ -29,9 +44,18 @@ static void post_sentinel(int signum)
   sem_post(&sentinel);
 }
 
+//////////////////////////////////////////////////
+/// \brief Function called each time a topic update is received.
+void cb(const gz::msgs::WorldStatistics &_msg)
+{
+  // std::cout << "Msg: " << _msg.real_time_factor() << std::endl << std::endl;
+  mutex_stats.lock();
+  gazebo_rtf = _msg.real_time_factor();
+  mutex_stats.unlock();
+}
+
 int main(int argc, char * argv[])
 {
-  float timeout = 60;
   std::ofstream m_os;
   std::string process_pid;
   struct timespec wait_until;
@@ -43,7 +67,7 @@ int main(int argc, char * argv[])
   std::cout << "file_name " << filename << std::endl;
   if (m_os.is_open()) {
     m_os << "T_experiment" << ",system_cpu_usage (%)"
-         << ",system virtual memory (Mb)" << std::endl;
+         << ",system virtual memory (Mb)" << ", Gazebo RTF" << std::endl;
   }
 
   auto start = std::chrono::high_resolution_clock::now();
@@ -51,13 +75,20 @@ int main(int argc, char * argv[])
   LinuxCPUSystemMeasurement linux_cpu_system_measurement;
   LinuxMemorySystemMeasurement linux_memory_system_measurement;
 
+  gz::transport::Node node;
+  std::string topic = "/stats";
+
+  // Subscribe to a topic by registering a callback.
+  if (!node.Subscribe(topic, cb))
+  {
+    std::cerr << "Error subscribing to topic [" << topic << "]" << std::endl;
+    return -1;
+  }
+
   while (true) {
     double cpu_system_percentage = linux_cpu_system_measurement.getCPUSystemCurrentlyUsed();
     double phy_mem_system_usage = linux_memory_system_measurement.getTotalMemorySystem() -
       linux_memory_system_measurement.getAvailableMemorySystem();
-
-    std::cout << "CPU Usage system: " << cpu_system_percentage << " (%)" << std::endl;
-    std::cout << "PhysMemUsedsystem: " << phy_mem_system_usage << " (Mb)" << std::endl;
 
     clock_gettime(CLOCK_REALTIME, &wait_until);
     wait_until.tv_sec += 1;
@@ -68,15 +99,12 @@ int main(int argc, char * argv[])
     auto finish = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double, std::milli> elapsed = finish - start;
     float seconds_running = elapsed.count() / 1000;
-    std::cout << "------------------------- " << std::endl;
-
-    if (seconds_running > timeout) {
-      break;
-    }
 
     if (m_os.is_open()) {
+      mutex_stats.lock();
       m_os << seconds_running << ", " << cpu_system_percentage <<
-        ", " << phy_mem_system_usage << std::endl;
+        ", " << phy_mem_system_usage << ", " << gazebo_rtf << std::endl;
+      mutex_stats.unlock();
     }
   }
 
