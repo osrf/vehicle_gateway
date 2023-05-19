@@ -90,7 +90,7 @@ void position_control(int vehicle_id)
   std::cout << "Begin transitioning to Offboard control... " << vehicle_id << std::endl;
   vg->gateway_->transition_to_offboard_sync();
 
-  std::cout << "Enabled position controller " << vehicle_id<< std::endl;
+  std::cout << "Enabled position controller " << vehicle_id << std::endl;
   auto target_north = 200.0,
     target_east = 0.0;
 
@@ -112,7 +112,8 @@ void position_control(int vehicle_id)
 
   std::cout << "Transitioning to multicopter... " << vehicle_id << std::endl;
   vg->gateway_->transition_to_mc_sync();
-  std::cout << "VTOL state:  " << vehicle_id << " - " << vg->gateway_->get_vtol_state() << std::endl;
+  std::cout << "VTOL state:  " << vehicle_id << " - " << vg->gateway_->get_vtol_state()
+            << std::endl;
   sleep(1);
 
   vg->gateway_->go_to_latlon_sync(
