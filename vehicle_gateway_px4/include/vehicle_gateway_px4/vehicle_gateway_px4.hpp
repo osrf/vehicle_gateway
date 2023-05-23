@@ -98,9 +98,6 @@ public:
   void land() override;
 
   /// Documentation inherited
-  void go_to_waypoint() override;
-
-  /// Documentation inherited
   void transition_to_fw() override;
 
   /// Documentation inherited
