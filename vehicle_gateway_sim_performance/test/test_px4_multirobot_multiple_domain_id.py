@@ -13,11 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from distutils.dir_util import copy_tree
 import os
 from shlex import split
 import subprocess
-import tempfile
 import threading
 
 import unittest
@@ -26,7 +24,7 @@ import xml.etree.ElementTree as ET
 from ament_index_python.packages import get_package_share_directory
 
 import launch
-from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.actions import SetEnvironmentVariable
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PythonExpression
@@ -38,36 +36,19 @@ from launch_testing.util import KeepAliveProc
 import psutil
 import pytest
 
-
-def get_px4_dir():
-    return get_package_share_directory('px4_sim')
-
-
-def seed_rootfs(rootfs):
-    px4_dir = get_px4_dir()
-    print(f'seeding rootfs at {rootfs} from {px4_dir}')
-    copy_tree(px4_dir, rootfs)
+from vehicle_gateway_python_helpers.helpers import get_px4_dir
+from vehicle_gateway_python_helpers.helpers import get_px4_process
 
 
 def create_px4_instance(vehicle_id):
-    rootfs = tempfile.TemporaryDirectory()
-    px4_dir = get_px4_dir()
     gateway_models_dir = get_package_share_directory('vehicle_gateway_models')
 
-    rc_script = os.path.join(px4_dir, 'etc/init.d-posix/rcS')
-    print('using rootfs ', rootfs.name)
-    seed_rootfs(rootfs.name)
     model_name = [LaunchConfiguration('vehicle_type'), '_stock_', vehicle_id]
-    run_px4 = ExecuteProcess(
-        cmd=['sleep', str(5 + int(vehicle_id)), '&&', 'px4', '%s/ROMFS/px4fmu_common' % rootfs.name,
-             '-s', rc_script,
-             '-i', vehicle_id,
-             '-d'],
-        cwd=get_px4_dir(),
-        output='screen',
-        shell=True,
-        additional_env={'PX4_GZ_MODEL_NAME': model_name,
-                        'ROS_DOMAIN_ID': vehicle_id})
+    run_px4 = get_px4_process(
+        vehicle_id,
+        {'PX4_GZ_MODEL_NAME': model_name,
+         'ROS_DOMAIN_ID': vehicle_id},
+        ['sleep', str(5 + int(vehicle_id)), '&&'])
 
     model_sdf_filename = [
         gateway_models_dir,
@@ -235,5 +216,7 @@ class TestFixture(unittest.TestCase):
                 p.wait()
             for proc in psutil.process_iter():
                 # check whether the process name matches
-                if proc.name() == 'ruby' or proc.name() == 'micro_ros_agent' or proc.name() == 'system_metric_collector':
+                if proc.name() == 'ruby' or \
+                   proc.name() == 'micro_ros_agent' or \
+                   proc.name() == 'system_metric_collector':
                     proc.kill()
