@@ -14,8 +14,8 @@
 # limitations under the License.
 
 import os
-import subprocess
 from shlex import split
+import subprocess
 import xml.etree.ElementTree as ET
 
 from ament_index_python.packages import get_package_share_directory

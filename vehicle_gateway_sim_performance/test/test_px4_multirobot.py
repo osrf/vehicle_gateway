@@ -31,7 +31,6 @@ import launch_testing
 from launch_testing.actions import ReadyToTest
 from launch_testing.util import KeepAliveProc
 
-import psutil
 import pytest
 
 from vehicle_gateway_python_helpers.helpers import get_px4_dir

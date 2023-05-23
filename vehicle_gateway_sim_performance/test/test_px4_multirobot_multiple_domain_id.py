@@ -19,7 +19,6 @@ import sys
 import threading
 
 import unittest
-import xml.etree.ElementTree as ET
 
 from ament_index_python.packages import get_package_share_directory
 
@@ -33,11 +32,9 @@ import launch_testing
 from launch_testing.actions import ReadyToTest
 from launch_testing.util import KeepAliveProc
 
-import psutil
 import pytest
 
 from vehicle_gateway_python_helpers.helpers import get_px4_dir
-from vehicle_gateway_python_helpers.helpers import get_px4_process
 
 sys.path.append(os.path.join(pathlib.Path(__file__).parent.resolve()))  # noqa
 from common import create_px4_instance, kill_all_process  # noqa
