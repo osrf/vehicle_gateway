@@ -18,11 +18,12 @@ from distutils.dir_util import copy_tree
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchContext, Substitution, SomeSubstitutionsType
 from launch.actions import ExecuteProcess
+from launch.utilities import perform_substitutions
 
 import tempfile
 import os
 import xml.etree.ElementTree as ET
-from typing import List
+from typing import List, Literal
 
 
 def get_px4_dir():
@@ -90,24 +91,25 @@ class WorldPoseFromSdfFrame(Substitution):
         """Getter for world name."""
         return self.__world_name
 
-    def parseCoords(self, strCoords: str, key: str, strSplit: str):
+    def parseCoords(self, strCoords: str,
+                    key: Literal["x", "y", "z", "roll", "pitch", "yaw"],
+                    strSplit: str):
         x, y, z, roll, pitch, yaw = strCoords.split(strSplit)
-        if (self.__coord_name == 'x'):
+        if (key == 'x'):
             return str(x)
-        if (self.__coord_name == 'y'):
+        if (key == 'y'):
             return str(y)
-        if (self.__coord_name == 'z'):
+        if (key == 'z'):
             return str(z)
-        if (self.__coord_name == 'roll'):
+        if (key == 'roll'):
             return str(roll)
-        if (self.__coord_name == 'pitch'):
+        if (key == 'pitch'):
             return str(pitch)
-        if (self.__coord_name == 'yaw'):
+        if (key == 'yaw'):
             return str(yaw)
-        return '0.0'
+        raise Exception("Not able to parse model pose coordinates")
 
     def perform(self, context: LaunchContext) -> str:
-        from launch.utilities import perform_substitutions
         frame_name_str = perform_substitutions(context, self.frame_name)
         world_name_str = perform_substitutions(context, self.world_name)
         model_pose_str = perform_substitutions(context, self.model_pose)
