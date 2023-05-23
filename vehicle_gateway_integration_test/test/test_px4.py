@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from distutils.dir_util import copy_tree
 import os
 import subprocess
 import tempfile
@@ -31,19 +30,10 @@ from launch_ros.actions import Node
 import launch_testing
 from launch_testing.actions import ReadyToTest
 from launch_testing.util import KeepAliveProc
+from vehicle_gateway_python_helpers.helpers import get_px4_dir, seed_rootfs
 
 import psutil
 import pytest
-
-
-def get_px4_dir():
-    return get_package_share_directory('px4_sim')
-
-
-def seed_rootfs(rootfs):
-    px4_dir = get_px4_dir()
-    print(f'seeding rootfs at {rootfs} from {px4_dir}')
-    copy_tree(px4_dir, rootfs)
 
 
 # This function specifies the processes to be run for our test

@@ -16,6 +16,7 @@
   <test_depend>px4_sim</test_depend>
   <test_depend>vehicle_gateway_models</test_depend>
   <test_depend>vehicle_gateway_python</test_depend>
+  <test_depend>vehicle_gateway_python_helpers</test_depend>
   <test_depend>vehicle_gateway_worlds</test_depend>
 
   <export>
