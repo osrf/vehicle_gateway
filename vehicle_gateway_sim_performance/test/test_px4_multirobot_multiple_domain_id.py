@@ -237,15 +237,3 @@ class TestFixture(unittest.TestCase):
                 # check whether the process name matches
                 if proc.name() == 'ruby' or proc.name() == 'micro_ros_agent' or proc.name() == 'system_metric_collector':
                     proc.kill()
-
-
-# # These tests are run after the processes in generate_test_description() have shutdown.
-# @launch_testing.post_shutdown_test()
-# class TestHelloWorldShutdown(unittest.TestCase):
-#
-#     def test_exit_codes(self, proc_info, run_px4_1, run_px4_2):
-#         """Check if the processes exited normally."""
-#         launch_testing.asserts.assertExitCodes(proc_info, process=run_px4_1,
-#                                                allowable_exit_codes=[0])
-#         launch_testing.asserts.assertExitCodes(proc_info, process=run_px4_2,
-#                                                allowable_exit_codes=[0])
