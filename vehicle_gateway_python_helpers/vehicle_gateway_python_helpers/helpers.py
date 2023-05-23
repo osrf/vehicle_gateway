@@ -17,7 +17,6 @@ from distutils.dir_util import copy_tree
 
 from ament_index_python.packages import get_package_share_directory
 from launch import Substitution, SomeSubstitutionsType, LaunchContext
-from launch.substitutions import LaunchConfiguration
 
 import xml.etree.ElementTree as ET
 import os
@@ -26,6 +25,7 @@ from typing import List
 
 def get_px4_dir():
     return get_package_share_directory('px4_sim')
+
 
 def seed_rootfs(rootfs):
     px4_dir = get_px4_dir()
