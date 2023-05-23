@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>vehicle_gateway_sim_performance</name>
+  <version>0.0.0</version>
+  <description>Vehicle Gateway simualtion performance</description>
+  <maintainer email="morgan@openrobotics.org">Morgan Quigley</maintainer>
+  <license>Apache License 2.0</license>
+
+  <depend>gz-cmake3</depend>
+  <depend>gz-transport12</depend>
+  <depend>vehicle_gateway_px4</depend>
+  <depend>rclcpp</depend>
+
+  <test_depend>ament_index_python</test_depend>
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+  <test_depend>launch</test_depend>
+  <test_depend>launch_testing_ament_cmake</test_depend>
+  <test_depend>micro_ros_agent</test_depend>
+  <test_depend>px4_sim</test_depend>
+  <test_depend>vehicle_gateway_models</test_depend>
+  <test_depend>vehicle_gateway_python</test_depend>
+  <test_depend>vehicle_gateway_worlds</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

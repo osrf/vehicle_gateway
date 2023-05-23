@@ -178,9 +178,6 @@ public:
   /// Land the robot
   virtual void land() = 0;
 
-  /// Got to waypoint
-  virtual void go_to_waypoint() = 0;
-
   /// VTOL
   /// Transition to fixed wings
   virtual void transition_to_fw() = 0;
