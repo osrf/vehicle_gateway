@@ -16,10 +16,12 @@
 from distutils.dir_util import copy_tree
 
 from ament_index_python.packages import get_package_share_directory
-from launch import Substitution, SomeSubstitutionsType, LaunchContext
+from launch import LaunchContext, Substitution, SomeSubstitutionsType
+from launch.actions import ExecuteProcess
 
-import xml.etree.ElementTree as ET
+import tempfile
 import os
+import xml.etree.ElementTree as ET
 from typing import List
 
 
@@ -31,6 +33,24 @@ def seed_rootfs(rootfs):
     px4_dir = get_px4_dir()
     print(f'seeding rootfs at {rootfs} from {px4_dir}')
     copy_tree(px4_dir, rootfs)
+
+
+def get_px4_process(drone_id, additional_env):
+    rootfs = tempfile.TemporaryDirectory()
+    rc_script = os.path.join(get_px4_dir(), 'etc/init.d-posix/rcS')
+    print('using rootfs ', rootfs.name)
+    seed_rootfs(rootfs.name)
+
+    run_px4 = ExecuteProcess(
+        cmd=['px4', '%s/ROMFS/px4fmu_common' % rootfs.name,
+             '-s', rc_script,
+             '-i', drone_id,
+             '-d'],
+        cwd=get_px4_dir(),
+        additional_env=additional_env,
+        output='screen')
+
+    return run_px4
 
 
 class WorldPoseFromSdfFrame(Substitution):
@@ -47,12 +67,12 @@ class WorldPoseFromSdfFrame(Substitution):
         self.__frame_name = normalize_to_list_of_substitutions(frame_name)
         self.__world_name = normalize_to_list_of_substitutions(world_name)
         self.__model_pose = normalize_to_list_of_substitutions(model_pose)
-        self.__x = "0.0"
-        self.__y = "0.0"
-        self.__z = "0.3"
-        self.__roll = "0.0"
-        self.__pitch = "0.0"
-        self.__yaw = "0.0"
+        self.__x = '0.0'
+        self.__y = '0.0'
+        self.__z = '0.3'
+        self.__roll = '0.0'
+        self.__pitch = '0.0'
+        self.__yaw = '0.0'
         self.__coord_name = coor_name
 
     @property
@@ -72,19 +92,19 @@ class WorldPoseFromSdfFrame(Substitution):
 
     def parseCoords(self, strCoords: str, key: str, strSplit: str):
         x, y, z, roll, pitch, yaw = strCoords.split(strSplit)
-        if (self.__coord_name == "x"):
+        if (self.__coord_name == 'x'):
             return str(x)
-        if (self.__coord_name == "y"):
+        if (self.__coord_name == 'y'):
             return str(y)
-        if (self.__coord_name == "z"):
+        if (self.__coord_name == 'z'):
             return str(z)
-        if (self.__coord_name == "roll"):
+        if (self.__coord_name == 'roll'):
             return str(roll)
-        if (self.__coord_name == "pitch"):
+        if (self.__coord_name == 'pitch'):
             return str(pitch)
-        if (self.__coord_name == "yaw"):
+        if (self.__coord_name == 'yaw'):
             return str(yaw)
-        return "0.0"
+        return '0.0'
 
     def perform(self, context: LaunchContext) -> str:
         from launch.utilities import perform_substitutions
@@ -94,7 +114,7 @@ class WorldPoseFromSdfFrame(Substitution):
 
         # allow manually specified model_pose param to override lookup
         if model_pose_str != '':
-            return self.parseCoords(model_pose_str, self.__coord_name, ", ")
+            return self.parseCoords(model_pose_str, self.__coord_name, ', ')
 
         if frame_name_str != '':
             world_sdf_path = os.path.join(
@@ -114,7 +134,7 @@ class WorldPoseFromSdfFrame(Substitution):
             return self.parseCoords(pose_str, self.__coord_name, " ")
 
         # default a bit above the origin; vehicle will drop to the ground plane
-        return self.parseCoords("0, 0, 0.3, 0, 0, 0", self.__coord_name, ", ")
+        return self.parseCoords('0, 0, 0.3, 0, 0, 0', self.__coord_name, ', ')
 
 
 def get_model_pose(frame_name, world_name, model_pose):

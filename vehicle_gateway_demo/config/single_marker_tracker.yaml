@@ -1,6 +1,6 @@
 /**:
   ros__parameters:
-    cam_base_topic: /world/aruco_px4_world/model/x500_0/link/camera_link/sensor/camera/image
+    cam_base_topic: /world/aruco_px4_world/model/x500_camera_0/link/camera_link/sensor/camera/image
     output_frame: 'aruco_px4_world'
     #output_frame: 'x500_0/camera_link/camera'
     use_sim_time: true

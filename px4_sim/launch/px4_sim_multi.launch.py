@@ -18,9 +18,9 @@ from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchD
 from launch.conditions import IfCondition
 from launch_ros.actions import Node
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from vehicle_gateway_python_helpers.helpers import get_model_pose, get_px4_dir, seed_rootfs
+from vehicle_gateway_python_helpers.helpers import get_model_pose, get_px4_dir
+from vehicle_gateway_python_helpers.helpers import get_px4_process
 
-import tempfile
 import os
 from launch.substitutions import LaunchConfiguration
 import yaml
@@ -98,24 +98,14 @@ def generate_launch_description():
             yaml_data = yaml.safe_load(stream)
             for vehicle in yaml_data:
                 (vehicle)
-                rootfs = tempfile.TemporaryDirectory()
-
-                rc_script = os.path.join(px4_dir, 'etc/init.d-posix/rcS')
-                ('using rootfs ', rootfs.name)
-                seed_rootfs(rootfs.name)
 
                 model_name = [vehicle['vehicle_type'], "_", vehicle['sensor_config'], "_", str(vehicle['vehicle_id'])]
 
-                run_px4 = ExecuteProcess(
-                    cmd=['px4', '%s/ROMFS/px4fmu_common' % rootfs.name,
-                         '-s', rc_script,
-                         '-i', str(vehicle['vehicle_id']),
-                         '-d'],
-                    cwd=px4_dir,
-                    additional_env={'PX4_SYS_AUTOSTART': str(magic_number[vehicle['vehicle_type']]),
-                                    'ROS_DOMAIN_ID': str(vehicle['dds_domain_id']),
-                                    'PX4_GZ_MODEL_NAME': model_name},
-                    output='screen')
+                run_px4 = get_px4_process(
+                    str(vehicle['vehicle_id']),
+                    {'PX4_SYS_AUTOSTART': str(magic_number[vehicle['vehicle_type']]),
+                     'ROS_DOMAIN_ID': str(vehicle['dds_domain_id']),
+                     'PX4_GZ_MODEL_NAME': model_name})
 
                 model_sdf_filename = [
                     gateway_models_dir,

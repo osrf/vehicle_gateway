@@ -18,13 +18,13 @@ from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchD
 from launch.actions import RegisterEventHandler, SetEnvironmentVariable
 from launch.conditions import IfCondition
 from launch.event_handlers import OnProcessExit
-from launch_ros.actions import Node
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from vehicle_gateway_python_helpers.helpers import get_model_pose, get_px4_dir, seed_rootfs
+from launch_ros.actions import Node
+from launch.substitutions import LaunchConfiguration, PythonExpression
+from vehicle_gateway_python_helpers.helpers import get_model_pose, get_px4_dir
+from vehicle_gateway_python_helpers.helpers import get_px4_process
 
-import tempfile
 import os
-from launch.substitutions import LaunchConfiguration
 
 
 def generate_launch_description():
@@ -46,6 +46,10 @@ def generate_launch_description():
     drone_type = LaunchConfiguration('drone_type', default='x500')
     drone_type_args = DeclareLaunchArgument('drone_type', default_value=drone_type,
                                             description='Sim Models (x500, rc_cessna, ...)')
+
+    sensor_config = LaunchConfiguration('sensor_config', default='camera')
+    sensor_config_args = DeclareLaunchArgument('sensor_config', default_value=sensor_config,
+                                               description='Sensor configuration from configs_px4 directory')
 
     world_name = LaunchConfiguration('world_name', default='aruco_px4_world')
     world_name_arg = DeclareLaunchArgument('world_name',
@@ -72,21 +76,6 @@ def generate_launch_description():
 
     os.environ['SDF_PATH'] = os.environ['GZ_SIM_RESOURCE_PATH']
 
-    rootfs = tempfile.TemporaryDirectory()
-    px4_dir = get_px4_dir()
-
-    rc_script = os.path.join(px4_dir, 'etc/init.d-posix/rcS')
-    print('using rootfs ', rootfs.name)
-    seed_rootfs(rootfs.name)
-
-    run_px4 = ExecuteProcess(
-        cmd=['px4', '%s/ROMFS/px4fmu_common' % rootfs.name,
-             '-s', rc_script,
-             '-i', '0',
-             '-d'],
-        cwd=get_px4_dir(),
-        output='screen',
-    )
     wait_spawn = ExecuteProcess(cmd=["sleep", "5"])
     micro_ros_agent = Node(
         package='micro_ros_agent',
@@ -106,24 +95,38 @@ def generate_launch_description():
         package='aruco_opencv',
         executable='aruco_tracker_autostart',
         name="aruco_markers",
-        parameters=[os.path.join(get_package_share_directory('vehicle_gateway_demo'), 'config', 'single_marker_tracker.yaml'), '--ros-args', '--log-level', 'aruco_tracker:=debug'],
+        parameters=[os.path.join(get_package_share_directory('vehicle_gateway_demo'), 'config', 'single_marker_tracker.yaml')],
         output='screen')
 
     node_static_transform_publisher = Node(
         package='tf2_ros',
         executable='static_transform_publisher',
         output='screen',
-        arguments=["--x", "0", "--y", "0", "--z", "0.1", "--roll", "0", "--pitch", "1.57", "--yaw", "0.0", "--frame-id", "x500_0/camera_link", "--child-frame-id", "x500_0/camera_link/camera"],
+        arguments=["--x", "0", "--y", "0", "--z", "0.1", "--roll", "0", "--pitch", "1.57", "--yaw", "0.0", "--frame-id", "x500_camera_0/camera_link", "--child-frame-id", "x500_camera_0/camera_link/camera"],
         parameters=[{'use_sim_time': use_sim_time}]
     )
+
+    gateway_models_dir = get_package_share_directory('vehicle_gateway_models')
+
+    model_sdf_filename = [
+        gateway_models_dir,
+        '/configs_px4/',
+        LaunchConfiguration('drone_type'),
+        '_',
+        LaunchConfiguration('sensor_config'),
+        '/model.sdf']
+
+    model_name = [LaunchConfiguration('drone_type'), "_", LaunchConfiguration('sensor_config'), "_0"]
+
+    run_px4 = get_px4_process('0', {})
 
     spawn_entity = Node(
         package='ros_gz_sim',
         executable='create',
         output='screen',
         parameters=[{'use_sim_time': use_sim_time}],
-        arguments=['-file', [get_package_share_directory('vehicle_gateway_models'), '/models/', "x500_camera", '/', 'model.sdf'],
-                   '-name', "x500_0",
+        arguments=['-file', model_sdf_filename,
+                   '-name', model_name,
                    '-allow_renaming', 'true',
                    '-x', model_pose_x,
                    '-y', model_pose_y,
@@ -137,18 +140,27 @@ def generate_launch_description():
         package='ros_gz_bridge',
         executable='parameter_bridge',
         arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
-                   '/world/aruco_px4_world/model/x500_0/link/camera_link/sensor/camera/image@sensor_msgs/msg/Image@gz.msgs.Image',
-                   '/world/aruco_px4_world/model/x500_0/link/camera_link/sensor/camera/camera_info@sensor_msgs/msg/CameraInfo@gz.msgs.CameraInfo'],
+                   '/world/aruco_px4_world/model/x500_camera_0/link/camera_link/sensor/camera/image@sensor_msgs/msg/Image@gz.msgs.Image',
+                   '/world/aruco_px4_world/model/x500_camera_0/link/camera_link/sensor/camera/camera_info@sensor_msgs/msg/CameraInfo@gz.msgs.CameraInfo'],
         output='screen'
     )
 
     bridge_pose = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
-        arguments=['/model/x500_0/pose@tf2_msgs/msg/TFMessage@gz.msgs.Pose_V'],
-        remappings=[("/model/x500_0/pose", "/tf")],
+        arguments=['/model/x500_camera_0/pose@tf2_msgs/msg/TFMessage@gz.msgs.Pose_V'],
+        remappings=[("/model/x500_camera_0/pose", "/tf")],
         output='screen'
     )
+
+    autostart_magic_number = PythonExpression([
+        '{"x500": 4001, "rc_cessna": 4003, "standard_vtol": 4004}["',
+        LaunchConfiguration('drone_type'),
+        '"]'])
+
+    autostart_env_var = SetEnvironmentVariable(
+        'PX4_SYS_AUTOSTART',
+        autostart_magic_number)
 
     os.environ['PX4_GZ_WORLD'] = ""
     return LaunchDescription([
@@ -159,11 +171,13 @@ def generate_launch_description():
         drone_type_args,
         model_pose_arg,
         frame_name_args,
+        sensor_config_args,
+        autostart_env_var,
         spawn_entity,
         bridge,
         bridge_pose,
         aruco_opencv,
-        SetEnvironmentVariable('PX4_GZ_MODEL_NAME', [LaunchConfiguration('drone_type'), "_0"]),
+        SetEnvironmentVariable('PX4_GZ_MODEL_NAME', model_name),
         SetEnvironmentVariable('PX4_SYS_AUTOSTART', '4001'),
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(

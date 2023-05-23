@@ -20,9 +20,9 @@ from launch.conditions import IfCondition
 from launch.event_handlers import OnProcessExit
 from launch_ros.actions import Node
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from vehicle_gateway_python_helpers.helpers import get_model_pose, get_px4_dir, seed_rootfs
+from vehicle_gateway_python_helpers.helpers import get_model_pose, get_px4_dir
+from vehicle_gateway_python_helpers.helpers import get_px4_process
 
-import tempfile
 import os
 from launch.substitutions import LaunchConfiguration, PythonExpression
 from subprocess import Popen, PIPE
@@ -91,20 +91,9 @@ def generate_launch_description():
     os.environ['GZ_SIM_RESOURCE_PATH'] += ':' + os.path.join(gateway_models_dir, 'models')
     os.environ['GZ_SIM_RESOURCE_PATH'] += ':' + os.path.join(gateway_models_dir, 'configs_px4')
 
-    rootfs = tempfile.TemporaryDirectory()
-
-    rc_script = os.path.join(px4_dir, 'etc/init.d-posix/rcS')
-    print('using rootfs ', rootfs.name)
-    seed_rootfs(rootfs.name)
-
-    run_px4 = ExecuteProcess(
-        cmd=['px4', '%s/ROMFS/px4fmu_common' % rootfs.name,
-             '-s', rc_script,
-             '-i', drone_id,
-             '-d'],
-        cwd=px4_dir,
-        additional_env={'ROS_DOMAIN_ID': LaunchConfiguration('dds_domain_id')},
-        output='screen')
+    run_px4 = get_px4_process(
+        drone_id,
+        {'ROS_DOMAIN_ID': LaunchConfiguration('dds_domain_id')})
 
     wait_spawn = ExecuteProcess(cmd=["sleep", "5"])
 
