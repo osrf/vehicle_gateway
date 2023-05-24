@@ -13,19 +13,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from distutils.dir_util import copy_tree
 import os
-from shlex import split
-import subprocess
-import tempfile
+import pathlib
+import sys
 
 import unittest
-import xml.etree.ElementTree as ET
 
 from ament_index_python.packages import get_package_share_directory
 
 import launch
-from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.actions import SetEnvironmentVariable
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PythonExpression
@@ -34,78 +31,12 @@ import launch_testing
 from launch_testing.actions import ReadyToTest
 from launch_testing.util import KeepAliveProc
 
-import psutil
 import pytest
 
+from vehicle_gateway_python_helpers.helpers import get_px4_dir
 
-def get_px4_dir():
-    return get_package_share_directory('px4_sim')
-
-
-def seed_rootfs(rootfs):
-    px4_dir = get_px4_dir()
-    print(f'seeding rootfs at {rootfs} from {px4_dir}')
-    copy_tree(px4_dir, rootfs)
-
-
-def create_px4_instance(vehicle_id):
-    rootfs = tempfile.TemporaryDirectory()
-    px4_dir = get_px4_dir()
-    gateway_models_dir = get_package_share_directory('vehicle_gateway_models')
-
-    rc_script = os.path.join(px4_dir, 'etc/init.d-posix/rcS')
-    print('using rootfs ', rootfs.name)
-    seed_rootfs(rootfs.name)
-    model_name = [LaunchConfiguration('vehicle_type'), '_stock_', vehicle_id]
-    run_px4 = ExecuteProcess(
-        cmd=['sleep', str(5 + int(vehicle_id)), '&&', 'px4', '%s/ROMFS/px4fmu_common' % rootfs.name,
-             '-s', rc_script,
-             '-i', vehicle_id,
-             '-d'],
-        cwd=get_px4_dir(),
-        output='screen',
-        shell=True,
-        additional_env={'PX4_GZ_MODEL_NAME': model_name})
-
-    model_sdf_filename = [
-        gateway_models_dir,
-        '/configs_px4/',
-        LaunchConfiguration('vehicle_type'),
-        '_',
-        'stock',
-        '/model.sdf']
-
-    world_sdf_path = os.path.join(
-        get_package_share_directory('vehicle_gateway_worlds'),
-        'worlds',
-        'empty_px4_world.sdf')
-    # I couldn't get the libsdformat binding to work as expected due
-    # to various troubles. Let's simplify and just treat SDF as
-    # regular XML and do an XPath query
-    sdf_root = ET.parse(world_sdf_path).getroot()
-    frame_node = sdf_root.find(f'.//frame[@name=\"pad_{vehicle_id}\"]')
-    if not frame_node:
-        raise ValueError(f'Could not find a frame named pad_{vehicle_id}')
-    pose_node = frame_node.find('pose')
-    pose_str = pose_node.text
-    x, y, z, roll, pitch, yaw = pose_str.split(' ')
-
-    spawn_entity = Node(
-        package='ros_gz_sim',
-        executable='create',
-        output='screen',
-        arguments=['-file', model_sdf_filename,
-                   '-name', model_name,
-                   '-allow_renaming', 'true',
-                   '-x', x,
-                   '-y', y,
-                   '-z', z,
-                   '-R', roll,
-                   '-P', pitch,
-                   '-Y', yaw],
-        on_exit=[run_px4])
-
-    return [run_px4, spawn_entity]
+sys.path.append(os.path.join(pathlib.Path(__file__).parent.resolve()))  # noqa
+from common import create_px4_instance, kill_all_process  # noqa
 
 
 # This function specifies the processes to be run for our test
@@ -185,7 +116,11 @@ def generate_test_description():
                'micro_ros_agent': micro_ros_agent}
 
     for i in range(1, NUMBER_OF_VEHICLES + 1):
-        [run_px4, spawn] = create_px4_instance(str(i))
+        model_name = [LaunchConfiguration('vehicle_type'), '_stock_', str(i)]
+        [run_px4, spawn] = create_px4_instance(
+            str(i),
+            {'PX4_GZ_MODEL_NAME': model_name},
+            model_name)
         ld.add_action(spawn)
         context['run_px4_' + str(i)] = run_px4
 
@@ -216,25 +151,4 @@ class TestFixture(unittest.TestCase):
         except AssertionError as e:
             print(e.what())
         finally:
-            for i in range(1, NUMBER_OF_VEHICLES + 1):
-                # shutdown px4
-                p = subprocess.Popen(split(f'px4-shutdown --instance {i}'),
-                                     stdout=subprocess.PIPE,
-                                     stderr=subprocess.PIPE)
-                p.wait()
-            for proc in psutil.process_iter():
-                # check whether the process name matches
-                if proc.name() == 'ruby' or proc.name() == 'micro_ros_agent' or proc.name() == 'system_metric_collector':
-                    proc.kill()
-
-
-# # These tests are run after the processes in generate_test_description() have shutdown.
-# @launch_testing.post_shutdown_test()
-# class TestHelloWorldShutdown(unittest.TestCase):
-#
-#     def test_exit_codes(self, proc_info, run_px4_1, run_px4_2):
-#         """Check if the processes exited normally."""
-#         launch_testing.asserts.assertExitCodes(proc_info, process=run_px4_1,
-#                                                allowable_exit_codes=[0])
-#         launch_testing.asserts.assertExitCodes(proc_info, process=run_px4_2,
-#                                                allowable_exit_codes=[0])
+            kill_all_process(NUMBER_OF_VEHICLES)

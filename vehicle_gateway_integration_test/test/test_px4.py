@@ -13,17 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from distutils.dir_util import copy_tree
 import os
 import subprocess
-import tempfile
 
 import unittest
 
 from ament_index_python.packages import get_package_share_directory
 
 import launch
-from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.actions import SetEnvironmentVariable
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
@@ -35,15 +33,8 @@ from launch_testing.util import KeepAliveProc
 import psutil
 import pytest
 
-
-def get_px4_dir():
-    return get_package_share_directory('px4_sim')
-
-
-def seed_rootfs(rootfs):
-    px4_dir = get_px4_dir()
-    print(f'seeding rootfs at {rootfs} from {px4_dir}')
-    copy_tree(px4_dir, rootfs)
+from vehicle_gateway_python_helpers.helpers import get_px4_dir
+from vehicle_gateway_python_helpers.helpers import get_px4_process
 
 
 # This function specifies the processes to be run for our test
@@ -59,20 +50,7 @@ def generate_test_description():
     os.environ['GZ_SIM_RESOURCE_PATH'] += ':' + os.path.join(get_px4_dir(), 'worlds')
     os.environ['GZ_SIM_RESOURCE_PATH'] += ':' + os.path.join(world_pkgs, 'worlds')
 
-    rootfs = tempfile.TemporaryDirectory()
-    px4_dir = get_px4_dir()
-    rc_script = os.path.join(px4_dir, 'etc/init.d-posix/rcS')
-    print('using rootfs ', rootfs.name)
-    seed_rootfs(rootfs.name)
-
-    run_px4 = ExecuteProcess(
-        cmd=['px4', '%s/ROMFS/px4fmu_common' % rootfs.name,
-             '-s', rc_script,
-             '-i', '0',
-             '-d'],
-        cwd=get_px4_dir(),
-        output='screen',
-        shell=True)
+    run_px4 = get_px4_process('0', {})
 
     micro_ros_agent = Node(
         package='micro_ros_agent',

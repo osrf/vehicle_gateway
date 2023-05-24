@@ -31,9 +31,8 @@ std::mutex mutex;
 class VehicleGatewayCpp
 {
 public:
-  VehicleGatewayCpp(unsigned int _vehicle_id)
+  explicit VehicleGatewayCpp(unsigned int _vehicle_id)
   {
-
     this->gateway_ = loader_->createSharedInstance("vehicle_gateway_px4::VehicleGatewayPX4");
     this->gateway_->set_vehicle_id(_vehicle_id);
     this->gateway_->init(0, nullptr);

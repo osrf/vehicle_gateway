@@ -49,14 +49,13 @@ static void post_sentinel(int signum)
 /// \brief Function called each time a topic update is received.
 void cb(const gz::msgs::WorldStatistics & _msg)
 {
-  // std::cout << "Msg: " << _msg.real_time_factor() << std::endl << std::endl;
   mutex_stats.lock();
   gazebo_rtf += _msg.real_time_factor();
   num_reading++;
   mutex_stats.unlock();
 }
 
-int main(int argc, char * argv[])
+int main(int /*argc*/, char * argv[])
 {
   std::ofstream m_os;
   std::string process_pid;
