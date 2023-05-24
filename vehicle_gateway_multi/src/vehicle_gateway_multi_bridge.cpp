@@ -122,7 +122,7 @@ int main(int argc, char ** argv)
   while (rclcpp::ok()) {
     std::cout << "sending telemetry message...\n";
 
-    mutex.lock();
+    mutex_positions.lock();
     for (auto it = map_positions.begin(); it != map_positions.end(); ++it) {
       j["vehicle_" + std::to_string(it->first)]["id"] = it->first;
       j["vehicle_" + std::to_string(it->first)]["east"] = it->second.lat;
@@ -130,7 +130,7 @@ int main(int argc, char ** argv)
       j["vehicle_" + std::to_string(it->first)]["down"] = -it->second.alt;
       j["vehicle_" + std::to_string(it->first)]["timestamp"] = it->second.timestamp;
     }
-    mutex.unlock();
+    mutex_positions.unlock();
     // todo: send string message via zenoh
     string s = j.dump();
 
