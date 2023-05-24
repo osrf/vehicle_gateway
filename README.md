@@ -106,6 +106,12 @@ source install/setup.bash
 ros2 launch px4_sim px4_sim.launch.py drone_type:=x500 frame_name:=pad_1 world_name:=null_island
 ```
 
+If you want to know all the available arguments you just need to type:
+
+```bash
+ros2 launch px4_sim px4_sim.launch.py --show-args
+```
+
 ### Fly!
 
 Once the simulation world is up and running, there should be a simulated autopilot running that you can communicate with using the Vehicle Gateway API. In a separate terminal, you can run a minimal takeoff-land script that uses this API:
