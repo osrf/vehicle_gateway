@@ -36,7 +36,7 @@ using namespace std::chrono_literals;
 class ZenohBridge
 {
 public:
-  ZenohBridge(unsigned int vehicle_id, rclcpp::Node::SharedPtr node,z_owned_session_t *session)
+  ZenohBridge(unsigned int vehicle_id, rclcpp::Node::SharedPtr node, z_owned_session_t * session)
   {
     this->vehicle_id_ = vehicle_id;
     this->node_ = node;
@@ -64,17 +64,17 @@ public:
 
     subscription_ =
       this->node_->create_subscription<px4_msgs::msg::SensorGps>(
-        vehicle_id_prefix + "/fmu/out/vehicle_gps_position",
-        qos_profile,
-        [this](px4_msgs::msg::SensorGps::ConstSharedPtr msg) {
-          std::cerr << "vehicle_id " << this->vehicle_id_ << '\n';
-          mutex_.lock();
-          this->lat_ = msg->lat * 1e-7;
-          this->lon_ = msg->lon * 1e-7;
-          this->alt_ = msg->alt * 1e-3;
-          this->timestamp_ = msg->timestamp;
-          mutex_.unlock();
-        });
+      vehicle_id_prefix + "/fmu/out/vehicle_gps_position",
+      qos_profile,
+      [this](px4_msgs::msg::SensorGps::ConstSharedPtr msg) {
+        std::cerr << "vehicle_id " << this->vehicle_id_ << '\n';
+        mutex_.lock();
+        this->lat_ = msg->lat * 1e-7;
+        this->lon_ = msg->lon * 1e-7;
+        this->alt_ = msg->alt * 1e-3;
+        this->timestamp_ = msg->timestamp;
+        mutex_.unlock();
+      });
 
     this->pub_ = z_declare_publisher(
       z_loan(*this->session_), z_keyexpr(this->zenoh_key_name_.c_str()), NULL);
@@ -113,7 +113,7 @@ private:
 
   std::string zenoh_key_name_;
   unsigned int vehicle_id_;
-  z_owned_session_t *session_;
+  z_owned_session_t * session_;
   z_owned_publisher_t pub_;
 };
 
