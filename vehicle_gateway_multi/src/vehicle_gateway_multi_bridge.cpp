@@ -32,17 +32,90 @@ using std::string;
 using nlohmann::json;
 using namespace std::chrono_literals;
 
-struct gpsdata
-{
-  double lat{0};
-  double lon{0};
-  double alt{0};
-  uint64_t timestamp;
-};
 
-std::mutex mutex_positions;
-std::unordered_map<int, gpsdata> map_positions;
-std::vector<rclcpp::Subscription<px4_msgs::msg::SensorGps>::SharedPtr> subscriptions;
+class ZenohBridge
+{
+public:
+  ZenohBridge(unsigned int vehicle_id, rclcpp::Node::SharedPtr node,z_owned_session_t *session)
+  {
+    this->vehicle_id_ = vehicle_id;
+    this->node_ = node;
+    this->zenoh_key_name_ = "vehicle_gateway/" + std::to_string(vehicle_id) + "/telemetry";
+    std::cout << "Declaring Publisher on '" << this->zenoh_key_name_ << "'...\n";
+    this->session_ = session;
+  }
+
+  std::string zenoh_key()
+  {
+    return this->zenoh_key_name_;
+  }
+
+  int initialize()
+  {
+    std::string vehicle_id_prefix = std::string("/px4_") +
+      std::to_string(this->vehicle_id_);
+
+    rclcpp::QoS qos_profile(10);
+    qos_profile
+    // Guaranteed delivery is needed to send messages to late-joining subscriptions.
+    .best_effort();
+
+    std::cout << "Subscribed to " << vehicle_id_prefix + "/fmu/out/vehicle_gps_position" << '\n';
+
+    subscription_ =
+      this->node_->create_subscription<px4_msgs::msg::SensorGps>(
+        vehicle_id_prefix + "/fmu/out/vehicle_gps_position",
+        qos_profile,
+        [this](px4_msgs::msg::SensorGps::ConstSharedPtr msg) {
+          std::cerr << "vehicle_id " << this->vehicle_id_ << '\n';
+          mutex_.lock();
+          this->lat_ = msg->lat * 1e-7;
+          this->lon_ = msg->lon * 1e-7;
+          this->alt_ = msg->alt * 1e-3;
+          this->timestamp_ = msg->timestamp;
+          mutex_.unlock();
+        });
+
+    this->pub_ = z_declare_publisher(
+      z_loan(*this->session_), z_keyexpr(this->zenoh_key_name_.c_str()), NULL);
+    if (!z_check(this->pub_)) {
+      std::cout << "Unable to declare Publisher for key expression!\n";
+      return -1;
+    }
+    return 0;
+  }
+
+  void publish_data()
+  {
+    json j;
+    this->mutex_.lock();
+    j["id"] = this->vehicle_id_;
+    j["east"] = this->lat_;
+    j["north"] = this->lon_;
+    j["down"] = -this->alt_;
+    j["timestamp"] = this->timestamp_;
+    this->mutex_.unlock();
+
+    string s = j.dump();
+    z_publisher_put_options_t options = z_publisher_put_options_default();
+    options.encoding = z_encoding(Z_ENCODING_PREFIX_TEXT_PLAIN, NULL);
+    z_publisher_put(z_loan(this->pub_), (const uint8_t *)s.c_str(), s.size() + 1, &options);
+  }
+
+private:
+  std::mutex mutex_;
+  double lat_{0};
+  double lon_{0};
+  double alt_{0};
+  uint64_t timestamp_;
+  rclcpp::Node::SharedPtr node_;
+  rclcpp::Subscription<px4_msgs::msg::SensorGps>::SharedPtr subscription_;
+
+  std::string zenoh_key_name_;
+  unsigned int vehicle_id_;
+  z_owned_session_t *session_;
+  z_owned_publisher_t pub_;
+};
 
 int main(int argc, char ** argv)
 {
@@ -50,10 +123,10 @@ int main(int argc, char ** argv)
     std::cout << "usage: vehicle_gateway_multi_bridge ZENOH_CONFIG_FILENAME VEHICLE_ID\n";
     return EXIT_FAILURE;
   }
-  const char * config_filename = argv[1];
-  z_owned_config_t config = zc_config_from_file(config_filename);
+  const char * zenoh_config_file = argv[1];
+  z_owned_config_t config = zc_config_from_file(zenoh_config_file);
   if (!z_check(config)) {
-    std::cout << "unable to parse zenoh config from [" << config_filename << "]\n";
+    std::cout << "unable to parse zenoh config from [" << zenoh_config_file << "]\n";
     return EXIT_FAILURE;
   }
   std::cout << "opening zenoh session...\n";
@@ -67,7 +140,6 @@ int main(int argc, char ** argv)
   YAML::Node config_yaml = YAML::LoadFile(argv[2]);
 
   rclcpp::init(argc, argv);
-
   rclcpp::Node::SharedPtr node;
   std::thread spin_thread;
   std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> exec;
@@ -80,39 +152,13 @@ int main(int argc, char ** argv)
       exec->spin();
     });
 
-  rclcpp::QoS qos_profile(10);
-  qos_profile
-  // Guaranteed delivery is needed to send messages to late-joining subscriptions.
-  .best_effort();
+  std::vector<std::shared_ptr<ZenohBridge>> bridges;
 
   for (std::size_t i = 0; i < config_yaml.size(); i++) {
-    std::string vehicle_id_prefix = std::string("/px4_") +
-      config_yaml[i]["vehicle_id"].as<std::string>();
     int vehicle_id = config_yaml[i]["vehicle_id"].as<int>();
-
-    std::cout << "Subscribed to " << vehicle_id_prefix + "/fmu/out/vehicle_gps_position" << '\n';
-
-    subscriptions.push_back(
-      node->create_subscription<px4_msgs::msg::SensorGps>(
-        vehicle_id_prefix + "/fmu/out/vehicle_gps_position",
-        qos_profile,
-        [&, vehicle_id](px4_msgs::msg::SensorGps::ConstSharedPtr msg) {
-          std::cerr << "vehicle_id " << vehicle_id << '\n';
-          struct gpsdata data{msg->lat * 1e-7, msg->lon * 1e-7, msg->alt * 1e-3,
-            msg->timestamp};
-          mutex_positions.lock();
-          map_positions[vehicle_id] = data;
-          mutex_positions.unlock();
-        }));
-  }
-
-  const char * keyexpr = "vehicle_gateway/positions";
-
-  std::cout << "Declaring Publisher on '" << keyexpr << "'...\n";
-  z_owned_publisher_t pub = z_declare_publisher(z_loan(session), z_keyexpr(keyexpr), NULL);
-  if (!z_check(pub)) {
-    std::cout << "Unable to declare Publisher for key expression!\n";
-    exit(-1);
+    auto b = std::make_shared<ZenohBridge>(vehicle_id, node, &session);
+    b->initialize();
+    bridges.push_back(b);
   }
 
   json j;
@@ -122,27 +168,14 @@ int main(int argc, char ** argv)
   while (rclcpp::ok()) {
     std::cout << "sending telemetry message...\n";
 
-    mutex_positions.lock();
-    for (auto it = map_positions.begin(); it != map_positions.end(); ++it) {
-      j["vehicle_" + std::to_string(it->first)]["id"] = it->first;
-      j["vehicle_" + std::to_string(it->first)]["east"] = it->second.lat;
-      j["vehicle_" + std::to_string(it->first)]["north"] = it->second.lon;
-      j["vehicle_" + std::to_string(it->first)]["down"] = -it->second.alt;
-      j["vehicle_" + std::to_string(it->first)]["timestamp"] = it->second.timestamp;
+    for (std::size_t i = 0; i < bridges.size(); i++) {
+      bridges[i]->publish_data();
     }
-    mutex_positions.unlock();
-    // todo: send string message via zenoh
-    string s = j.dump();
-
-    z_publisher_put_options_t options = z_publisher_put_options_default();
-    options.encoding = z_encoding(Z_ENCODING_PREFIX_TEXT_PLAIN, NULL);
-    std::cerr << "sizeof(s.c_str()) " << sizeof(s.c_str()) << '\n';
-    z_publisher_put(z_loan(pub), (const uint8_t *)s.c_str(), s.size() + 1, &options);
 
     loop_rate.sleep();
   }
 
-  subscriptions.clear();
+  bridges.clear();
   rclcpp::shutdown();
 
   std::cout << "closing zenoh session...\n";

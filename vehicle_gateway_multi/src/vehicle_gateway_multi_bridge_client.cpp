@@ -29,7 +29,7 @@ void data_handler(const z_sample_t * sample, void * /*arg*/)
 
 int main(int argc, char ** argv)
 {
-  const char * expr = "vehicle_gateway/positions";
+  const char * expr = "vehicle_gateway/*/telemetry";
   if (argc > 1) {
     expr = argv[1];
   }
