@@ -10,8 +10,21 @@ The goal of this project is to create a pluginlib-based C++ library that can int
  - px4_sim: This package downloads the PX4 repository and compile the required targets to simulate quadcopters, VTOLs and fixed wings planes in Gazebo.
  - qgroundcontrol: This package download and install [QGroundControl](https://github.com/mavlink/qgroundcontrol) which is an intuitive and powerful ground control station (GCS) for UAVs.
  - vehicle_gateway: A pluginlib-based system for interfacing to vehicle SDK's.
+ - vehicle_gateway_betaflight: Betaflight plugin for the Vehicle Gateway.
+ - vehicle_gateway_demo: Some demos to show the capabilities of the Vehicle Gateway API.
+   - aruco_demo: This demos will launch a robot with a camera and it should follow an ARUCO marker
+   - circles: The robot will move around a point in circles.
+   - vtol_position_control: This demos will launch a VTOL, takeoff, transition to fixed wings mode, move to a location, return to launch and land.
+ - vehicle_gateway_integration_test: Integration test that generate some end-to-end testing of the Vehicle Gateway API.
+ - vehicle_gateway_models: Additional model:
+   - aruco marker
+   - camera that can be attached to a quadcopter
+   - standard_vtol_camera that can be attached to a vtol
+ - vehicle_gateway_multi: Zenoh bridge
  - vehicle_gateway_px4: PX4 plugin for the Vehicle Gateway.
  - vehicle_gateway_python: Vehicle gateway python wrapper.
+ - vehicle_gateway_python_helpers: Some helper functions to use in the launch files.
+ - vehicle_gateway_sim_performance: This package will launch some performance test with different number of drones and/or domain id. This will allow to check the system CPU, system memory and Gazebo real time factor.
  - vehicle_gateway_worlds: Some demo worlds for the Vehicle Gateway.
 
 You can find more details about Betaflight [here](./BETAFLIGHT_README.md) or PX4 [here](./px4_sim/README.md).
