@@ -11,14 +11,16 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
+  <depend>nlohmann-json-dev</depend>
+  <depend>px4_msgs</depend>
   <depend>rclcpp</depend>
   <depend>std_msgs</depend>
   <depend>vehicle_gateway</depend>
+  <depend>yaml_cpp_vendor</depend>
   <depend>zenohc</depend>
-  <depend>nlohmann-json-dev</depend>
 
   <test_depend>ament_lint_auto</test_depend>
-  <test_depend>ament_cmake_lint_cmake</test_depend>
+  <test_depend>ament_lint_common</test_depend>
 
   <export>
     <build_type>ament_cmake</build_type>
