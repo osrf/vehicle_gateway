@@ -10,7 +10,7 @@
     </plugin>
 
     <include merge="true">
-      <uri>model://x500_stock</uri>
+      <uri>model://x500</uri>
     </include>
 
     <include merge="true">

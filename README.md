@@ -138,6 +138,32 @@ Then you will see two drones one positioned in the `pad_1` and another one in th
 ...
 ```
 
+# Create a multirobot config file
+
+Create a file called `multirobot_config.yaml`:
+
+```yaml
+- vehicle_id: 1
+  frame_name: pad_1
+  vehicle_type: x500
+  sensor_config: stock
+  model_pose: ""
+  dds_domain_id: ""
+- vehicle_id: 2
+  frame_name: pad_2
+  vehicle_type: standard_vtol
+  sensor_config: stock
+  model_pose: ""
+  dds_domain_id: ""
+```
+
+Export and run the script `px4_sim_multi.launch.py` with the following commands:
+
+```bash
+export MULTIROBOT_CONFIG=<path_to_config_file>/multirobot_config.yaml
+ros2 launch px4_sim px4_sim_multi.launch.py
+```
+
 # Running tests
 
 You can run an integration test suite which will test several flight capabilities. Gazebo will run headless simulation and report ability of the Vehicle Gateway plugin and a software-in-the-loop autopilot to perform various capabilities.

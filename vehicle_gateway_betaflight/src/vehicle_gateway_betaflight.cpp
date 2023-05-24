@@ -289,8 +289,6 @@ void VehicleGatewayBetaflight::takeoff() {}
 
 void VehicleGatewayBetaflight::land() {}
 
-void VehicleGatewayBetaflight::go_to_waypoint() {}
-
 void VehicleGatewayBetaflight::transition_to_fw() {}
 
 void VehicleGatewayBetaflight::transition_to_fw_sync() {}

@@ -79,17 +79,99 @@
       <pose>0.0 0.0 0.5 0.0 0.0 0.0</pose>
     </frame>
     <frame name="pad_2">
-      <pose>2.0 0.0 0.5 0.0 0.0 0.0</pose>
+      <pose>4.0 0.0 0.5 0.0 0.0 0.0</pose>
     </frame>
     <frame name="pad_3">
-      <pose>-2.0 0.0 0.5 0.0 0.0 0.0</pose>
+      <pose>-4.0 0.0 0.5 0.0 0.0 0.0</pose>
     </frame>
     <frame name="pad_4">
-      <pose>0.0 2.0 0.5 0.0 0.0 0.0</pose>
+      <pose>0.0 6.0 0.5 0.0 0.0 0.0</pose>
     </frame>
     <frame name="pad_5">
-      <pose>0.0 -2.0 0.5 0.0 0.0 0.0</pose>
+      <pose>0.0 -6.0 0.5 0.0 0.0 0.0</pose>
     </frame>
 
+    <frame name="pad_6">
+      <pose>4.0 6.0 0.5 0.0 0.0 0.0</pose>
+    </frame>
+    <frame name="pad_7">
+      <pose>-4.0 6.0 0.5 0.0 0.0 0.0</pose>
+    </frame>
+    <frame name="pad_8">
+      <pose>4.0 -6.0 0.5 0.0 0.0 0.0</pose>
+    </frame>
+    <frame name="pad_9">
+      <pose>-4.0 -6.0 0.5 0.0 0.0 0.0</pose>
+    </frame>
+
+    <frame name="pad_10">
+      <pose>-4.0 -10.0 0.5 0.0 0.0 0.0</pose>
+    </frame>
+    <frame name="pad_11">
+      <pose>0.0 -10.0 0.5 0.0 0.0 0.0</pose>
+    </frame>
+    <frame name="pad_12">
+      <pose>4.0 -10.0 0.5 0.0 0.0 0.0</pose>
+    </frame>
+    <frame name="pad_13">
+      <pose>-6.0 -10.0 0.5 0.0 0.0 0.0</pose>
+    </frame>
+    <frame name="pad_14">
+      <pose>6.0 -10.0 0.5 0.0 0.0 0.0</pose>
+    </frame>
+    <frame name="pad_15">
+      <pose>-8.0 -10.0 0.5 0.0 0.0 0.0</pose>
+    </frame>
+
+    <frame name="pad_16">
+      <pose>-4.0 10.0 0.5 0.0 0.0 0.0</pose>
+    </frame>
+    <frame name="pad_17">
+      <pose>0.0 10.0 0.5 0.0 0.0 0.0</pose>
+    </frame>
+    <frame name="pad_18">
+      <pose>4.0 10.0 0.5 0.0 0.0 0.0</pose>
+    </frame>
+    <frame name="pad_19">
+      <pose>-6.0 10.0 0.5 0.0 0.0 0.0</pose>
+    </frame>
+    <frame name="pad_20">
+      <pose>6.0 10.0 0.5 0.0 0.0 0.0</pose>
+    </frame>
+
+    <frame name="pad_21">
+      <pose>-4.0 -14.0 0.5 0.0 0.0 0.0</pose>
+    </frame>
+    <frame name="pad_22">
+      <pose>0.0 -14.0 0.5 0.0 0.0 0.0</pose>
+    </frame>
+    <frame name="pad_23">
+      <pose>4.0 -14.0 0.5 0.0 0.0 0.0</pose>
+    </frame>
+    <frame name="pad_24">
+      <pose>-6.0 -14.0 0.5 0.0 0.0 0.0</pose>
+    </frame>
+    <frame name="pad_25">
+      <pose>6.0 -14.0 0.5 0.0 0.0 0.0</pose>
+    </frame>
+
+    <frame name="pad_26">
+      <pose>-8.0 -14.0 0.5 0.0 0.0 0.0</pose>
+    </frame>
+    <frame name="pad_27">
+      <pose>-4.0 14.0 0.5 0.0 0.0 0.0</pose>
+    </frame>
+    <frame name="pad_28">
+      <pose>0.0 14.0 0.5 0.0 0.0 0.0</pose>
+    </frame>
+    <frame name="pad_29">
+      <pose>4.0 14.0 0.5 0.0 0.0 0.0</pose>
+    </frame>
+    <frame name="pad_30">
+      <pose>-6.0 14.0 0.5 0.0 0.0 0.0</pose>
+    </frame>
+    <frame name="pad_31">
+      <pose>6.0 14.0 0.5 0.0 0.0 0.0</pose>
+    </frame>
   </world>
 </sdf>

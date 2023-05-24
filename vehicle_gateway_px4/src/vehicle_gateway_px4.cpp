@@ -20,6 +20,12 @@
 #include "px4_msgs/msg/vehicle_local_position_setpoint.hpp"
 #include "tf2/utils.h"
 
+#ifdef _WIN32
+#include <Windows.h>
+#else
+#include <unistd.h>
+#endif
+
 namespace vehicle_gateway_px4
 {
 
@@ -382,11 +388,7 @@ void VehicleGatewayPX4::destroy()
     // we've asked it to shut down many times, so clearly now we're good lol
     this->exec_ = nullptr;
     rclcpp::shutdown();
-    printf("calling std::thread::join()\n");
-    fflush(stdout);
     this->spin_thread_.join();
-    printf("done with std::thread::join()\n");
-    fflush(stdout);
   }
 }
 
@@ -571,7 +573,6 @@ void VehicleGatewayPX4::land()
 
 void VehicleGatewayPX4::transition_to_fw()
 {
-  printf("sending VTOL_TRANSITION request\n");
   this->send_command(
     // https://mavlink.io/en/messages/common.html#MAV_CMD_DO_VTOL_TRANSITION
     px4_msgs::msg::VehicleCommand::VEHICLE_CMD_DO_VTOL_TRANSITION,
@@ -831,10 +832,6 @@ bool VehicleGatewayPX4::set_body_rates_and_thrust_setpoint(
 bool VehicleGatewayPX4::set_motors(std::vector<uint16_t>/*motor_values*/)
 {
   return true;
-}
-
-void VehicleGatewayPX4::go_to_waypoint()
-{
 }
 
 void VehicleGatewayPX4::get_local_position(float & x, float & y, float & z)
