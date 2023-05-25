@@ -142,7 +142,7 @@ int main(int argc, char ** argv)
   }
   std::cout << "zenoh session open!\n";
 
-  YAML::Node config_yaml = YAML::LoadFile(argv[2]);
+  int vehicle_id = atoi(argv[2]);
 
   rclcpp::init(argc, argv);
   rclcpp::Node::SharedPtr node;
@@ -157,14 +157,8 @@ int main(int argc, char ** argv)
       exec->spin();
     });
 
-  std::vector<std::shared_ptr<ZenohBridge>> bridges;
-
-  for (std::size_t i = 0; i < config_yaml.size(); i++) {
-    int vehicle_id = config_yaml[i]["vehicle_id"].as<int>();
-    auto b = std::make_shared<ZenohBridge>(vehicle_id, node, &session);
-    b->initialize();
-    bridges.push_back(b);
-  }
+  std::shared_ptr<ZenohBridge> bridge = std::make_shared<ZenohBridge>(vehicle_id, node, &session);
+  bridge->initialize();
 
   json j;
 
@@ -172,15 +166,11 @@ int main(int argc, char ** argv)
 
   while (rclcpp::ok()) {
     std::cout << "sending telemetry message...\n";
-
-    for (std::size_t i = 0; i < bridges.size(); i++) {
-      bridges[i]->publish_data();
-    }
+    bridge->publish_data();
 
     loop_rate.sleep();
   }
 
-  bridges.clear();
   rclcpp::shutdown();
 
   std::cout << "closing zenoh session...\n";
