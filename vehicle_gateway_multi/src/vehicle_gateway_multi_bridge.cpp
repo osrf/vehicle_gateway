@@ -91,8 +91,9 @@ public:
   {
     const std::lock_guard<std::mutex> lock(mutex_);
 
-    if (!this->newdata_)
+    if (!this->newdata_) {
       return;
+    }
 
     json j;
     j["id"] = this->vehicle_id_;
