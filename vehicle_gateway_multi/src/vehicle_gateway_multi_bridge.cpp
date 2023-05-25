@@ -68,12 +68,13 @@ public:
       qos_profile,
       [this](px4_msgs::msg::SensorGps::ConstSharedPtr msg) {
         std::cerr << "vehicle_id " << this->vehicle_id_ << '\n';
-        mutex_.lock();
-        this->lat_ = msg->lat * 1e-7;
-        this->lon_ = msg->lon * 1e-7;
-        this->alt_ = msg->alt * 1e-3;
-        this->timestamp_ = msg->timestamp;
-        mutex_.unlock();
+        {
+          const std::lock_guard<std::mutex> lock(mutex_);
+          this->lat_ = msg->lat * 1e-7;
+          this->lon_ = msg->lon * 1e-7;
+          this->alt_ = msg->alt * 1e-3;
+          this->timestamp_ = msg->timestamp;
+        }
       });
 
     this->pub_ = z_declare_publisher(
@@ -87,19 +88,23 @@ public:
 
   void publish_data()
   {
+    const std::lock_guard<std::mutex> lock(mutex_);
+
     json j;
-    this->mutex_.lock();
     j["id"] = this->vehicle_id_;
     j["east"] = this->lat_;
     j["north"] = this->lon_;
     j["down"] = -this->alt_;
     j["timestamp"] = this->timestamp_;
-    this->mutex_.unlock();
 
     string s = j.dump();
     z_publisher_put_options_t options = z_publisher_put_options_default();
-    options.encoding = z_encoding(Z_ENCODING_PREFIX_TEXT_PLAIN, NULL);
-    z_publisher_put(z_loan(this->pub_), (const uint8_t *)s.c_str(), s.size() + 1, &options);
+    options.encoding = z_encoding(Z_ENCODING_PREFIX_TEXT_JSON, NULL);
+    z_publisher_put(
+      z_loan(this->pub_),
+      reinterpret_cast<const uint8_t *>(s.c_str()),
+      s.size() + 1,
+      &options);
   }
 
 private:
