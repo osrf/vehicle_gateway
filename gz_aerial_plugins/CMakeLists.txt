@@ -37,6 +37,21 @@ gz_find_package(gz-gui7 REQUIRED)
 set(GZ_GUI_VER ${gz-gui7_VERSION_MAJOR})
 
 #--------------------------------------
+# Find gz-plugin
+gz_find_package(gz-plugin2 REQUIRED)
+set(GZ_PLUGIN_VER ${gz-plugin2_VERSION_MAJOR})
+
+#--------------------------------------
+# Find gz-msgs
+gz_find_package(gz-msgs9 REQUIRED)
+set(GZ_MSGS_VER ${gz-msgs9_VERSION_MAJOR})
+
+#--------------------------------------
+# Find gz-transport
+gz_find_package(gz-transport12 REQUIRED)
+set(GZ_TRANSPORT_VER ${gz-transport12_VERSION_MAJOR})
+
+#--------------------------------------
 # Find gz-common
 # Always use the profiler component to get the headers, regardless of status.
 gz_find_package(gz-common5
@@ -61,6 +76,9 @@ add_library(DroneHmi SHARED ${headers_MOC}
 target_link_libraries(DroneHmi
   gz-gui7::gz-gui7
   gz-common5::gz-common5
+  gz-msgs${GZ_MSGS_VER}::gz-msgs${GZ_MSGS_VER}
+  gz-plugin${GZ_PLUGIN_VER}::register
+  gz-transport${GZ_TRANSPORT_VER}::gz-transport${GZ_TRANSPORT_VER}
   ${Qt5Core_LIBRARIES}
   ${Qt5Qml_LIBRARIES}
   ${Qt5Quick_LIBRARIES}

@@ -9,8 +9,15 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <depend>gz-sim7</depend>
+  <depend>control_toolbox</depend>
   <depend>gz-cmake3</depend>
+  <depend>gz-math7</depend>
+  <depend>gz-plugin2</depend>
+  <depend>gz-sim7</depend>
+  <depend>gz-transport7</depend>
+  <depend>pluginlib</depend>
+  <depend>rclcpp</depend>
+  <depend>std_msgs</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

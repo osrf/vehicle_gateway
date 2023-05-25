@@ -16,10 +16,10 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-find_package(ament_cmake_ros REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(std_msgs REQUIRED)
 find_package(vehicle_gateway REQUIRED)
 
 find_package(PkgConfig REQUIRED)
@@ -37,6 +37,7 @@ ament_target_dependencies(
   pluginlib
   rclcpp
   sensor_msgs
+  std_msgs
   vehicle_gateway
 )
 
