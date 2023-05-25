@@ -67,16 +67,17 @@ public:
       vehicle_id_prefix + "/fmu/out/vehicle_gps_position",
       qos_profile,
       [this](px4_msgs::msg::SensorGps::ConstSharedPtr msg) {
-        std::cerr << "vehicle_id " << this->vehicle_id_ << '\n';
         {
           const std::lock_guard<std::mutex> lock(mutex_);
           this->lat_ = msg->lat * 1e-7;
           this->lon_ = msg->lon * 1e-7;
           this->alt_ = msg->alt * 1e-3;
           this->timestamp_ = msg->timestamp;
+          this->newdata_ = true;
         }
       });
 
+    std::cout << "sending telemetry message...\n";
     this->pub_ = z_declare_publisher(
       z_loan(*this->session_), z_keyexpr(this->zenoh_key_name_.c_str()), NULL);
     if (!z_check(this->pub_)) {
@@ -90,12 +91,16 @@ public:
   {
     const std::lock_guard<std::mutex> lock(mutex_);
 
+    if (!this->newdata_)
+      return;
+
     json j;
     j["id"] = this->vehicle_id_;
     j["east"] = this->lat_;
     j["north"] = this->lon_;
     j["down"] = -this->alt_;
     j["timestamp"] = this->timestamp_;
+    this->newdata_ = false;
 
     string s = j.dump();
     z_publisher_put_options_t options = z_publisher_put_options_default();
@@ -113,6 +118,7 @@ private:
   double lon_{0};
   double alt_{0};
   uint64_t timestamp_;
+  bool newdata_{false};
   rclcpp::Node::SharedPtr node_;
   rclcpp::Subscription<px4_msgs::msg::SensorGps>::SharedPtr subscription_;
 
@@ -165,7 +171,6 @@ int main(int argc, char ** argv)
   rclcpp::WallRate loop_rate(500ms);
 
   while (rclcpp::ok()) {
-    std::cout << "sending telemetry message...\n";
     bridge->publish_data();
 
     loop_rate.sleep();
