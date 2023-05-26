@@ -11,12 +11,15 @@
   <exec_depend>ament_index_python</exec_depend>
   <exec_depend>qgroundcontrol</exec_depend>
   <exec_depend>ros_gz_sim</exec_depend>
+  <exec_depend>ros_gz_bridge</exec_depend>
   <exec_depend>ros2launch</exec_depend>
-  <exec_depend>vehicle_gateway_worlds</exec_depend>
   <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+  <exec_depend>vehicle_gateway_python_helpers</exec_depend>
+  <exec_depend>vehicle_gateway_models</exec_depend>
+  <exec_depend>vehicle_gateway_worlds</exec_depend>
 
-  <build_depend>micro_ros_msgs</build_depend>
-  <build_depend>micro_ros_agent</build_depend>
+  <exec_depend>micro_ros_agent</exec_depend>
 
   <export>
     <build_type>ament_cmake</build_type>

@@ -13,20 +13,26 @@
 
   <depend>aruco_opencv_msgs</depend>
   <depend>control_toolbox</depend>
+  <depend>pluginlib</depend>
   <depend>rclcpp</depend>
   <depend>std_msgs</depend>
   <depend>vehicle_gateway</depend>
   <depend>vehicle_gateway_px4</depend>
 
   <exec_depend>ament_index_python</exec_depend>
+  <exec_depend>aruco_opencv</exec_depend>
   <exec_depend>betaflight_sim</exec_depend>
-  <exec_depend>px4_sim</exec_depend>
+  <exec_depend>micro_ros_agent</exec_depend>
   <exec_depend>launch</exec_depend>
-  <exec_depend>vehicle_gateway_models</exec_depend>
-  <exec_depend>vehicle_gateway_worlds</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+  <exec_depend>px4_sim</exec_depend>
   <exec_depend>ros_gz_bridge</exec_depend>
   <exec_depend>ros_gz_sim</exec_depend>
-  <exec_depend>aruco_opencv</exec_depend>
+  <exec_depend>rviz2</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
+  <exec_depend>vehicle_gateway_models</exec_depend>
+  <exec_depend>vehicle_gateway_worlds</exec_depend>
+
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_cmake_lint_cmake</test_depend>

@@ -7,11 +7,13 @@
   <maintainer email="ahcorde@openrobotics.com">ahcorde</maintainer>
   <license>Apache 2.0</license>
 
-  <buildtool_depend>ament_cmake</buildtool_depend>
-  <buildtool_depend>gz-cmake3</buildtool_depend>
-  <buildtool_depend>gz-gui7</buildtool_depend>
-  <buildtool_depend>gz-msgs9</buildtool_depend>
-  <buildtool_depend>gz-common5</buildtool_depend>
+  <depend>ament_cmake</depend>
+  <depend>gz-common5</depend>
+  <depend>gz-cmake3</depend>
+  <depend>gz-gui7</depend>
+  <depend>gz-plugin2</depend>
+  <depend>gz-msgs9</depend>
+  <depend>gz-transport12</depend>
   <depend>qml-module-qtquick-extras</depend>
 
   <test_depend>ament_lint_auto</test_depend>

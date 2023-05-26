@@ -9,15 +9,20 @@
 
   <depend>gz-cmake3</depend>
   <depend>gz-transport12</depend>
-  <depend>vehicle_gateway_px4</depend>
+  <depend>pluginlib</depend>
   <depend>rclcpp</depend>
+  <depend>vehicle_gateway_px4</depend>
 
   <test_depend>ament_index_python</test_depend>
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
   <test_depend>launch</test_depend>
+  <test_depend>launch_ros</test_depend>
+  <test_depend>launch_testing</test_depend>
   <test_depend>launch_testing_ament_cmake</test_depend>
   <test_depend>micro_ros_agent</test_depend>
+  <test_depend>ros_gz_bridge</test_depend>
+  <test_depend>ros_gz_sim</test_depend>
   <test_depend>px4_sim</test_depend>
   <test_depend>vehicle_gateway_models</test_depend>
   <test_depend>vehicle_gateway_python</test_depend>
