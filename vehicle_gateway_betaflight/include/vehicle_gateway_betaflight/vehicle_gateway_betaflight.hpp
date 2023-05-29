@@ -174,7 +174,6 @@ public:
 
   void * get_multirobot_session() override {return nullptr;}
 
-
 private:
   // Orchestration
   std::thread spin_thread_;
