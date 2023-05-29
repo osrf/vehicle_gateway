@@ -101,7 +101,6 @@ public:
     j["north"] = this->lon_;
     j["down"] = -this->alt_;
     j["timestamp"] = this->timestamp_;
-    //j["airspeed"] = this->
     this->newdata_ = false;
 
     string s = j.dump();
