@@ -61,7 +61,8 @@ private:
   std::shared_ptr<pluginlib::ClassLoader<vehicle_gateway::VehicleGateway>> loader_;
 };
 
-void Follower::state_handler(const z_sample_t * sample) {
+void Follower::state_handler(const z_sample_t * sample)
+{
   json j;
   try {
     j = json::parse(
@@ -88,7 +89,8 @@ void Follower::state_handler(const z_sample_t * sample) {
   // TODO: here we shall do something smart to chase after the leader
 }
 
-void state_handler(const z_sample_t * sample, void * context) {
+void state_handler(const z_sample_t * sample, void * context)
+{
   Follower * follower = reinterpret_cast<Follower *>(context);
   follower->state_handler(sample);
 }
