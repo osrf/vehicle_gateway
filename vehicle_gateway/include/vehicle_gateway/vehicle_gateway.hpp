@@ -292,7 +292,6 @@ public:
 
 protected:
   VehicleGateway() {}
-
 };
 }  // namespace vehicle_gateway
 
