@@ -89,8 +89,7 @@ void Follower::state_handler(const z_sample_t * sample)
     "leader position: (%.3f, %.3f, %.3f)\n",
     leader_north, leader_east, leader_down);
 
-  if (!this->following_active)
-  {
+  if (!this->following_active) {
     this->start = std::chrono::steady_clock::now();
     this->following_active = true;
     std::cout << "Arming..." << '\n';
@@ -112,9 +111,7 @@ void Follower::state_handler(const z_sample_t * sample)
 
     std::cout << "Begin transitioning to Offboard control..." << std::endl;
     gateway_->transition_to_offboard_sync();
-  }
-  else
-  {
+  } else {
     const auto home_position = gateway_->get_latlon();
     if (home_position.size() != 3) {
       throw std::runtime_error("home_position should have three elements: lat, lon, alt");
