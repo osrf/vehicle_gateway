@@ -68,9 +68,9 @@ int main(int argc, const char * argv[])
 
   if (argc > 2) {
     if (vg->gateway_->create_multirobot_session(argv[2])) {
-      printf("started multivehicle comms as vehicle %d\n", vehicle_id);
+      std::cout << "started multivehicle comms as vehicle " << vehicle_id << std::endl;
     } else {
-      printf("could not initialize multirobot session from %s\n", argv[1]);
+      std::cout << "could not initialize multirobot session from " << argv[1] << std::endl;
       return 1;
     }
   }
@@ -106,16 +106,27 @@ int main(int argc, const char * argv[])
 
   std::cout << "Flying to first waypoint..." << std::endl;
   vg->gateway_->offboard_mode_go_to_local_setpoint_sync(
-    target_north, target_east, -TARGET_ATTITUDE,
+    200, 0, -TARGET_ATTITUDE,
     std::numeric_limits<float>::quiet_NaN(), 15);
   std::cout << "Flying to second waypoint..." << std::endl;
+
   vg->gateway_->offboard_mode_go_to_local_setpoint_sync(
-    -target_north, target_east, -TARGET_ATTITUDE,
-    std::numeric_limits<float>::quiet_NaN(), 20);
+    200, 200, -TARGET_ATTITUDE,
+    std::numeric_limits<float>::quiet_NaN(), 15);
   std::cout << "Flying home..." << std::endl;
+
   vg->gateway_->offboard_mode_go_to_local_setpoint_sync(
-    0, 0, -TARGET_ATTITUDE,
-    std::numeric_limits<float>::quiet_NaN(), 20);
+    0, 200, -TARGET_ATTITUDE,
+    std::numeric_limits<float>::quiet_NaN(), 15);
+
+  vg->gateway_->offboard_mode_go_to_local_setpoint_sync(
+    0, -200, -TARGET_ATTITUDE,
+    std::numeric_limits<float>::quiet_NaN(), 15);
+
+  vg->gateway_->offboard_mode_go_to_local_setpoint_sync(
+    -200, 0, -TARGET_ATTITUDE,
+    std::numeric_limits<float>::quiet_NaN(), 15);
+
 
   std::cout << "Switching back to hold mode..." << std::endl;
   vg->gateway_->set_onboard_mode();

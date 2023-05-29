@@ -949,14 +949,12 @@ void VehicleGatewayPX4::zenoh_transmit()
   j["east"] = this->current_pos_x_;
   j["north"] = this->current_pos_y_;
   j["down"] = this->current_pos_z_;
+  j["airspeed"] = this->airspeed_;
+  j["heading"] = this->yaw_;
   // TODO: add heading and airspeed/groundspeed
   // TODO: add a timestamp that is relevant to multi-vehicle. Maybe GPS time
   // plus out local clock elapsed time since GPS time was last updated?
   string s = j.dump();
-  /*
-  RCLCPP_INFO(this->px4_node_->get_logger(),
-    "publishing state to zenoh: %s", s.c_str());
-  */
 
   z_publisher_put_options_t options = z_publisher_put_options_default();
   options.encoding = z_encoding(Z_ENCODING_PREFIX_APP_JSON, NULL);

@@ -49,7 +49,6 @@ ament_target_dependencies(follower
   vehicle_gateway_px4
 )
 
-
 install(DIRECTORY
   launch
   config
