@@ -22,6 +22,7 @@ find_package(pluginlib REQUIRED)
 find_package(px4_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(tf2 REQUIRED)
+find_package(zenohc REQUIRED)
 
 add_library(vehicle_gateway_px4 src/vehicle_gateway_px4.cpp)
 target_include_directories(vehicle_gateway_px4 PUBLIC
@@ -35,18 +36,8 @@ ament_target_dependencies(
   vehicle_gateway
   tf2
 )
-
-add_executable(vehicle_gateway_px4_node src/vehicle_gateway_main.cpp)
-target_include_directories(vehicle_gateway_px4_node PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>)
-ament_target_dependencies(
-  vehicle_gateway_px4_node
-  vehicle_gateway
-  "pluginlib"
-  rclcpp
-  px4_msgs
-  tf2
+target_link_libraries(vehicle_gateway_px4
+  zenohc::lib
 )
 
 pluginlib_export_plugin_description_file(vehicle_gateway plugins.xml)
@@ -61,11 +52,6 @@ install(
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
-)
-
-install(
-  TARGETS vehicle_gateway_px4_node
-  DESTINATION lib/${PROJECT_NAME}
 )
 
 install(
@@ -95,6 +81,7 @@ ament_export_dependencies(
   rclcpp
   vehicle_gateway
   tf2
+  zenohc
 )
 
 ament_export_include_directories(

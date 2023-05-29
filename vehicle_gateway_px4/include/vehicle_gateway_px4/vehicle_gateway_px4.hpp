@@ -37,12 +37,16 @@
 #include <px4_msgs/msg/vehicle_rates_setpoint.hpp>
 #include <px4_msgs/msg/airspeed.hpp>
 
+#include "zenoh.h"
+
 namespace vehicle_gateway_px4
 {
 
 class VehicleGatewayPX4 : public vehicle_gateway::VehicleGateway
 {
 public:
+  VehicleGatewayPX4();
+
   // Destructor
   ~VehicleGatewayPX4();
 
@@ -176,6 +180,12 @@ public:
   /// Documentation inherited
   bool set_motors(std::vector<uint16_t> motor_values) override;
 
+  bool create_multirobot_session(const char *config_filename) override;
+
+  bool destroy_multirobot_session() override;
+
+  void *get_multirobot_session() override;
+
 private:
   /// Send command to PX4
   /// \param[in] command Command ID
@@ -261,6 +271,11 @@ private:
   float roll_{0};
   float pitch_{0};
   float yaw_{0};
+
+  z_owned_session_t zenoh_session_;
+  void zenoh_transmit();
+  rclcpp::TimerBase::SharedPtr zenoh_transmit_timer_;
+  z_owned_publisher_t zenoh_state_pub_;
 };
 
 }  // namespace vehicle_gateway_px4

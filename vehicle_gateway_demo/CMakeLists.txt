@@ -41,6 +41,15 @@ ament_target_dependencies(vtol_position_control
   vehicle_gateway_px4
 )
 
+add_executable(follower
+  src/follower.cpp
+)
+ament_target_dependencies(follower
+  rclcpp
+  vehicle_gateway_px4
+)
+
+
 install(DIRECTORY
   launch
   config
@@ -52,6 +61,7 @@ install(
   TARGETS
     aruco_demo
     circles
+    follower
     vtol_position_control
   DESTINATION lib/${PROJECT_NAME}
 )

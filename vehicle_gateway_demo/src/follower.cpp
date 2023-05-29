@@ -12,8 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <fstream>
 #include <iostream>
+#include <string>
 
+#include <nlohmann/json.hpp>
 #include <pluginlib/class_loader.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <vehicle_gateway_px4/vehicle_gateway_px4.hpp>
@@ -23,10 +26,13 @@
 #include <unistd.h>
 #endif
 
-class VehicleGatewayCpp
+using nlohmann::json;
+using std::string;
+
+class Follower
 {
 public:
-  VehicleGatewayCpp(const int vehicle_id)
+  Follower(const int vehicle_id)
   {
     this->loader_ = std::make_shared<pluginlib::ClassLoader<vehicle_gateway::VehicleGateway>>(
       "vehicle_gateway", "vehicle_gateway::VehicleGateway");
@@ -49,33 +55,78 @@ public:
   }
 
   std::shared_ptr<vehicle_gateway::VehicleGateway> gateway_;
+  void state_handler(const z_sample_t *sample);
 
 private:
   std::shared_ptr<pluginlib::ClassLoader<vehicle_gateway::VehicleGateway>> loader_;
 };
 
+void Follower::state_handler(const z_sample_t *sample) {
+  json j;
+  try {
+    j = json::parse(std::string(
+      reinterpret_cast<const char *>(sample->payload.start),
+      sample->payload.len));
+  } catch(...) {
+    printf("error parsing json\n");
+    return;
+  }
+  // todo: test for required fields
+  const int sender_id = j["id"].get<int>();
+  if (sender_id != 1) {
+    printf("ignoring non-leader state (id %d)\n", sender_id);
+    return;
+  }
+  const double leader_north = j["north"].get<double>();
+  const double leader_east = j["east"].get<double>();
+  const double leader_down = j["down"].get<double>();
+  printf("leader position: (%.3f, %.3f, %.3f)\n",
+    leader_north, leader_east, leader_down);
+
+  // TODO: here we shall do something smart to chase after the leader
+}
+
+void state_handler(const z_sample_t *sample, void *context) {
+  Follower *follower = reinterpret_cast<Follower *>(context);
+  follower->state_handler(sample);
+}
 
 int main(int argc, const char * argv[])
 {
   rclcpp::init(argc, argv);
 
-  int vehicle_id = 0;
-  if (argc > 1)
-    vehicle_id = atoi(argv[1]);
+  if (argc < 3) {
+    printf("usage: follower VEHICLE_ID CONFIG.json\n");
+    return 1;
+  }
+  const int vehicle_id = atoi(argv[1]);
+  const char * const config_filename = argv[2];
 
-  const auto vg = std::make_shared<VehicleGatewayCpp>(vehicle_id);
-
-  if (argc > 2) {
-    if (vg->gateway_->create_multirobot_session(argv[2])) {
-      printf("started multivehicle comms as vehicle %d\n", vehicle_id);
-    } else {
-      printf("could not initialize multirobot session from %s\n", argv[1]);
-      return 1;
-    }
+  const auto vg = std::make_shared<Follower>(vehicle_id);
+  if (!vg->gateway_->create_multirobot_session(config_filename)) {
+    printf("failed to create multirobot session!\n");
+    return 1;
   }
 
-  const float TARGET_ATTITUDE = 30.0f;
+  // note that ROS_DOMAIN_ID must be set equal to the domain that the
+  // desired vehicle_id is living in. If not, this will silently be sad.
+  // todo: detect this situation and print a helpful warning message.
 
+  z_owned_closure_sample_t callback = z_closure(state_handler, NULL, vg.get());
+  z_owned_session_t *zenoh_session = reinterpret_cast<z_owned_session_t *>(
+    vg->gateway_->get_multirobot_session());
+
+  z_owned_subscriber_t state_sub = z_declare_subscriber(
+    z_loan(*zenoh_session),
+    z_keyexpr("vehicle_gateway/*/state"), z_move(callback), NULL);
+
+  rclcpp::WallRate loop_rate(std::chrono::milliseconds(500));
+  while (rclcpp::ok()) {
+    loop_rate.sleep();
+  }
+
+/*
+  const float TARGET_ATTITUDE = 30.0f;
   std::cout << "Arming..." << std::endl;
   vg->gateway_->arm_sync();
   sleep(2);
@@ -133,6 +184,7 @@ int main(int argc, const char * argv[])
 
   std::cout << "Disarming..." << std::endl;
   vg->gateway_->disarm_sync();
+*/
 
   vg->destroy();
   std::cout << "Demo complete." << std::endl;
