@@ -875,7 +875,7 @@ float VehicleGatewayPX4::get_altitude()
   return this->current_pos_z_;
 }
 
-bool VehicleGatewayPX4::create_multirobot_session(const char *config_filename)
+bool VehicleGatewayPX4::create_multirobot_session(const char * config_filename)
 {
   double tx_interval = 0.5;
   string zenoh_config;
@@ -885,37 +885,45 @@ bool VehicleGatewayPX4::create_multirobot_session(const char *config_filename)
     const json j_zenoh = j["zenoh"];
     zenoh_config = j_zenoh.dump();
     tx_interval = j["state_transmit_interval_seconds"].get<double>();
-  } catch(...) {
+  } catch (...) {
     RCLCPP_FATAL(this->px4_node_->get_logger(), "unable to parse %s\n", config_filename);
     return false;
   }
 
   z_owned_config_t config = zc_config_from_str(zenoh_config.c_str());
   if (!z_check(config)) {
-    RCLCPP_FATAL(this->px4_node_->get_logger(),
+    RCLCPP_FATAL(
+      this->px4_node_->get_logger(),
       "Unable to create zenoh config from %s",
       zenoh_config.c_str());
   }
-  RCLCPP_INFO(this->px4_node_->get_logger(),
+  RCLCPP_INFO(
+    this->px4_node_->get_logger(),
     "Created zenoh config successfully");
   zenoh_session_ = z_open(z_move(config));
   if (!z_check(zenoh_session_)) {
-    RCLCPP_FATAL(this->px4_node_->get_logger(),
+    RCLCPP_FATAL(
+      this->px4_node_->get_logger(),
       "Unable to create zenoh session");
     return false;
   }
-  RCLCPP_INFO(this->px4_node_->get_logger(),
+  RCLCPP_INFO(
+    this->px4_node_->get_logger(),
     "Zenoh session opened successfully");
-  RCLCPP_INFO(this->px4_node_->get_logger(),
+  RCLCPP_INFO(
+    this->px4_node_->get_logger(),
     "Creating topic subscriptions for vehicle %d", get_vehicle_id());
 
-  string state_key = string("vehicle_gateway/") + std::to_string(get_vehicle_id()) + string("/state");
-  RCLCPP_INFO(this->px4_node_->get_logger(),
+  string state_key = string("vehicle_gateway/") + std::to_string(get_vehicle_id()) +
+    string("/state");
+  RCLCPP_INFO(
+    this->px4_node_->get_logger(),
     "Declaring state publisher on Zenoh keyexpr %s", state_key.c_str());
   zenoh_state_pub_ = z_declare_publisher(
     z_loan(zenoh_session_), z_keyexpr(state_key.c_str()), NULL);
   if (!z_check(zenoh_state_pub_)) {
-    RCLCPP_FATAL(this->px4_node_->get_logger(),
+    RCLCPP_FATAL(
+      this->px4_node_->get_logger(),
       "Unable to create zenoh state publisher");
     return false;
   }
@@ -962,7 +970,8 @@ void VehicleGatewayPX4::zenoh_transmit()
 bool VehicleGatewayPX4::destroy_multirobot_session()
 {
   if (!z_check(zenoh_session_)) {
-    RCLCPP_WARN(this->px4_node_->get_logger(),
+    RCLCPP_WARN(
+      this->px4_node_->get_logger(),
       "Zenoh session is not open; can't destroy it!");
     return false;
   }
@@ -970,7 +979,7 @@ bool VehicleGatewayPX4::destroy_multirobot_session()
   return true;
 }
 
-void *VehicleGatewayPX4::get_multirobot_session()
+void * VehicleGatewayPX4::get_multirobot_session()
 {
   return &zenoh_session_;
 }

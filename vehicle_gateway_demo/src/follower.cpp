@@ -55,19 +55,20 @@ public:
   }
 
   std::shared_ptr<vehicle_gateway::VehicleGateway> gateway_;
-  void state_handler(const z_sample_t *sample);
+  void state_handler(const z_sample_t * sample);
 
 private:
   std::shared_ptr<pluginlib::ClassLoader<vehicle_gateway::VehicleGateway>> loader_;
 };
 
-void Follower::state_handler(const z_sample_t *sample) {
+void Follower::state_handler(const z_sample_t * sample) {
   json j;
   try {
-    j = json::parse(std::string(
-      reinterpret_cast<const char *>(sample->payload.start),
-      sample->payload.len));
-  } catch(...) {
+    j = json::parse(
+      std::string(
+        reinterpret_cast<const char *>(sample->payload.start),
+        sample->payload.len));
+  } catch (...) {
     printf("error parsing json\n");
     return;
   }
@@ -80,14 +81,15 @@ void Follower::state_handler(const z_sample_t *sample) {
   const double leader_north = j["north"].get<double>();
   const double leader_east = j["east"].get<double>();
   const double leader_down = j["down"].get<double>();
-  printf("leader position: (%.3f, %.3f, %.3f)\n",
+  printf(
+    "leader position: (%.3f, %.3f, %.3f)\n",
     leader_north, leader_east, leader_down);
 
   // TODO: here we shall do something smart to chase after the leader
 }
 
-void state_handler(const z_sample_t *sample, void *context) {
-  Follower *follower = reinterpret_cast<Follower *>(context);
+void state_handler(const z_sample_t * sample, void * context) {
+  Follower * follower = reinterpret_cast<Follower *>(context);
   follower->state_handler(sample);
 }
 
@@ -113,7 +115,7 @@ int main(int argc, const char * argv[])
   // todo: detect this situation and print a helpful warning message.
 
   z_owned_closure_sample_t callback = z_closure(state_handler, NULL, vg.get());
-  z_owned_session_t *zenoh_session = reinterpret_cast<z_owned_session_t *>(
+  z_owned_session_t * zenoh_session = reinterpret_cast<z_owned_session_t *>(
     vg->gateway_->get_multirobot_session());
 
   z_owned_subscriber_t state_sub = z_declare_subscriber(

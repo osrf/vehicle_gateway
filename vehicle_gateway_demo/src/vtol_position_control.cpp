@@ -60,8 +60,9 @@ int main(int argc, const char * argv[])
   rclcpp::init(argc, argv);
 
   int vehicle_id = 0;
-  if (argc > 1)
+  if (argc > 1) {
     vehicle_id = atoi(argv[1]);
+  }
 
   const auto vg = std::make_shared<VehicleGatewayCpp>(vehicle_id);
 

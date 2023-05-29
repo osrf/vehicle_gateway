@@ -180,11 +180,11 @@ public:
   /// Documentation inherited
   bool set_motors(std::vector<uint16_t> motor_values) override;
 
-  bool create_multirobot_session(const char *config_filename) override;
+  bool create_multirobot_session(const char * config_filename) override;
 
   bool destroy_multirobot_session() override;
 
-  void *get_multirobot_session() override;
+  void * get_multirobot_session() override;
 
 private:
   /// Send command to PX4

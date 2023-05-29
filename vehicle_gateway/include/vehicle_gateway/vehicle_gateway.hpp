@@ -281,14 +281,14 @@ public:
   // TODO(anyone): it would be nice if we could implement this function fully
   // in this class; unsure if that can be done with pluginlib or if this
   // class needs to stay pure virtual
-  virtual bool create_multirobot_session(const char *config_filename) = 0;
+  virtual bool create_multirobot_session(const char * config_filename) = 0;
 
   virtual bool destroy_multirobot_session() = 0;
 
   // using a void* here to avoid bringing in zenoh.h since it seems nontrivial
   // to get that through pybind and all the cmake/ament interface machinery
   // to pluginlib
-  virtual void *get_multirobot_session() = 0;
+  virtual void * get_multirobot_session() = 0;
 
 protected:
   VehicleGateway() {}
