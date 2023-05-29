@@ -90,7 +90,6 @@ void Follower::state_handler(const z_sample_t * sample)
     leader_north, leader_east, leader_down);
 
   if (!this->following_active) {
-    this->start = std::chrono::steady_clock::now();
     this->following_active = true;
     std::cout << "Arming..." << '\n';
     gateway_->arm_sync();
