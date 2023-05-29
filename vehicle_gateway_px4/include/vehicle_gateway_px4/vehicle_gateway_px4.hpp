@@ -17,6 +17,8 @@
 
 #include "vehicle_gateway/vehicle_gateway.hpp"
 
+#include <zenoh.h>
+
 #include <chrono>
 #include <cstdint>
 #include <limits>
@@ -36,8 +38,6 @@
 #include <px4_msgs/msg/vehicle_odometry.hpp>
 #include <px4_msgs/msg/vehicle_rates_setpoint.hpp>
 #include <px4_msgs/msg/airspeed.hpp>
-
-#include "zenoh.h"
 
 namespace vehicle_gateway_px4
 {

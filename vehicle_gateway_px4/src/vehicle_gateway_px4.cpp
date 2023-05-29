@@ -14,6 +14,8 @@
 
 #include "vehicle_gateway_px4/vehicle_gateway_px4.hpp"
 
+#include <zenoh.h>
+
 #include <chrono>
 #include <cmath>
 #include <fstream>
@@ -24,7 +26,6 @@
 #include "px4_msgs/msg/vehicle_local_position_setpoint.hpp"
 #include "tf2/utils.h"
 #include "nlohmann/json.hpp"
-#include "zenoh.h"
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -951,8 +952,7 @@ void VehicleGatewayPX4::zenoh_transmit()
   j["down"] = this->current_pos_z_;
   j["airspeed"] = this->airspeed_;
   j["heading"] = this->yaw_;
-  // TODO: add heading and airspeed/groundspeed
-  // TODO: add a timestamp that is relevant to multi-vehicle. Maybe GPS time
+  // TODO(ahcorde): add a timestamp that is relevant to multi-vehicle. Maybe GPS time
   // plus out local clock elapsed time since GPS time was last updated?
   string s = j.dump();
 
