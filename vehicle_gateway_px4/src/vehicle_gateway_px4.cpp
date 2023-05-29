@@ -660,7 +660,7 @@ void VehicleGatewayPX4::go_to_latlon_sync(
   double alt_threshold)
 {
   go_to_latlon(lat, lon, alt);
-  while (true) {
+  while (rclcpp::ok()) {
     const auto current_latlon = get_latlon();
     if (current_latlon.size() != 3) {
       throw std::runtime_error("current_latlon should have three elements: lat, lon, alt");
@@ -733,7 +733,7 @@ void VehicleGatewayPX4::offboard_mode_go_to_local_setpoint_sync(
   double distance_threshold,
   vehicle_gateway::CONTROLLER_TYPE controller_type)
 {
-  while (true) {
+  while (rclcpp::ok()) {
     set_offboard_control_mode(controller_type);
     set_local_position_setpoint(x, y, alt, yaw);
     set_airspeed(airspeeed);
