@@ -26,11 +26,12 @@
 class VehicleGatewayCpp
 {
 public:
-  VehicleGatewayCpp()
+  VehicleGatewayCpp(const int vehicle_id)
   {
     this->loader_ = std::make_shared<pluginlib::ClassLoader<vehicle_gateway::VehicleGateway>>(
       "vehicle_gateway", "vehicle_gateway::VehicleGateway");
     this->gateway_ = this->loader_->createSharedInstance("vehicle_gateway_px4::VehicleGatewayPX4");
+    this->gateway_->set_vehicle_id(vehicle_id);
     this->gateway_->init(0, nullptr);
   }
 
@@ -58,7 +59,22 @@ int main(int argc, const char * argv[])
 {
   rclcpp::init(argc, argv);
 
-  const auto vg = std::make_shared<VehicleGatewayCpp>();
+  int vehicle_id = 0;
+  if (argc > 1) {
+    vehicle_id = atoi(argv[1]);
+  }
+
+  const auto vg = std::make_shared<VehicleGatewayCpp>(vehicle_id);
+
+  if (argc > 2) {
+    if (vg->gateway_->create_multirobot_session(argv[2])) {
+      std::cout << "started multivehicle comms as vehicle " << vehicle_id << std::endl;
+    } else {
+      std::cout << "could not initialize multirobot session from " << argv[1] << std::endl;
+      return 1;
+    }
+  }
+
   const float TARGET_ATTITUDE = 30.0f;
 
   std::cout << "Arming..." << std::endl;
@@ -90,16 +106,27 @@ int main(int argc, const char * argv[])
 
   std::cout << "Flying to first waypoint..." << std::endl;
   vg->gateway_->offboard_mode_go_to_local_setpoint_sync(
-    target_north, target_east, -TARGET_ATTITUDE,
+    200, 0, -TARGET_ATTITUDE,
     std::numeric_limits<float>::quiet_NaN(), 15);
   std::cout << "Flying to second waypoint..." << std::endl;
+
   vg->gateway_->offboard_mode_go_to_local_setpoint_sync(
-    -target_north, target_east, -TARGET_ATTITUDE,
-    std::numeric_limits<float>::quiet_NaN(), 20);
+    200, 200, -TARGET_ATTITUDE,
+    std::numeric_limits<float>::quiet_NaN(), 15);
   std::cout << "Flying home..." << std::endl;
+
   vg->gateway_->offboard_mode_go_to_local_setpoint_sync(
-    0, 0, -TARGET_ATTITUDE,
-    std::numeric_limits<float>::quiet_NaN(), 20);
+    0, 200, -TARGET_ATTITUDE,
+    std::numeric_limits<float>::quiet_NaN(), 15);
+
+  vg->gateway_->offboard_mode_go_to_local_setpoint_sync(
+    0, -200, -TARGET_ATTITUDE,
+    std::numeric_limits<float>::quiet_NaN(), 15);
+
+  vg->gateway_->offboard_mode_go_to_local_setpoint_sync(
+    -200, 0, -TARGET_ATTITUDE,
+    std::numeric_limits<float>::quiet_NaN(), 15);
+
 
   std::cout << "Switching back to hold mode..." << std::endl;
   vg->gateway_->set_onboard_mode();

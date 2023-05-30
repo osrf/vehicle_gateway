@@ -1,0 +1,15 @@
+{
+  "state_transmit_interval_seconds": 0.5,
+  "zenoh": {
+    "mode": "peer",
+    "connect": {
+      "endpoints": [
+      ]
+    },
+    "listen": {
+      "endpoints": [
+        "tcp/0.0.0.0:0"
+      ]
+    }
+  }
+}

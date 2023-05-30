@@ -40,7 +40,7 @@ public:
   {
     this->vehicle_id_ = vehicle_id;
     this->node_ = node;
-    this->zenoh_key_name_ = "vehicle_gateway/" + std::to_string(vehicle_id) + "/telemetry";
+    this->zenoh_key_name_ = "vehicle_gateway/" + std::to_string(vehicle_id) + "/state";
     std::cout << "Declaring Publisher on '" << this->zenoh_key_name_ << "'...\n";
     this->session_ = session;
   }
@@ -77,7 +77,7 @@ public:
         }
       });
 
-    std::cout << "sending telemetry message...\n";
+    std::cout << "sending state message...\n";
     this->pub_ = z_declare_publisher(
       z_loan(*this->session_), z_keyexpr(this->zenoh_key_name_.c_str()), NULL);
     if (!z_check(this->pub_)) {

@@ -168,6 +168,12 @@ public:
   /// Documentation inherited
   bool set_motors(std::vector<uint16_t> motor_values) override;
 
+  bool create_multirobot_session(const char * config_filename) override {return false;}
+
+  bool destroy_multirobot_session() override {return false;}
+
+  void * get_multirobot_session() override {return nullptr;}
+
 private:
   // Orchestration
   std::thread spin_thread_;

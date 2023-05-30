@@ -14,17 +14,27 @@
 
 #include "vehicle_gateway_px4/vehicle_gateway_px4.hpp"
 
+#include <zenoh.h>
+
 #include <chrono>
 #include <cmath>
+#include <fstream>
+#include <iostream>
+#include <string>
+#include <thread>
 
 #include "px4_msgs/msg/vehicle_local_position_setpoint.hpp"
 #include "tf2/utils.h"
+#include "nlohmann/json.hpp"
 
 #ifdef _WIN32
 #include <Windows.h>
 #else
 #include <unistd.h>
 #endif
+
+using std::string;
+using nlohmann::json;
 
 namespace vehicle_gateway_px4
 {
@@ -41,6 +51,13 @@ double calc_distance_latlon(double lat_1, double lon_1, double lat_2, double lon
   double dy = (EARTH_RADIUS * M_PI / 180) * (lat_2 - lat_1);
 
   return sqrt(dx * dx + dy * dy);
+}
+
+VehicleGatewayPX4::VehicleGatewayPX4()
+: VehicleGateway()
+{
+  zenoh_session_ = z_session_null();
+  zenoh_state_pub_ = z_publisher_null();
 }
 
 void VehicleGatewayPX4::set_vehicle_id(unsigned int _vehicle_id)
@@ -857,6 +874,112 @@ std::vector<double> VehicleGatewayPX4::get_latlon()
 float VehicleGatewayPX4::get_altitude()
 {
   return this->current_pos_z_;
+}
+
+bool VehicleGatewayPX4::create_multirobot_session(const char * config_filename)
+{
+  double tx_interval = 0.5;
+  string zenoh_config;
+  try {
+    std::ifstream f(config_filename);
+    const json j = json::parse(f);
+    const json j_zenoh = j["zenoh"];
+    zenoh_config = j_zenoh.dump();
+    tx_interval = j["state_transmit_interval_seconds"].get<double>();
+  } catch (...) {
+    RCLCPP_FATAL(this->px4_node_->get_logger(), "unable to parse %s\n", config_filename);
+    return false;
+  }
+
+  z_owned_config_t config = zc_config_from_str(zenoh_config.c_str());
+  if (!z_check(config)) {
+    RCLCPP_FATAL(
+      this->px4_node_->get_logger(),
+      "Unable to create zenoh config from %s",
+      zenoh_config.c_str());
+  }
+  RCLCPP_INFO(
+    this->px4_node_->get_logger(),
+    "Created zenoh config successfully");
+  zenoh_session_ = z_open(z_move(config));
+  if (!z_check(zenoh_session_)) {
+    RCLCPP_FATAL(
+      this->px4_node_->get_logger(),
+      "Unable to create zenoh session");
+    return false;
+  }
+  RCLCPP_INFO(
+    this->px4_node_->get_logger(),
+    "Zenoh session opened successfully");
+  RCLCPP_INFO(
+    this->px4_node_->get_logger(),
+    "Creating topic subscriptions for vehicle %d", get_vehicle_id());
+
+  string state_key = string("vehicle_gateway/") + std::to_string(get_vehicle_id()) +
+    string("/state");
+  RCLCPP_INFO(
+    this->px4_node_->get_logger(),
+    "Declaring state publisher on Zenoh keyexpr %s", state_key.c_str());
+  zenoh_state_pub_ = z_declare_publisher(
+    z_loan(zenoh_session_), z_keyexpr(state_key.c_str()), NULL);
+  if (!z_check(zenoh_state_pub_)) {
+    RCLCPP_FATAL(
+      this->px4_node_->get_logger(),
+      "Unable to create zenoh state publisher");
+    return false;
+  }
+
+  zenoh_transmit_timer_ = rclcpp::create_timer(
+    this->px4_node_,
+    this->px4_node_->get_clock(),
+    rclcpp::Duration::from_seconds(tx_interval),
+    [this]() {
+      this->zenoh_transmit();
+    });
+
+  return true;
+}
+
+void VehicleGatewayPX4::zenoh_transmit()
+{
+  // todo: probably should wrap a mutex around this data block since
+  // we have a multithreaded executor and it will get updated in parallel
+
+  json j;
+  j["id"] = this->vehicle_id_;
+  j["east"] = this->current_pos_x_;
+  j["north"] = this->current_pos_y_;
+  j["down"] = this->current_pos_z_;
+  j["airspeed"] = this->airspeed_;
+  j["heading"] = this->yaw_;
+  // TODO(ahcorde): add a timestamp that is relevant to multi-vehicle. Maybe GPS time
+  // plus out local clock elapsed time since GPS time was last updated?
+  string s = j.dump();
+
+  z_publisher_put_options_t options = z_publisher_put_options_default();
+  options.encoding = z_encoding(Z_ENCODING_PREFIX_APP_JSON, NULL);
+  z_publisher_put(
+    z_loan(this->zenoh_state_pub_),
+    reinterpret_cast<const uint8_t *>(s.c_str()),
+    s.size() + 1,
+    &options);
+}
+
+bool VehicleGatewayPX4::destroy_multirobot_session()
+{
+  if (!z_check(zenoh_session_)) {
+    RCLCPP_WARN(
+      this->px4_node_->get_logger(),
+      "Zenoh session is not open; can't destroy it!");
+    return false;
+  }
+  z_close(z_move(zenoh_session_));
+  return true;
+}
+
+void * VehicleGatewayPX4::get_multirobot_session()
+{
+  return &zenoh_session_;
 }
 
 }  // namespace vehicle_gateway_px4
