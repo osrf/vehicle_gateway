@@ -1,6 +1,6 @@
 FROM dustynv/ros:humble-desktop-l4t-r35.3.1
 
-# Or use the following image for the full desktop version (includes rviz, rqt, etc.)
+# Or use the following image for the full desktop version (includes rviz, demos, tutorials, etc.):
 # FROM dustynv/ros:humble-ros-base-l4t-r32.7.1
 
 ENV VEHICLE_GATEWAY_WS /root/vg
