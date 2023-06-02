@@ -176,8 +176,10 @@ colcon test-result --verbose --all
 
 # Dockerfile
 
+## For development
+
 ```bash
-cd Docker
+cd Docker/dev
 docker build -t vehicle_gateway .
 ```
 
@@ -191,4 +193,32 @@ Run the container with rocker to visualize the GUI
 
 ```bash
 rocker --x11 vehicle_gateway ros2 launch px4_sim px4_sim.launch.py drone_type:='x500' world_name:=null_island model_pose:="-9.7948, -8.31, 2, 0, 0, 0"
+```
+
+## Building on NVIDIA Jetson
+
+You can also build a subset of the vehicle gateway project for an NVIDIA Jetson ([image source](https://github.com/dusty-nv/jetson-containers)). Currently, this will build all of the PX4-related packages, as well as the multi vehicle packages; and it will not build Gazebo or Betaflight-related packages.
+
+You can build the Docker image with the following command.
+Note that this requires that you are using a `linux/arm64` machine or an emulator like `qemu`.
+
+```bash
+cd Docker/nvidia_jetson
+docker build -t vehicle_gateway_nvidia_jetson .
+```
+
+If you want to get the built objects out of the container, you can use the following command to copy them to your host machine.
+
+```bash
+id=$(docker create vehicle_gateway_nvidia_jetson)
+docker cp $id:/root/vg vg_ws
+docker rm -v $id
+```
+
+If you would like to build a different subset of packages, you can modify the Dockerfile's `colcon build` command.
+The approach we are taking is to specify the top-level packages that we would like built with the `--packages-up-to` argument.
+You can take a similar approach and use `colcon graph` to preview the packages that will be built. For example, from the `vg` workspace in the Docker container:
+
+```bash
+colcon graph --packages-up-to vehicle_gateway_python vehicle_gateway_models vehicle_gateway_multi
 ```
