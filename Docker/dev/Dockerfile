@@ -45,7 +45,7 @@ RUN apt-get update && apt-get upgrade -q -y && \
 RUN rosdep init && \
   rosdep update && \
   cd /home/vehicle_gateway && \
-  rosdep install --from-paths ./ -i -y --rosdistro humble --ignore-src --skip-keys="gz-math7 gz-transport12 gz-msgs9 gz-sim7 gz-cmake3 gz-common5 gz-gui7 micro_ros_agent"
+  rosdep install --from-paths ./ -i -y --rosdistro humble --ignore-src --skip-keys="gz-transport12 gz-common5 gz-math7 gz-msgs9 gz-gui7 gz-cmake3 gz-sim7 zenohc gz-transport7 gz-plugin2"
 
 RUN cd /home/vehicle_gateway && . /opt/ros/humble/local_setup.sh && colcon build --merge-install --event-handlers console_direct+ --cmake-args -DBUILD_TESTING=0
 
