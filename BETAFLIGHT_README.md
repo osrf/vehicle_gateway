@@ -3,6 +3,8 @@
 The Gazebo support for Betaflight was added in this [PR](https://github.com/betaflight/betaflight/pull/12346).
 It's already available in `master` branch.
 
+![SITL Diagram](_images/betaflight-simulation.drawio.png)
+
 ## Packages available
 
  - **betaflight_configurator**:  This package download and install in the workspace the
@@ -31,7 +33,7 @@ It's already available in `master` branch.
 
  - **betaflight_gazebo**: This plugin will send the state data to the SITL and it will received
  the data from the motors [-1, 1].
-  - Sending state output to SITL at UDP link: 127.0.0.1:9003
+  - Sending state output to SITL at UDP link: 127.0.0.1:9002
   - Receiving PWM from SITL at UDP server: 127.0.0.1:9003
 
  - **betaflight_sim**: Download and install the betaflight flight controller.
