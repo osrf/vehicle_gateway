@@ -29,7 +29,7 @@ It's already available in `master` branch.
  UDP socket in the port 9004. Values are between [1000 - 2000]
    - Connect a joystick
    - You need to run `ros2 run joy joy_node`
-   - And the `ros2 run betaflight_controller betaflight_joy_controller`.
+   - And then `source ~/vg/install/setup.bash && ros2 run betaflight_controller betaflight_joy_controller`.
 
  - **betaflight_gazebo**: This plugin will send the state data to the SITL and it will received
  the data from the motors [-1, 1].
