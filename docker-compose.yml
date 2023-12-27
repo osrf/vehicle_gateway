@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  gazebo_betaflight:
+    container_name: gazebo_betaflight
+    image: gazebo-betaflight
+    network_mode: host
+    privileged: true
+    stdin_open: true
+    tty: true
+    environment:
+      DISPLAY: ":0"
+      QT_X11_NO_MITSHM: "1"
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - /var/run/avahi-daemon/socket:/var/run/avahi-daemon/socket:rw
+    restart: unless-stopped

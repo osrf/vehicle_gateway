@@ -1,3 +1,9 @@
+# Launching Gazebo with Betaflight
+
+**IMPORTANT**: Always launch the `gazebo-betaflight` container _first_ and then launch the betaflight `SITL`, otherwise the connection will fail.
+
+For Duckietown users this means launching this container and successively starting `dt-duckiebot-interface`.
+
 # Vehicle Gateway
 
 The goal of this project is to create a pluginlib-based C++ library that can interface with several vehicle SDK's.
