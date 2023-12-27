@@ -4,6 +4,17 @@
 
 For Duckietown users this means launching this container and successively starting `dt-duckiebot-interface`.
 
+## TL;DR
+
+- Build the container by executing from the root of this repo:
+
+      docker build -t gazebo-betaflight .
+
+- Start the container with 
+
+      docker compose up
+
+
 # Vehicle Gateway
 
 The goal of this project is to create a pluginlib-based C++ library that can interface with several vehicle SDK's.
