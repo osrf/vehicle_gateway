@@ -31,8 +31,8 @@ RUN pip3 install vcstool pyros-genmsg
 
 ## TODO: this is wrong, we should use the current folder rather than cloning the code
 RUN mkdir -p /home/vehicle_gateway/src/vehicle_gateway
-COPY . /home/vehicle_gateway/src/vehicle_gateway
 
+COPY dependencies.repos /home/vehicle_gateway/src/vehicle_gateway/dependencies.repos
 RUN cd /home/vehicle_gateway/ && vcs import src < src/vehicle_gateway/dependencies.repos
 
 RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg && \
@@ -44,6 +44,8 @@ RUN apt-get update && apt-get upgrade -q -y && \
     apt -y install python3-rosdep python3-colcon-common-extensions \
      $(sort -u $(find . -iname 'packages-'`lsb_release -cs`'.apt' -o -iname 'packages.apt' | grep -v '/\.git/') | sed '/gz\|sdf/d' | tr '\n' ' ') \
     && apt-get clean
+
+COPY . /home/vehicle_gateway/src/vehicle_gateway
 
 RUN rosdep init && \
   rosdep update && \
