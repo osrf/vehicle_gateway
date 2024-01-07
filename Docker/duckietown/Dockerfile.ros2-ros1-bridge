@@ -1,0 +1,13 @@
+FROM ghcr.io/contradict/ros-humble-ros1-bridge:main
+
+# Update packages and install Avahi and required utilities
+RUN apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y avahi-daemon avahi-utils \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Start Avahi service when the container starts
+CMD ["avahi-daemon", "--no-drop-root", "-D"]
+
+COPY fastdds_no_shared_memory.xml /data/config/fastdds_no_shared_memory.xml
+COPY bridge.yml /data/config/bridge.yml

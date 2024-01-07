@@ -9,7 +9,7 @@
       </velocity_decay>
       <inertial>
         <pose>0 0 0 0 0 0</pose>
-        <mass>1.5</mass>
+        <mass>0.5</mass>
         <inertia>
           <ixx>0.008</ixx>
           <ixy>0</ixy>
@@ -19,6 +19,49 @@
           <izz>0.017</izz>
         </inertia>
       </inertial>
+      <sensor name="camera_front" type="camera">
+        <pose>0 0 0.194923 0 0 3.14159</pose>
+        <camera>
+          <horizontal_fov>1.3962634</horizontal_fov>
+          <image>
+            <width>640</width>
+            <height>480</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.02</near>
+            <far>20.0</far>
+          </clip>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.007</stddev>
+          </noise>
+        </camera>
+        <always_on>1</always_on>
+        <update_rate>30.0</update_rate>
+        <visualize>true</visualize>
+      </sensor>
+      <sensor name="depth_camera" type="depth">
+        <pose>0 0 0.194923 0 0 3.14159</pose>
+        <camera>
+          <horizontal_fov>0.26</horizontal_fov>
+          <image>
+            <width>1</width>
+            <height>1</height>
+            <format>R_FLOAT32</format>
+          </image>
+          <clip>
+            <near>0.01</near>
+            <far>10.0</far>
+          </clip>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.01</stddev>
+          </noise>
+        </camera>
+      </sensor>
       <collision name='base_collision'>
         <pose>0 0 -0.08 0 0 0</pose>
         <geometry>

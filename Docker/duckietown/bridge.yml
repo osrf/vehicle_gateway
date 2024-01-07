@@ -1,0 +1,4 @@
+topics:
+- queue_size: 1
+  topic: /virtualcamera/image
+  type: sensor_msgs/msg/Image
