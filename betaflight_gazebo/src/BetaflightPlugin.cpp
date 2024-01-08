@@ -879,7 +879,7 @@ void betaflight_gazebo::BetaFlightPlugin::PreUpdate(
         }
         this->dataPtr->lastServoPacketRecvTime = _info.simTime;
       } else if (this->ReceiveServoPacket(t, _ecm)) {
-        this->dataPtr->lastServoPacketRecvTime = _info.simTime;
+        this->dataPtr->lastServoPacketRecvTime = _info.simTime; 
       }
 
       if (this->dataPtr->betaflightOnline) {
@@ -1115,6 +1115,13 @@ bool betaflight_gazebo::BetaFlightPlugin::ReceiveServoPacket(
           this->ResetPIDs();
         }
       }
+    } else {
+      // Betaflight is not online yet, keep sending last state
+      // until we get a servo packet from Betaflight
+      this->SendState(_simTime, _ecm);
+
+      gzdbg << "[" << this->dataPtr->modelName << "] "
+            << "Waiting for Initial Betaflight connection, sending current state.\n";
     }
   } else {
     const ssize_t expectedPktSize =
