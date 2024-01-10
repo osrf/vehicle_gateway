@@ -1,6 +1,7 @@
 <?xml version='1.0'?>
 <sdf version='1.6'>
   <model name='iris_with_standoffs'>
+
     <pose>0 0 0.194923 0 0 0</pose>
     <link name='base_link'>
       <velocity_decay>
@@ -20,6 +21,7 @@
         </inertia>
       </inertial>
       <sensor name="camera_front" type="camera">
+        <topic>camera_front/Image</topic>
         <pose>0 0 0.194923 0 0 3.14159</pose>
         <camera>
           <horizontal_fov>1.3962634</horizontal_fov>
@@ -42,25 +44,34 @@
         <update_rate>30.0</update_rate>
         <visualize>true</visualize>
       </sensor>
-      <sensor name="depth_camera" type="depth">
-        <pose>0 0 0.194923 0 0 3.14159</pose>
-        <camera>
-          <horizontal_fov>0.26</horizontal_fov>
-          <image>
-            <width>1</width>
-            <height>1</height>
-            <format>R_FLOAT32</format>
-          </image>
-          <clip>
-            <near>0.01</near>
-            <far>10.0</far>
-          </clip>
-          <noise>
-            <type>gaussian</type>
-            <mean>0.0</mean>
-            <stddev>0.01</stddev>
-          </noise>
-        </camera>
+
+      <sensor name='gpu_lidar' type='gpu_lidar'>"
+        <pose relative_to='lidar_frame'>0 0 0 -1.70 0 0 </pose>
+        <topic>lidar</topic>
+        <update_rate>10</update_rate>
+        <ray>
+            <scan>
+                <horizontal>
+                    <samples>1</samples>
+                    <resolution>1</resolution>
+                    <min_angle>-1.396263</min_angle>
+                    <max_angle>1.396263</max_angle>
+                </horizontal>
+                <vertical>
+                    <samples>1</samples>
+                    <resolution>0.01</resolution>
+                    <min_angle>0</min_angle>
+                    <max_angle>0</max_angle>
+                </vertical>
+            </scan>
+            <range>
+                <min>0.08</min>
+                <max>10.0</max>
+                <resolution>0.01</resolution>
+            </range>
+        </ray>
+        <always_on>1</always_on>
+        <visualize>true</visualize>
       </sensor>
       <collision name='base_collision'>
         <pose>0 0 -0.08 0 0 0</pose>
@@ -157,6 +168,9 @@
         </material>
       </visual>
     </link>
+    <frame name="lidar_frame" attached_to='base_link'>
+      <pose>0.8 0 0.5 0 0 0</pose>
+    </frame>
     <link name='imu_link'>
       <inertial>
         <pose>0 0 0 0 0 0</pose>
