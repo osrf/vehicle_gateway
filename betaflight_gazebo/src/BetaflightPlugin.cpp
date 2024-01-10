@@ -1119,9 +1119,6 @@ bool betaflight_gazebo::BetaFlightPlugin::ReceiveServoPacket(
       // Betaflight is not online yet, keep sending last state
       // until we get a servo packet from Betaflight
       this->SendState(_simTime, _ecm);
-
-      gzdbg << "[" << this->dataPtr->modelName << "] "
-            << "Waiting for Initial Betaflight connection, sending current state.\n";
     }
   } else {
     const ssize_t expectedPktSize =
