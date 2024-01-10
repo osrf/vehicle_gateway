@@ -5,10 +5,9 @@ version: '3'
 services:
   gazebo-betaflight:
     container_name: gazebo_betaflight
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile # TODO: uncomment when everything is working so that you don't have to build the image every time
-    image: vehicle_gateway-gazebo-betaflight
+    build:
+      context: .
+      dockerfile: Dockerfile
     network_mode: host
     privileged: true
     stdin_open: true
@@ -19,6 +18,8 @@ services:
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - /var/run/avahi-daemon/socket:/var/run/avahi-daemon/socket:rw
+      - ./betaflight_sim/models/iris_with_standoffs/model.sdf:/home/vehicle_gateway/src/vehicle_gateway/betaflight_sim/models/iris_with_standoffs/model.sdf:ro
+      - ./betaflight_sim/worlds/empty_betaflight_world.sdf:/home/vehicle_gateway/src/vehicle_gateway/betaflight_sim/worlds/empty_betaflight_world.sdf:ro
 
   # This is a special container running ROS 1 + ROS 2 simultaneously. It is used to bridge the two frameworks.
   ros1-bridge:

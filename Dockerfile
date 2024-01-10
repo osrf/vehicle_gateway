@@ -29,11 +29,8 @@ RUN wget https://packages.osrfoundation.org/gazebo.gpg -O /usr/share/keyrings/pk
 
 RUN pip3 install vcstool pyros-genmsg
 
-## TODO: this is wrong, we should use the current folder rather than cloning the code
-RUN mkdir -p /home/vehicle_gateway/src/vehicle_gateway
-
-COPY dependencies.repos /home/vehicle_gateway/src/vehicle_gateway/dependencies.repos
-RUN cd /home/vehicle_gateway/ && vcs import src < src/vehicle_gateway/dependencies.repos
+RUN mkdir -p /home/vehicle_gateway/src && cd /home/vehicle_gateway && git clone https://github.com/duckietown/vehicle_gateway -b ente src/vehicle_gateway --depth 1 && \
+    vcs import src < src/vehicle_gateway/dependencies.repos
 
 RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $(lsb_release -cs)) main" | tee /etc/apt/sources.list.d/ros2.list > /dev/null & \
@@ -44,8 +41,6 @@ RUN apt-get update && apt-get upgrade -q -y && \
     apt -y install python3-rosdep python3-colcon-common-extensions \
      $(sort -u $(find . -iname 'packages-'`lsb_release -cs`'.apt' -o -iname 'packages.apt' | grep -v '/\.git/') | sed '/gz\|sdf/d' | tr '\n' ' ') \
     && apt-get clean
-
-COPY . /home/vehicle_gateway/src/vehicle_gateway
 
 RUN rosdep init && \
   rosdep update && \
