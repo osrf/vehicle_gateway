@@ -3,28 +3,19 @@
 # see https://github.com/gazebosim/ros_gz/blob/ros2/ros_gz_bridge/README.md#example-1a-gazebo-transport-talker-and-ros-2-listener for more details on usage
 # Set each topic name explicitly
 
-# Camera topics
-- ros_topic_name: "/virtualcamera/image"
-  gz_topic_name: "/world/empty_betaflight_world/model/iris_with_Betaflight/model/iris_with_standoffs/link/base_link/sensor/camera_front/image"
+# Virtual Camera
+- ros_topic_name: "/gazebo/camera_node_virtual/image"
+  gz_topic_name: "/camera_front/Image"
   ros_type_name: "sensor_msgs/msg/Image"
   gz_type_name: "gz.msgs.Image"
-- ros_topic_name: "/virtualcamera/camera_info"
-  gz_topic_name: "/world/empty_betaflight_world/model/iris_with_Betaflight/model/iris_with_standoffs/link/base_link/sensor/camera_front/camera_info"
+
+- ros_topic_name: "/gazebo/camera_node_virtual/camera_info"
+  gz_topic_name: "/camera_front/CameraInfo"
   ros_type_name: "sensor_msgs/msg/CameraInfo"
   gz_type_name: "gz.msgs.CameraInfo"
 
-# Add a virtual depth camera
-- ros_topic_name: "/virtualdepthcamera/image"
-  gz_topic_name: "/world/empty_betaflight_world/model/iris_with_Betaflight/model/iris_with_standoffs/link/base_link/sensor/depth_camera_front/depth_image"
-  ros_type_name: "sensor_msgs/msg/Image"
-  gz_type_name: "gz.msgs.Image"
-  
-- ros_topic_name: "/virtualdepthcamera/camera_info"
-  gz_topic_name: "/world/empty_betaflight_world/model/iris_with_Betaflight/model/iris_with_standoffs/link/base_link/sensor/depth_camera_front/camera_info"
-  ros_type_name: "sensor_msgs/msg/CameraInfo"
-  gz_type_name: "gz.msgs.CameraInfo"
-
-- ros_topic_name: "/virtualdepthcamera/depth/points"
-  gz_topic_name: "/world/empty_betaflight_world/model/iris_with_Betaflight/model/iris_with_standoffs/link/base_link/sensor/depth_camera_front/depth_image/points"
-  ros_type_name: "sensor_msgs/msg/PointCloud2"
-  gz_type_name: "gz.msgs.PointCloudPacked"
+# Virtual Lidar (emulates ToF)
+- ros_topic_name: "/gazebo/lidar_node_virtual/scan"
+  gz_topic_name: "/lidar"
+  ros_type_name: "sensor_msgs/msg/LaserScan"
+  gz_type_name: "gz.msgs.LaserScan"

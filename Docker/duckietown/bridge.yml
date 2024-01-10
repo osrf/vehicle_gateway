@@ -1,4 +1,15 @@
 topics:
+
+# Camera
 - queue_size: 1
-  topic: /virtualcamera/image
+  topic: /gazebo/camera_node_virtual/image
   type: sensor_msgs/msg/Image
+
+- queue_size: 1
+  topic: /gazebo/camera_node_virtual/camera_info
+  type: sensor_msgs/msg/CameraInfo
+
+# Lidar
+- queue_size: 1
+  topic: /gazebo/lidar_node_virtual/scan
+  type: sensor_msgs/msg/LaserScan
