@@ -10,4 +10,6 @@ RUN apt-get update \
 CMD ["avahi-daemon", "--no-drop-root", "-D"]
 
 COPY fastdds_no_shared_memory.xml /data/config/fastdds_no_shared_memory.xml
-COPY bridge.yml /data/config/bridge.yml
+COPY bridge.yml.j2 /data/config/bridge.yml.j2
+RUN apt-get update && apt-get install -y python3-jinja2
+COPY ./ros-bridge-replacer.py /data/config/ros-bridge-replacer.py

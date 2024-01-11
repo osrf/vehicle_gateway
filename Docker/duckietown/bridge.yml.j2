@@ -2,11 +2,11 @@ topics:
 
 # Camera
 - queue_size: 1
-  topic: /gazebo/camera_node_virtual/image
+  topic: /{{veh}}/virtual_camera_node/Image
   type: sensor_msgs/msg/Image
 
 - queue_size: 1
-  topic: /gazebo/camera_node_virtual/camera_info
+  topic: /{{veh}}/virtual_camera_node/camera_info
   type: sensor_msgs/msg/CameraInfo
 
 # Lidar

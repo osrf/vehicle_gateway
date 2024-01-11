@@ -27,20 +27,22 @@ services:
         context: ./Docker/duckietown
         dockerfile: Dockerfile.ros2-ros1-bridge
       environment:
-          - ROS_MASTER_URI=${ROS_MASTER_URI}
+          - VEH=${VEH}
+          - ROS_MASTER_URI=http://${VEH}.local:11311
           - ROS_IP=${ROS_IP}
           - FASTRTPS_DEFAULT_PROFILES_FILE=/data/config/fastdds_no_shared_memory.xml
       volumes:
         - /var/run/avahi-daemon/socket:/var/run/avahi-daemon/socket
       network_mode: host
-      command: ["bash", "-c", "source /ros_entrypoint.sh && rosparam load /data/config/bridge.yml && ros2 run ros1_bridge parameter_bridge"] 
+      command: ["bash", "-c", "source /ros_entrypoint.sh && cd /data/config && python3 ros-bridge-replacer.py && rosparam load /data/config/bridge.yml && ros2 run ros1_bridge parameter_bridge"] 
 
   gazebo-ros2-bridge:
       build:
         context: ./Docker/duckietown
         dockerfile: Dockerfile.gz-garden-bridge
       environment:
+          - VEH=${VEH}
           - FASTRTPS_DEFAULT_PROFILES_FILE=/data/config/fastdds_no_shared_memory.xml
 
       network_mode: host
-      command: ["bash", "-c", "source /opt/ros/humble/setup.bash && source /ws/install/setup.bash && ros2 run ros_gz_bridge parameter_bridge --ros-args -p config_file:=/data/config/gazebo-bridge-config.yaml"]
+      command: ["bash", "-c", "source /opt/ros/humble/setup.bash && python3 /data/config/gazebo-bridge-replacer.py && source /ws/install/setup.bash && ros2 run ros_gz_bridge parameter_bridge --ros-args -p config_file:=/data/config/gazebo-bridge-config.yaml"]

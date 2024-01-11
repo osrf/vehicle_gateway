@@ -36,5 +36,7 @@ RUN /bin/bash -c "source /opt/ros/humble/setup.bash && colcon build"
 
 # Copy the FastDDS configuration file and the Gazebo bridge configuration file
 COPY fastdds_no_shared_memory.xml /data/config/fastdds_no_shared_memory.xml
-COPY gazebo-bridge-config.yaml /data/config/gazebo-bridge-config.yaml
+RUN apt-get update && apt-get install -y python3-jinja2
+COPY gazebo-bridge-config.yaml.j2 /data/config/gazebo-bridge-config.yaml.j2
+COPY ./gazebo-bridge-replacer.py /data/config/gazebo-bridge-replacer.py
 
