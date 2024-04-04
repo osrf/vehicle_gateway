@@ -47,6 +47,13 @@ RUN rosdep init && \
   cd /home/vehicle_gateway && \
   rosdep install --from-paths ./ -i -y --rosdistro humble --ignore-src --skip-keys="gz-transport12 gz-common5 gz-math7 gz-msgs9 gz-gui7 gz-cmake3 gz-sim7 zenohc gz-transport7 gz-plugin2"
 
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
+    echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> $HOME/.profile
+
+ENV PATH="/root/.cargo/bin:${PATH}"
+
+RUN rustup update
+
 RUN cd /home/vehicle_gateway && . /opt/ros/humble/local_setup.sh && colcon build --merge-install --event-handlers console_direct+ --cmake-args -DBUILD_TESTING=0
 
 RUN apt-get install -y -q ros-humble-ros2launch
