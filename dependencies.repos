@@ -22,4 +22,4 @@ repositories:
   zenohc:
     type: git
     url: https://github.com/eclipse-zenoh/zenoh-c
-    version: master
+    version: main
