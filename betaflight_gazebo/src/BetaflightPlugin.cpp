@@ -879,7 +879,7 @@ void betaflight_gazebo::BetaFlightPlugin::PreUpdate(
         }
         this->dataPtr->lastServoPacketRecvTime = _info.simTime;
       } else if (this->ReceiveServoPacket(t, _ecm)) {
-        this->dataPtr->lastServoPacketRecvTime = _info.simTime; 
+        this->dataPtr->lastServoPacketRecvTime = _info.simTime;
       }
 
       if (this->dataPtr->betaflightOnline) {
