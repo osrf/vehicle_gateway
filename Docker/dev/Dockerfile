@@ -58,5 +58,5 @@ RUN rustup update
 RUN cd /home/vehicle_gateway && . /opt/ros/humble/local_setup.sh && colcon build --merge-install --event-handlers console_direct+ --cmake-args -DBUILD_TESTING=0
 
 RUN apt-get install -y -q ros-humble-ros2launch
-COPY entrypoint.sh /entrypoint.sh
+COPY Docker/dev/entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
