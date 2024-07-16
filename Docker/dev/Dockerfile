@@ -29,8 +29,9 @@ RUN wget https://packages.osrfoundation.org/gazebo.gpg -O /usr/share/keyrings/pk
 
 RUN pip3 install vcstool pyros-genmsg
 
-RUN mkdir -p /home/vehicle_gateway/src && cd /home/vehicle_gateway && git clone https://github.com/osrf/vehicle_gateway src/vehicle_gateway --depth 1 && \
-    vcs import src < src/vehicle_gateway/dependencies.repos
+RUN mkdir -p /home/vehicle_gateway/src && cd /home/vehicle_gateway 
+COPY . /home/vehicle_gateway/src/vehicle_gateway
+RUN cd /home/vehicle_gateway && vcs import src < src/vehicle_gateway/dependencies.repos
 
 RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $(lsb_release -cs)) main" | tee /etc/apt/sources.list.d/ros2.list > /dev/null & \
